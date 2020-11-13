@@ -83,6 +83,12 @@ forage_density <- function(forage_points, impact_cat, grid_size = 20, kern_bw = 
   KernDen[KernDen == 0] <- NA
   KernDen[KernDen < low_thresh] <- NA
 
+  # transform raster to same crs as input points if different.
+
+  if (sf::st_crs(KernDen)!=sf::st_crs(forage_points)) {
+    KernDen <- raster::projectRaster(KernDen, crs=sp::CRS(sprintf('+init=EPSG:%s',sf::st_crs(forage_points)$epsg)))
+  }
+
   return(KernDen)
 
 }
