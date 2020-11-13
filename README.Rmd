@@ -1,0 +1,24 @@
+---
+output: 
+  github_document:
+    fig_width: 7.5
+    fig_height: 6
+  html_preview: false
+editor_options: 
+  chunk_output_type: console
+---
+
+# beavertools
+
+
+A package that documents a selection of tools to help monitor the expansion of beaer populations.
+
+This is in development right now but should include:
+* Kernel Density Estimation of field Signs
+* Standardised mapping functions for foraging kernel density 
+* automated territory detection
+* population carrying capacity estimate.
+
+Here is the start of the Kernel Density approach:
+
+![River Otter Beaver Trial Forage Density](man/figures/OtterSequence.png)

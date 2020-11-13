@@ -2,3 +2,5 @@
 
 export(forage_density)
 export(inflate_bbox)
+export(panel_plot_forage_density)
+export(plot_forage_density)
