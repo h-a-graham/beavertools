@@ -2,19 +2,29 @@
 # beavertools
 
 A package that documents a selection of tools to help monitor the
-expansion of beaer populations.
+expansion of beaver populations.
 
-This is in development right now but should include:
+This is a checklist of the functios that will be included:
 
-  - Kernel Density Estimation of field Signs
+  - [x] Kernel Density Estimation of field Signs
 
-  - Standardised mapping functions for foraging kernel density
+  - [x] Standardised mapping functions for foraging kernel density
 
-  - automated territory detection
+  - [x] Automated territory detection
 
-  - population carrying capacity estimate.
+  - [x] User modeification of terriroty classes
 
-Here is the start of the Kernel Density approach:
+  - [x] Standardised mapping functions for territory locations/classes
+
+  - [x] Animation function to animate a list of equally sized/scaled
+    maps
+
+  - [ ] Population carrying capacity estimate.
+
+  - [ ] Standardised pop. capacity mapping functions
+
+This example shows the kernel density estimate for feeding signs and the
+derived (automated) territory locations and their classification
 
 ![River Otter Beaver Trial Forage
 Density](man/figures/Otter_comb_test1.gif)
