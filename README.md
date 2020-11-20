@@ -12,7 +12,7 @@ This is a checklist of the functios that will be included:
 
   - [x] Automated territory detection
 
-  - [x] User modeification of terriroty classes
+  - [x] User modification of territory classes
 
   - [x] Standardised mapping functions for territory locations/classes
 
@@ -22,6 +22,8 @@ This is a checklist of the functios that will be included:
   - [ ] Population carrying capacity estimate.
 
   - [ ] Standardised pop. capacity mapping functions
+
+  - [ ] DOCUMENT ALL FUNCTIONS AND DATASETS\!
 
 This example shows the kernel density estimate for feeding signs and the
 derived (automated) territory locations and their classification
