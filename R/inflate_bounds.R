@@ -3,7 +3,7 @@
 #'
 #' @export
 inflate_bbox <- function(sp_obj, value){
-
+  sp_obj <- check_spatial_feature(sp_obj, 'sp_obj')
   bounds <- sf::st_bbox(sp_obj)
 
   bounds[1] <- bounds[1] - value

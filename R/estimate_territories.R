@@ -28,14 +28,14 @@ estimate_territories <- function(forage_raster, confirm_signs, low_thresh = 0, u
   options(warn = -1)
 
   poly_list <- list(low_thresh, upper_thresh) %>%
-    purrr::map(., ~ raster::quantile(out_ras, .)) %>%
-    purrr::map(., ~ polygonise(out_ras, .))
+    purrr::map(., ~ raster::quantile(forage_raster, .)) %>%
+    purrr::map(., ~ polygonise(forage_raster, .))
 
   # restore warning setting
   options(warn = oldw)
 
   forage_poly <- poly_list[[1]] %>%
-    dplyr::mutate(id = dplyr::row_number() ) %>%
+    dplyr::mutate(id = forcats::as_factor(dplyr::row_number())) %>%
     dplyr::mutate(Upper_Thresh = ifelse(id %in% unlist(st_intersects(poly_list[[2]], poly_list[[1]])),
                                         'Yes', 'No')) %>%
     dplyr::mutate(Confirm_signs = ifelse(id %in% unlist(st_intersects(confirm_signs, poly_list[[1]])),
@@ -68,3 +68,30 @@ polygonise <- function(ras, thresh){
     dplyr::mutate(quantf = as.factor(quant)) %>%
     sf::st_cast(., to='POLYGON')
 }
+
+
+
+#' Add user specified classification of territory areas
+#'
+#' Opportunity to add a new column 'user_class' which enables the user to confirm or reject
+#' the automated assessment of territory areas.
+#'
+#' @export
+user_classify <- function(territory_poly, territory=NULL, possible=NULL){
+
+  class_overlap <- territory %in% possible
+
+  if (isTRUE(TRUE %in% class_overlap)){
+    stop('A territory is duplicated in both possible and territory lists')
+  }
+
+  territory_poly %>%
+    dplyr::mutate(user_class = terr_status) %>%
+    dplyr::mutate(user_class = ifelse(id %in% territory, 'Territory',
+                                      ifelse(id %in% possible, 'Possible',
+                                             terr_status))) %>%
+    dplyr::relocate(user_class, .after = terr_status)
+
+
+}
+

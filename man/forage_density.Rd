@@ -11,7 +11,8 @@ forage_density(
   kern_bw = 250,
   kd_extent,
   kd_weights = c(1, 1000, 1e+06),
-  low_thresh = 1e-12
+  low_thresh = 1e-12,
+  standardise = FALSE
 )
 }
 \description{

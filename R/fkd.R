@@ -4,22 +4,10 @@
 #'
 #' @export
 forage_density <- function(forage_points, impact_cat, grid_size = 20, kern_bw = 250, kd_extent,
-                           kd_weights = c(1, 1e+03, 1e+06), low_thresh = 1e-12){
+                           kd_weights = c(1, 1e+03, 1e+06), low_thresh = 1e-12, standardise=FALSE){
 
   # check the input forage points and convert to sf from either filepath or sp. skip if already sf.
-  if (class(forage_points)[1] == "sf") {
-    # forage objects already in sf format
-
-  } else if (class(forage_points)[1] == "SpatialPointsDataFrame") {
-    forage_points <- (sf::st_as_sf(forage_points))
-
-  } else if (class(forage_points)[1] == 'character'){
-    forage_points <- sf::read_sf(forage_points)
-
-  } else {
-    stop('Class type %s is not supported for "forage_points" arg.
-         Please provide either: sf, SpatialPointsDataFrame, or sf-readable filepath')
-  }
+  forage_points <- check_spatial_feature(forage_points, 'forage_points')
 
   if (is.na(sf::st_crs(forage_points))) {
     stop("A valid CRS is missing in 'forage_points'")
@@ -72,10 +60,10 @@ forage_density <- function(forage_points, impact_cat, grid_size = 20, kern_bw = 
   # Run the kernel Density Estimate
   if (isTRUE(weighted_kde)){
   KernDen <- spatialEco::sp.kde(forage_points, y=forage_points$weights, bw=kern_bw, nr = dims$nrows[1], nc = dims$ncols[1], newdata = kd_extent,
-                                standardize=FALSE)
+                                standardize=standardise)
   } else {
     KernDen <- spatialEco::sp.kde(forage_points, bw=kern_bw, nr = dims$nrows[1], nc = dims$ncols[1], newdata = kd_extent,
-                                  standardize=FALSE)
+                                  standardize=standardise)
   }
 
 

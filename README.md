@@ -12,4 +12,4 @@ capacity estimate.
 Here is the start of the Kernel Density approach:
 
 ![River Otter Beaver Trial Forage
-Density](man/figures/OtterSequence.png)
+Density](man/figures/Otter_comb_test1.gif)
