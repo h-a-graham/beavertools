@@ -4,7 +4,7 @@
 \alias{gen_territories}
 \title{Caller function for create territories wrapped in safely.}
 \usage{
-gen_territories(BeaverNetwork, ncores)
+gen_territories(BeaverNetwork, progbar = TRUE, multicore = TRUE, ncores)
 }
 \description{
 Caller function for create territories wrapped in safely.

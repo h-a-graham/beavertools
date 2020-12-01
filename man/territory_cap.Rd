@@ -4,7 +4,14 @@
 \alias{territory_cap}
 \title{Beaver territory capacity simulation}
 \usage{
-territory_cap(territories, min_veg = 2.5, min_bdc = 1)
+territory_cap(
+  territories,
+  min_veg = 2.5,
+  min_bdc = 1,
+  progbars = TRUE,
+  multicore = FALSE,
+  ncores
+)
 }
 \description{
 Beaver territory capacity simulation
