@@ -87,41 +87,38 @@ create_territories <- function(reach, river, t_length=NULL,  new_buff= NULL, old
 
 #' Caller function for create territories wrapped in safely.
 #'
-#' @import foreach doParallel parallel progress
+#' @import foreach doParallel parallel tcltk
 #' @export
-gen_territories <- function(BeaverNetwork){
+gen_territories <- function(BeaverNetwork, progbar=TRUE, multicore=TRUE, ncores){
+  # silence warnings...
   oldw <- getOption("warn")
   options(warn = -1)
 
   #setup parallel backend to use many processors
+  if (isFALSE(multicore)){
+    ncores <- 1
+  }
 
-  # cores <- 10
-  cores=parallel::detectCores()
-  cl <- parallel::makeCluster(cores[1]-2) #not to overload your computer
+  if (missing(ncores)){
+    cores=parallel::detectCores()[1]-2
+  } else {
+    cores <- ncores
+  }
 
-  cl <- parallel::makeCluster(cores, cores = cores)
+  cl <- parallel::makeCluster(cores)
 
   doParallel::registerDoParallel(cl)
-
-  iter_size <- nrow(BeaverNetwork)
-
-
-  # iter_size= 100
-  n <- ceiling(iter_size/cores)
-
-
-  # st <- seq(1,iter_size,by=n)
-  # en <- c(seq(n,iter_size,by=n),iter_size)
 
   split_df <- BeaverNetwork %>%
     dplyr::group_by((dplyr::row_number()-1) %/% (dplyr::n()/cores)) %>%
     dplyr::group_split()
 
-  # pb <- progress::progress_bar$new(total = nrow(BeaverNetwork),
-  #                                  clear = FALSE)
 
-  gen_terr_safe <- function(x) {
-    # pb$tick()
+  gen_terr_safe <- function(x, it, progbar) {
+
+    if (!is.null(progbar)){
+      tcltk::setTkProgressBar(progbar, it)
+    }
 
     f = purrr::safely(function() create_territories(reach = x, river = BeaverNetwork))
 
@@ -130,18 +127,30 @@ gen_territories <- function(BeaverNetwork){
   }
   # run paralell territory generation...
   out <- foreach::foreach(i = seq_along(split_df), .combine = rbind,
-                         .packages = c("dplyr", "sf", "purrr", "lwgeom", "tibble", "magrittr"),
+                         .packages = c("dplyr", "sf", "purrr", "lwgeom", "magrittr", "tcltk"),
                          .export = c("gen_terr_safe", "create_territories", "terr_checks")) %dopar% {
 
 
+                           if (i == 1) {
+                             if (isTRUE(progbar)){
+                               n <- nrow(split_df[[i]])
+                               if(!exists("counter")) counter <- 0
+                               counter <- counter + 1
+                               if(!exists("pb")) pb <- tcltk::tkProgressBar("Generating potential territories", min=1, max=n)
+                             } else {
+                               pb <- NULL
+                             }
 
+                           } else {
+                             pb <- NULL
+                           }
 
 
                            par_terrs <- split_df[[i]] %>%
-                             tibble::rowid_to_column(., var='id') %>%
+                             dplyr::mutate(id = dplyr::row_number()) %>%
                              dplyr::group_by(id) %>%
                              dplyr::group_split() %>%
-                             purrr::map( ~ gen_terr_safe(.)) %>%
+                             purrr::imap( ~ gen_terr_safe(x = .x, it = .y, progbar = pb)) %>%
                              purrr::map(., ~ .$result) %>%
                              dplyr::bind_rows()
 
@@ -150,10 +159,11 @@ gen_territories <- function(BeaverNetwork){
 
   parallel::stopCluster(cl)
 
+  #enable warnings
   options(warn = oldw)
 
   out <- out %>%
-    tibble::rowid_to_column(., var='id')
+    dplyr::mutate(id = dplyr::row_number())
 
   imp_terr_n <- nrow(BeaverNetwork) -nrow(out)
 
