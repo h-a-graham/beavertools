@@ -10,7 +10,7 @@ animate_maps <- function(map_list, filename=NULL, x_pix=1200, y_pix=675, pix_res
   animation <- magick::image_animate(magick::image_morph(img,  frames = n_frames), fps = fps, optimize = TRUE)
 
   if (!is.null(filename)){
-    image_write(animation, normalizePath(file.path(filename)))
+    magick::image_write(animation, normalizePath(file.path(filename), mustWork = FALSE))
   }
 
   return(animation)

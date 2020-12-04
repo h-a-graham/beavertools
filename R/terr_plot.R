@@ -4,7 +4,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
                              label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
                              scalebar=TRUE, scalebar_loc = 'tl',
                              north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                             wsg=FALSE, guide=TRUE, seed=123, drop_act=FALSE, trans_type=NULL,
+                             wsg=FALSE, guide=TRUE, seed=NA, drop_act=FALSE, trans_type=NULL,
                              catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
 
   # define extent
@@ -82,9 +82,11 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
 
     # Define the number of colors you want
     nb.cols <- nrow(terr_poly)
-    mycolors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Set1"))(nb.cols)
-    set.seed(seed)
-    mycolors <-sample(mycolors)
+    # mycolors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Set1"))(nb.cols)
+    if (!is.na(seed)){
+      set.seed(seed)
+    }
+    mycolors <-random_palette(nb.cols)
 
     p <- p + ggplot2::scale_fill_manual(values = mycolors)
   }
@@ -93,7 +95,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
     p <- p + ggrepel::geom_label_repel(dplyr::filter(terr_poly, terr_status!='Activity'),
                              mapping = aes(label = id, geometry=geometry), position =position_dodge2(width=10),
                              arrow = arrow(length = unit(0.02, "npc"), angle = 25, type = "open", ends = "first"),
-                             force = 10, inherit.aes = F, fill=NA, seed=123, show.legend=F,stat = "sf_coordinates")
+                             force = 10, inherit.aes = F, fill=NA, seed=seed, show.legend=F,stat = "sf_coordinates")
   }
 
 
@@ -134,7 +136,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
     p <- p + ggplot2::guides(fill=FALSE)
   }
 
-
+  rm(.Random.seed, envir=globalenv())
 
   return(p)
 }

@@ -141,7 +141,7 @@ territory_cap <- function(territories, min_veg = 2.5, min_bdc = 1, progbars = TR
   }
 
   accept_names <- c("id", "Terr_Leng", "BFI_40m", "BDC", "Str_Ord", "geom", "geometry")
-  junk_names <- colnames(test_TC3)[!accept_names %in% colnames(test_TC3)]
+  junk_names <- colnames(final_terrs)[!accept_names %in% colnames(final_terrs)]
 
   final_terrs <- final_terrs %>%
     dplyr::select(!junk_names) %>%
