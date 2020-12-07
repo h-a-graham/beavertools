@@ -37,3 +37,11 @@ This is a checklist of the functios that will be included:
 This example shows the kernel density estimate for feeding signs and the derived (automated) territory locations and their classification
 
 ![River Otter Beaver Trial Forage Density](man/figures/Otter_comb_test1.gif)
+
+
+This examples shows a developmental modelling approach to estimating the carrying capacity of beaver populations withing a catchment.
+
+
+<p align="center">
+  <img src="man/figures/Terr_Cap_ani_test4.gif" />
+</p>
