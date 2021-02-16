@@ -1,3 +1,4 @@
 ^beavertools\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^run$

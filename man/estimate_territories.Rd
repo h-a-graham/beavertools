@@ -11,8 +11,45 @@ estimate_territories(
   upper_thresh = 0.95
 )
 }
+\arguments{
+\item{forage_raster}{the foraging density raster generated from \code{beavertools::forage_density()}}
+
+\item{confirm_signs}{An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
+containing 'confirmatory' field signs for beaver such as dams and lodges. This is required to assign a
+confidence classification for areas of activity either: 'Activity'. 'Possible' or 'Territory'.}
+
+\item{low_thresh}{numeric between 0 and 1. Used to set minimum value for activity. Lower values
+return more information i.e. area with cover but can result in the merging of territories as density
+increases. use lowest possible value.}
+
+\item{upper_thresh}{numeric between 0 and 1. Used to set the minimum value for core areas of activity. AS
+central place forages, beavers feed more near their lodge, this value idenitfies areas of activity which may
+indicate the centre of a territory. default is 0.95, may need adjusting depending on territory density.}
+}
+\value{
+An 'sf' polygon object defining areas of beaver activity, with kernel denisty summary stats and
+the territory status.
+}
 \description{
 Uses the kernel density maps to estimate the area of territories by locating areas of activity that
 contain foraging intensity above a given threshold, which locates potential territories - to confirm
-territories, confirmatory signs can be provided including dam and dwelling locations.
+territories, confirmatory signs are required including dam and dwelling locations.
+}
+\examples{
+# Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
+# Then pipe this 'sf' object to forage_density.
+
+ROBT_201920 <- RivOtter_FeedSigns \%>\%
+dplyr::filter(SurveySeason == "2019 - 2020")\%>\%
+  forage_density(., 'FeedCat')
+
+# Now we load the ROBT `RivOtter_OtherSigns` dataset and filter to the same
+# year as the forage density raster.
+
+CS_201920 <- RivOtter_OtherSigns \%>\%
+dplyr::filter(SurveySeason == "2019 - 2020")
+
+# run territory classification
+otter_poly <- estimate_territories(ROBT_201920, confirm_signs = CS_201920)
+
 }

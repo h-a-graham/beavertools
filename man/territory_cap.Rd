@@ -13,6 +13,41 @@ territory_cap(
   ncores
 )
 }
+\arguments{
+\item{territories}{The potential terrtory areas produced using \code{beavertools::gen_territories()}}
+
+\item{min_veg}{Numeric vector describing the minimum vegetation index value which can support a beaver territory.}
+
+\item{min_bdc}{Numeric vector describing the minimum Beaver Dam Capacity for reaches where Stream Order <=4.}
+
+\item{multicore}{Boolean to multiple core - This function can be slow for large catchments so setting as TRUE can speed things up.}
+
+\item{ncores}{numeric denoting the number of processes to run the function across. If not included, defaults to:
+\code{parallel::detectCores()[1]-2}}
+
+\item{progbar}{Boolean to use a progress bar to monitor progress}
+}
+\value{
+An 'sf' object containing all viable territories, the total of which equals the territory capacity.
+}
 \description{
-Beaver territory capacity simulation
+Function to estimate the territory capacity of a catchment for beavers. The potential territories are iteratively compared
+to select the most suitable habitats that do not intersect. Stream size and habitat quality are prioritised such that terrtories
+in larger rivers with better habitat are considered more suitable.
+}
+\examples{
+# here we read in the BeaverNetwork data
+# NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
+BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
+
+# ---------- Subset dataset for example to reduce computation time -----------
+BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+
+# ---------- run terriroty generation --------
+test_out <-  gen_territories(BeavNetOtter)
+
+# ------------- Run territory cap -------------
+test_TC_par <-territory_cap(test_out, multicore = TRUE)
+
+
 }

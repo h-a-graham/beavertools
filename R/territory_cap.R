@@ -77,7 +77,35 @@ best_territories_ <- function(territories, terr_original=NULL, keep_terr=NULL, p
 
 #' Beaver territory capacity simulation
 #'
+#' Function to estimate the territory capacity of a catchment for beavers. The potential territories are iteratively compared
+#' to select the most suitable habitats that do not intersect. Stream size and habitat quality are prioritised such that terrtories
+#' in larger rivers with better habitat are considered more suitable.
+#'
+#' @param territories The potential terrtory areas produced using `beavertools::gen_territories()`
+#' @param min_veg  Numeric vector describing the minimum vegetation index value which can support a beaver territory.
+#' @param min_bdc  Numeric vector describing the minimum Beaver Dam Capacity for reaches where Stream Order <=4.
+#' @param progbar Boolean to use a progress bar to monitor progress
+#' @param multicore  Boolean to multiple core - This function can be slow for large catchments so setting as TRUE can speed things up.
+#' @param ncores numeric denoting the number of processes to run the function across. If not included, defaults to:
+#' `parallel::detectCores()[1]-2`
+#' @return An 'sf' object containing all viable territories, the total of which equals the territory capacity.
+#' @import foreach doParallel parallel tcltk
 #' @export
+#' @examples
+#' # here we read in the BeaverNetwork data
+#' # NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
+#' BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
+#'
+#' # ---------- Subset dataset for example to reduce computation time -----------
+#' BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+#'
+#' # ---------- run terriroty generation --------
+#' test_out <-  gen_territories(BeavNetOtter)
+#'
+#' # ------------- Run territory cap -------------
+#' test_TC_par <-territory_cap(test_out, multicore = TRUE)
+#'
+#'
 territory_cap <- function(territories, min_veg = 2.5, min_bdc = 1, progbars = TRUE, multicore=FALSE, ncores){
 
   terrs <- territories %>%

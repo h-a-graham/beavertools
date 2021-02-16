@@ -1,8 +1,26 @@
 #' Function to generate Kernel Density plot from Beaver Forage Data
 #'
 #' This function allows users to generate a kernel density raster from a collection of points.
-#'
+#' @param forage_points The foraging sign point data - must be either an sf object or an sf-readable file.
+#'See sf::st_drivers() for available drivers
+#' @param impact_cat A character vector of length one containing the column name which describes the feeding
+#'impact category (i.e. Low, Medium, or high). If not provided kernel density is not weighted
+#' @param grid_size The raster grid cell size desired.
+#' @param kern_bw The bandwidth for the kernel denisty search radius.
+#' @param kd_extent The desired extent of the output raster.
+#' @param kd_weights A numeric vector of length equal to the number of unique impact categories.
+#' @param low_thresh A lower threshold for setting the minimum desired value. Values < low_thresh are set to NA.
+#' @param standardise Boolean to specify if densities shoul be standardised between 0-1.
+#' @return "RasterLayer" object with kernel denisity estimates for feeding signs
 #' @export
+#' @examples
+#' # Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
+#' # Then pipe this 'sf' object to forage_density.
+#'
+#' ROBT_201920 <- RivOtter_FeedSigns %>%
+#' dplyr::filter(SurveySeason == "2019 - 2020")%>%
+#'   forage_density(., 'FeedCat')
+#'
 forage_density <- function(forage_points, impact_cat, grid_size = 20, kern_bw = 250, kd_extent,
                            kd_weights = c(1, 1e+03, 1e+06), low_thresh = 1e-12, standardise=FALSE){
 

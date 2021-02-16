@@ -14,6 +14,59 @@ animate_maps(
   fps = 5
 )
 }
+\arguments{
+\item{map_list}{A list of ggplot objects generated with either  \code{plot_territories} or \code{plot_forage_density}}
+
+\item{filename}{character string for the save path if saving to disk is required.}
+
+\item{x_pix}{numeric denoting width of the animation canvas in pixels}
+
+\item{y_pix}{numeric denoting height of the animation canvas in pixels}
+
+\item{pix_res}{numeric denoting canvas resolution}
+
+\item{n_frames}{numeric for the number of frames to use for transitions}
+
+\item{fps}{numeric for the number of frames per second for the resulting animation}
+}
+\value{
+Animated map of esither territory locations over time or feeding density over time.
+}
 \description{
-Function to Animate a list of maps generated with either \code{plot_territories} or \code{plot_forage_density}
+This function generates an animation between map time steps to visualise change over time using
+the {magick} package.
+}
+\examples{
+
+# kde plots for panel/animation
+fsd_ggplot <- function(.data, p.names, p.ext, add_map_stuff= FALSE){
+
+ if (isTRUE(add_map_stuff)){
+   fsd <- plot_forage_density(.data, guide = FALSE, catchment = Otter_catch,
+                              rivers = TRUE, plot_extent = p.ext, axes_units = FALSE) +
+     labs(subtitle = sprintf('Beaver Foraging Density: \%s', p.names))
+ } else {
+   fsd <- plot_forage_density(.data, axes_units = FALSE, north_arrow = FALSE, scalebar = FALSE, guide = FALSE,
+                              catchment = Otter_catch, rivers = TRUE, plot_extent = p.ext) +
+     labs(subtitle = p.names)
+ }
+
+ return(fsd)
+}
+
+# get name list for plots
+plot_names <- unique(RivOtter_FeedSigns$SurveySeason)
+
+ras_ext <- inflate_bbox(RivOtter_FeedSigns, 250)
+
+# generate KDE rasters for all survey periods
+kde_ras_list <- RivOtter_FeedSigns \%>\%
+  group_by(SurveySeason) \%>\%
+  group_split()\%>\%
+  purrr::map(., ~forage_density(., 'FeedCat', kd_extent = ras_ext))
+
+# animate kernel density rasters
+kde_animation <- kde_ras_list \%>\%
+purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y, target_ext, add_map_stuff = TRUE)) \%>\%
+  animate_maps(., filename = 'run/maps/Otter_kde_test1.gif')
 }

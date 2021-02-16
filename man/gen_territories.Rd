@@ -2,10 +2,43 @@
 % Please edit documentation in R/gen_territories.R
 \name{gen_territories}
 \alias{gen_territories}
-\title{Caller function for create territories wrapped in safely.}
+\title{Generate potential territories for all reaches of a BeaverNetwork dataset.}
 \usage{
 gen_territories(BeaverNetwork, progbar = TRUE, multicore = TRUE, ncores)
 }
+\arguments{
+\item{BeaverNetwork}{A river network with attributed results from Graham, et al., (2020) or Macfarlane, et al., (2017)
+An sf object or an sf-readable file. See sf::st_drivers() for available drivers.}
+
+\item{progbar}{Boolean to use a progress bar to monitor progress}
+
+\item{multicore}{Boolean to multiple core - This function can be slow for large catchments so TRUE is recomended.}
+
+\item{ncores}{numeric denoting the number of processes to run the function across. If not included, defaults to:
+\code{parallel::detectCores()[1]-2}}
+}
+\value{
+an 'sf object containing a potential territory area for every reach from the input BeaverNetwork.
+}
 \description{
-Caller function for create territories wrapped in safely.
+Generates a theoretical territory area for every reach within the catchment. Reaches must be <1000m but <200m is recomended.
+Territory sizes (based on length of channel) are randomly generated from a normal distribution using \code{rnorm(1, 1630, 293)}
+where the mean is 1630 with a standard deviation of 293m. This range is based on empiracal studies:
+\href{https://link.springer.com/article/10.1007/s00265-005-0942-6#citeas}{Campbell, et al. (2005)};
+\href{https://hrcak.srce.hr/index.php?id_clanak_jezik=53979&show=clanak}{Vorel, et al. (2008)},
+\href{https://www.researchgate.net/profile/Vlastimil_Kostkan/publication/228683750_Compositional_analysis_and_GPSGIS_for_study_of_habitat_selection_by_the_European_beaver_Castor_fiber_in_the_middle_reaches_of_the_Morava_River/links/53db8cd00cf2cfac9928ef55.pdf}{John and Kostkan (2009)},
+\href{https://link.springer.com/article/10.1016/j.mambio.2016.07.046}{Graf, et al. (2016)}; and
+\href{https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.2988}{Mayer, et al. (2017)}.
+}
+\examples{
+# here we read in the BeaverNetwork data
+# NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
+BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
+
+# ---------- Subset dataset for example to reduce computation time -----------
+BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+
+# ---------- run terriroty generation --------
+test_out <-  gen_territories(BeavNetOtter)
+
 }

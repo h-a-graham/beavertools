@@ -15,6 +15,37 @@ forage_density(
   standardise = FALSE
 )
 }
+\arguments{
+\item{forage_points}{The foraging sign point data - must be either an sf object or an sf-readable file.
+See sf::st_drivers() for available drivers}
+
+\item{impact_cat}{A character vector of length one containing the column name which describes the feeding
+impact category (i.e. Low, Medium, or high). If not provided kernel density is not weighted}
+
+\item{grid_size}{The raster grid cell size desired.}
+
+\item{kern_bw}{The bandwidth for the kernel denisty search radius.}
+
+\item{kd_extent}{The desired extent of the output raster.}
+
+\item{kd_weights}{A numeric vector of length equal to the number of unique impact categories.}
+
+\item{low_thresh}{A lower threshold for setting the minimum desired value. Values < low_thresh are set to NA.}
+
+\item{standardise}{Boolean to specify if densities shoul be standardised between 0-1.}
+}
+\value{
+"RasterLayer" object with kernel denisity estimates for feeding signs
+}
 \description{
 This function allows users to generate a kernel density raster from a collection of points.
+}
+\examples{
+# Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
+# Then pipe this 'sf' object to forage_density.
+
+ROBT_201920 <- RivOtter_FeedSigns \%>\%
+dplyr::filter(SurveySeason == "2019 - 2020")\%>\%
+  forage_density(., 'FeedCat')
+
 }

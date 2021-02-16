@@ -13,6 +13,61 @@ panel_plot(
   north_arrow_size = 0.5
 )
 }
+\arguments{
+\item{terr_plot_list}{list of ggplots generated from either \code{plot_territories} or \code{plot_forage_density}}
+
+\item{scalebar}{Boolean to add a scalebar to the last plot in the sequence}
+
+\item{scalebar_loc}{character vector to determine the scalebar location on final plot:
+'tl', 'bl', 'tr', 'br' Meaning "top left" etc.}
+
+\item{north_arrow}{Boolean to add a north arrow to the last plot in the sequence}
+
+\item{north_arrow_loc}{character vector to determine the north arrow location on final plot:
+'tl', 'bl', 'tr', 'br' Meaning "top left" etc.}
+
+\item{north_arrow_size}{numeric to set the size of the north arrow}
+}
+\value{
+TableGrob obect of a multi-panel map.
+}
 \description{
-generate a panel plot of multiple maps generated with \code{plot_territories} or \code{plot_forage_density}
+Function to help build a panel plot consisting of multiple plots from different time periods.
+}
+\examples{
+#'# kde plots for panel/animation
+fsd_ggplot <- function(.data, p.names, p.ext, add_map_stuff= FALSE){
+
+ if (isTRUE(add_map_stuff)){
+   fsd <- plot_forage_density(.data, basemap = FALSE, guide = FALSE, catchment = Otter_catch,
+                              rivers = FALSE, plot_extent = p.ext, axes_units = FALSE) +
+     labs(subtitle = sprintf('Beaver Foraging Density: \%s', p.names))
+ } else {
+   fsd <- plot_forage_density(.data, basemap = FALSE, axes_units = FALSE, north_arrow = FALSE, scalebar = FALSE, guide = FALSE,
+                              catchment = Otter_catch, rivers = FALSE, plot_extent = p.ext) +
+     labs(subtitle = p.names)
+ }
+
+ return(fsd)
+}
+
+# get name list for plots
+plot_names <- unique(RivOtter_FeedSigns$SurveySeason)
+
+ras_ext <- inflate_bbox(RivOtter_FeedSigns, 250)
+
+# generate KDE rasters for all survey periods
+kde_ras_list <- RivOtter_FeedSigns \%>\%
+  group_by(SurveySeason) \%>\%
+  group_split()\%>\%
+  purrr::map(., ~forage_density(., 'FeedCat', kd_extent = ras_ext))
+
+# generate panel plot showing sequence of feeding density maps
+kde_panel <- kde_ras_list \%>\%
+    purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y, target_ext)) \%>\%
+    panel_plot(.)
+
+# save to disk if you like...
+# ggsave('panel_plot_map.png',plot = kde_panel)
+
 }

@@ -2,10 +2,24 @@
 % Please edit documentation in R/inflate_bounds.R
 \name{inflate_bbox}
 \alias{inflate_bbox}
-\title{A function to provide an inflated bbox for input to Kernel Density function}
+\title{A function to generate an inflated bbox for input to Kernel Density function}
 \usage{
 inflate_bbox(sp_obj, value)
 }
+\arguments{
+\item{sp_obj}{Either an sf object or an sf-readable file. See sf::st_drivers() for available drivers. used as the basis for the bounding box.}
+
+\item{value}{A numeric distance (in the units of the spatial object) to inflate the bounds by.}
+}
+\value{
+object of class "bbox" containing the spatial coordinates of a bounding area
+}
 \description{
-A function to provide an inflated bbox for input to Kernel Density function
+generate a bounding box based on a sf/sp (readable) object
+}
+\examples{
+
+# generate inflated (by 10m) bounding box for ROBT feeding signs
+inflate_bbox(RivOtter_FeedSigns, 10)
+
 }

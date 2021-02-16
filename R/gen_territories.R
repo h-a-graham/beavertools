@@ -52,7 +52,7 @@ create_territories <- function(reach, river, t_length=NULL,  new_buff= NULL, old
     sf::st_buffer(buff) %>%
     sf::st_intersection(river) %>%
     dplyr::mutate(Leng = as.numeric(sf::st_length(.))) %>%
-    dplyr::summarise(across(c("BFI_40m", "BDC"), ~ weighted.mean(.x, w= Leng, na.rm = TRUE)))%>%
+    dplyr::summarise(dplyr::across(c("BFI_40m", "BDC"), ~ weighted.mean(.x, w= Leng, na.rm = TRUE)))%>%
     sf::st_buffer(0.1)
 
 
@@ -85,10 +85,37 @@ create_territories <- function(reach, river, t_length=NULL,  new_buff= NULL, old
 }
 
 
-#' Caller function for create territories wrapped in safely.
+#' Generate potential territories for all reaches of a BeaverNetwork dataset.
 #'
+#' Generates a theoretical territory area for every reach within the catchment. Reaches must be <1000m but <200m is recomended.
+#' Territory sizes (based on length of channel) are randomly generated from a normal distribution using `rnorm(1, 1630, 293)`
+#' where the mean is 1630 with a standard deviation of 293m. This range is based on empiracal studies:
+#' [Campbell, et al. (2005)](https://link.springer.com/article/10.1007/s00265-005-0942-6#citeas);
+#' [Vorel, et al. (2008)](https://hrcak.srce.hr/index.php?id_clanak_jezik=53979&show=clanak),
+#' [John and Kostkan (2009)](https://www.researchgate.net/profile/Vlastimil_Kostkan/publication/228683750_Compositional_analysis_and_GPSGIS_for_study_of_habitat_selection_by_the_European_beaver_Castor_fiber_in_the_middle_reaches_of_the_Morava_River/links/53db8cd00cf2cfac9928ef55.pdf),
+#' [Graf, et al. (2016)](https://link.springer.com/article/10.1016/j.mambio.2016.07.046); and
+#' [Mayer, et al. (2017)](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.2988).
+#'
+#' @param BeaverNetwork A river network with attributed results from Graham, et al., (2020) or Macfarlane, et al., (2017)
+#' An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
+#' @param progbar Boolean to use a progress bar to monitor progress
+#' @param multicore  Boolean to multiple core - This function can be slow for large catchments so TRUE is recomended.
+#' @param ncores numeric denoting the number of processes to run the function across. If not included, defaults to:
+#' `parallel::detectCores()[1]-2`
+#' @return an 'sf object containing a potential territory area for every reach from the input BeaverNetwork.
 #' @import foreach doParallel parallel tcltk
 #' @export
+#' @examples
+#' # here we read in the BeaverNetwork data
+#' # NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
+#' BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
+#'
+#' # ---------- Subset dataset for example to reduce computation time -----------
+#' BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+#'
+#' # ---------- run terriroty generation --------
+#' test_out <-  gen_territories(BeavNetOtter)
+#'
 gen_territories <- function(BeaverNetwork, progbar=TRUE, multicore=TRUE, ncores){
   # silence warnings...
   oldw <- getOption("warn")

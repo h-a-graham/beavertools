@@ -1,5 +1,59 @@
-# ' Built in plotting function for territory polygons.
+#' Built in plotting function for territory polygons.
+#'
+#' function to create a ggplot for the territory zones.
+#'
+#' @param terr_poly a territory polygon created using `beavertools::estimate_territories()`
+#' @param fill_name a character vector containing the name of the column to be used as the fill aesthetic.
+#' choose from: 'terr_status', 'user_class', 'mean_fd', sum_fd' or 'id'.
+#' @param fill_col character vector of R colours or HEX codes.
+#' @param label label activity areas with polygon ID.
+#' @param basemap Boolean, include an OSM basemap. (optional)
+#' @param basemap_type Character vector for osm map type. for options see `rosm::osm.types()`
+#' @param axes_units Boolean to include coordinate values on axis.
+#' @param scalebar Boolean to include a scalebar.
+#' @param scalebar_loc character vector for the scalebar location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
+#' @param north_arrow Boolean to include a north arrow
+#' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
+#' @param north_arrow_size numeric vector for the arrow
+#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param guide Boolean to include a legend
+#' @param seed numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.
+#' @param drop_act  Boolean to remove areas classified as 'activity' this creates a plot which shows only possibl
+#' and confirmed territories
+#' @param trans_type character - the transformation type to be used if fill_name=c('mean_fd', sum_fd').
+#' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
+#' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
+#' map region outside of desired AOI.
+#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package)
+#' @param add_hillshade Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
+#' create a textured basemap.
+#' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
+#' @return ggplot object of the territory check map.
 #' @export
+#' @examples
+#' # Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
+#' # Then pipe this 'sf' object to forage_density.
+#'
+#' ROBT_201920 <- RivOtter_FeedSigns %>%
+#' dplyr::filter(SurveySeason == "2019 - 2020")%>%
+#'   forage_density(., 'FeedCat')
+#'
+#'# Now we load the ROBT `RivOtter_OtherSigns` dataset and filter to the same
+#'# year as the forage density raster.
+#'
+#' CS_201920 <- RivOtter_OtherSigns %>%
+#' dplyr::filter(SurveySeason == "2019 - 2020")
+#'
+#'# run territory classification
+#' otter_poly <- estimate_territories(ROBT_201920, confirm_signs = CS_201920)
+#'
+#'# various options:
+#'plot_territories(otter_poly_uc, 'user_class', basemap=TRUE)
+#'plot_territories(otter_poly_uc, 'mean_fd', basemap=FALSE)
+#'plot_territories(otter_poly_uc, 'sum_fd', basemap=FALSE, trans_type = 'log10')
+#'plot_territories(otter_poly_uc, 'id', basemap=TRUE, guide = FALSE, label = TRUE,
+#'                 drop_act = TRUE, axes_units = FALSE, rivers = TRUE)
+#'
 plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87223", "#61E265"),
                              label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
                              scalebar=TRUE, scalebar_loc = 'tl',
@@ -142,8 +196,47 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
 }
 
 
-# ' Built in plotting function to check automated territory class assignment.
+#' Built in plotting function to check automated territory class assignment.
+#'
+#' Function plots the automatically generated territory classifications with corresponding ID numbers
+#' take note of the numbers which have been missclassified and correct them using `beavertools::user_classify()`
+#'
+#' @param terr_poly a territory polygon created using `beavertools::estimate_territories()`
+#' @param fill_col character vector of R colours or HEX codes.
+#' @param label label activity areas with polygon ID. important when checking the predicted classification
+#' @param basemap Boolean, include an OSM basemap. (optional)
+#' @param basemap_type Character vector for osm map type. for options see `rosm::osm.types()`
+#' @param axes_units Boolean to include coordinate values on axis.
+#' @param scalebar Boolean to include a scalebar.
+#' @param scalebar_loc character vector for the scalebar location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
+#' @param north_arrow Boolean to include a north arrow
+#' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
+#' @param north_arrow_size numeric vector for the arrow
+#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param guide Boolean to include a legend
+#' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
+#' @return ggplot object of the territory check map.
 #' @export
+#' @examples
+#' # Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
+#' # Then pipe this 'sf' object to forage_density.
+#'
+#' ROBT_201920 <- RivOtter_FeedSigns %>%
+#' dplyr::filter(SurveySeason == "2019 - 2020")%>%
+#'   forage_density(., 'FeedCat')
+#'
+#'# Now we load the ROBT `RivOtter_OtherSigns` dataset and filter to the same
+#'# year as the forage density raster.
+#'
+#' CS_201920 <- RivOtter_OtherSigns %>%
+#' dplyr::filter(SurveySeason == "2019 - 2020")
+#'
+#'# run territory classification
+#' otter_poly <- estimate_territories(ROBT_201920, confirm_signs = CS_201920)
+#'
+#'# create the map for checking automated territory classification
+#' check_auto_terr(otter_poly, basemap=FALSE, label=TRUE)
+#'
 check_auto_terr <- function(terr_poly, fill_col = c("#7EAAC7", "#F87223", "#61E265"), label = TRUE,
                             basemap=FALSE, basemap_type = "osmgrayscale", axes_units = TRUE,
                             scalebar=TRUE, scalebar_loc = 'tl',
@@ -168,8 +261,49 @@ if (missing(plot_extent)){
 }
 
 
-# ' Built in plotting function to check automated territory class assignment.
+#' Built in plotting function to check user-corrected territory class assignment.
+#'
+#' Function to plot the user-corrected territory classes from: `beavertools::user_classify()`
+#'
+#' @param terr_poly a territory polygon created using `beavertools::estimate_territories()`
+#' @param fill_col character vector of R colours or HEX codes.
+#' @param label label activity areas with polygon ID. important when checking the predicted classification
+#' @param basemap Boolean, include an OSM basemap. (optional)
+#' @param basemap_type Character vector for osm map type. for options see `rosm::osm.types()`
+#' @param axes_units Boolean to include coordinate values on axis.
+#' @param scalebar Boolean to include a scalebar.
+#' @param scalebar_loc character vector for the scalebar location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
+#' @param north_arrow Boolean to include a north arrow
+#' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
+#' @param north_arrow_size numeric vector for the arrow
+#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param guide Boolean to include a legend
+#' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
+#' @return ggplot object of the territory check map.
 #' @export
+#' @examples
+#' # Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
+#' # Then pipe this 'sf' object to forage_density.
+#'
+#' ROBT_201920 <- RivOtter_FeedSigns %>%
+#' dplyr::filter(SurveySeason == "2019 - 2020")%>%
+#'   forage_density(., 'FeedCat')
+#'
+#'# Now we load the ROBT `RivOtter_OtherSigns` dataset and filter to the same
+#'# year as the forage density raster.
+#'
+#' CS_201920 <- RivOtter_OtherSigns %>%
+#' dplyr::filter(SurveySeason == "2019 - 2020")
+#'
+#'# run territory classification
+#' otter_poly <- estimate_territories(ROBT_201920, confirm_signs = CS_201920)
+#'
+#'# create the map for checking automated territory classification
+#' otter_poly_uc <- user_classify(otter_poly, territory = c(10, 28))
+#'
+#' # generate the user territory check plot.
+#' check_user_terr(otter_poly_uc, basemap=FALSE)
+#'
 check_user_terr <- function(terr_poly, fill_col = c("#7EAAC7", "#F87223", "#61E265"), label = TRUE,
                             basemap=FALSE, basemap_type = "osmgrayscale", axes_units = TRUE,
                             scalebar=TRUE, scalebar_loc = 'tl',

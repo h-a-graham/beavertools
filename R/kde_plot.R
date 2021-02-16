@@ -1,5 +1,43 @@
-# ' Built in plotting function for Kernel density Raster.
+#' Built in plotting function for Kernel density Raster.
+#'
+#'This function provides a simple way to produce consistent maps of Kernel density plots.
+#'Please be aware that the 'basemap', 'rivers' and 'add_hillshade' arguments  use the following functions:
+#'`rosm::osm.image()` `osmdata::opq()` which occasional fail during busy server times.
+#'
+#' @param kd_raster Kernel Density raster generated from the `beavertools::forage_density()`
+#' @param basemap Boolean, include an OSM basemap. (optional)
+#' @param basemap_type Character vector for osm map type. for options see `rosm::osm.types()`
+#' @param trans_fill Boolean to transform the colourmap - visualisation general better when TRUE (the default)
+#' @param trans_type Character vector for the type of transform.
+#' @param axes_units Boolean to include coordinate values on axis.
+#' @param scalebar Boolean to include a scalebar.
+#' @param scalebar_loc character vector for the scalebar location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
+#' @param north_arrow Boolean to include a north arrow
+#' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
+#' @param north_arrow_size numeric vector for the arrow
+#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param guide Boolean to include a legend
+#' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
+#' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
+#' map region outside of desired AOI.
+#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package)
+#' @param add_hillshade Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
+#' create a textured basemap.
+#' @param plot_extent 'bbox', 'sf' or 'sp' object used to set the plot extent.
+#' @return ggplot object of Kernel Density Map
 #' @export
+#' @examples
+#' # Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
+#' # Then pipe this 'sf' object to forage_density.
+#'
+#' ROBT_201920 <- RivOtter_FeedSigns %>%
+#' dplyr::filter(SurveySeason == "2019 - 2020")%>%
+#'   forage_density(., 'FeedCat')
+#'
+#' # Now we plot the raster with plot_forage_density
+#' beaver_forage <- plot_forage_density(ROBT_201920, catchment = Otter_catch, rivers = TRUE,
+#'                                      plot_extent = target_ext, trans_fill=TRUE)
+#'
 plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgrayscale", trans_fill = TRUE, trans_type = 'log10',
                      axes_units = TRUE, scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
                      wsg=FALSE, guide=TRUE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
@@ -87,6 +125,10 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
   if (isFALSE(guide)) {
     p <- p + ggplot2::guides(fill=FALSE)
   }
+
+  if (isTRUE(basemap)|isTRUE(rivers)|isTRUE(add_hillshade))
+  p <- p +
+    labs(caption = 'Copyright OpenStreetMap contributors')
 
   return(p)
 }
