@@ -19,11 +19,11 @@ This is a checklist of the functios that will be included:
   - [x] Animation function to animate a list of equally sized/scaled
     maps
 
-  - [ ] Population carrying capacity estimate.
+  - [x] Population carrying capacity estimate.
 
-  - [ ] Standardised pop. capacity mapping functions
+  - [x] Standardised pop. capacity mapping functions
 
-  - [ ] DOCUMENT ALL FUNCTIONS AND DATASETS\!
+  - [x] DOCUMENT ALL FUNCTIONS AND DATASETS\!
 
 This example shows the kernel density estimate for feeding signs and the
 derived (automated) territory locations and their classification
