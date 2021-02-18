@@ -1,6 +1,7 @@
 #' Built in plotting function for territory carrying capacity.
 #'
-#'
+#' Once territory capacity is generated using `beavertools::territory_cap()`, this function can be used to plot the results
+#' in a standardised way.
 #'
 #' @param terr_capacity output from `beavertools::territory_cap()` which gives the maximum number of territories that can
 #' fit within the catchment.

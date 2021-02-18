@@ -73,7 +73,8 @@ create a textured basemap.}
 A ggplot object which displays a map of the territory capacity.
 }
 \description{
-Built in plotting function for territory carrying capacity.
+Once territory capacity is generated using \code{beavertools::territory_cap()}, this function can be used to plot the results
+in a standardised way.
 }
 \examples{
 # here we read in the BeaverNetwork data
