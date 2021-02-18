@@ -105,45 +105,82 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
     }
   }
 
-  p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(fill=!! dplyr::sym(fill_name)),alpha = 0.7, lwd=0.3) +
-    ggplot2::theme_bw() +
+ # dealing with points first
+  if (fill_name =='feedsigns'){
+    weight_levs <- terr_poly %>%
+      select(!! dplyr::sym(fill_name)) %>%
+      sf::st_drop_geometry() %>%
+      unique() %>%
+      pull()
+
+    if (length(weight_levs)==3){
+      p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(colour=FeedCat,
+                                                                  size=!! dplyr::sym(fill_name)),alpha = 0.7) +
+        ggplot2::scale_colour_manual(values = c(fill_col[1],fill_col[2], fill_col[3]), breaks = (c('Low', 'Med', 'High')),
+                                     labels = (c('Low', 'Med', 'High')), name='Impact level') +
+        ggplot2::scale_size(range = c(weight_levs[3], weight_levs[1]),
+                            breaks = (c(weight_levs[3], weight_levs[2], weight_levs[1])),
+                            labels = (c('Low', 'Med', 'High')),
+                            name='Impact level')
+    } else if (length(weight_levs)==1){
+      p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(colour=FeedCat),alpha = 0.7, size = weight_levs) +
+        ggplot2::scale_colour_manual(values = c(fill_col[1],fill_col[2], fill_col[3]), breaks = (c('Low', 'Med', 'High')),
+                                     labels = (c('Low', 'Med', 'High')), name='Impact level')
+
+    }
+
+
+
+  } else if (fill_name == 'othersigns'){
+    p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(colour=othersigns),alpha = 0.7,
+                              size = dplyr::pull(terr_poly, p_size)[1]) +
+      ggplot2::scale_colour_manual(values = c(fill_col[1],fill_col[2], fill_col[3]), name='Sign Type')
+
+  } else { # Now we tackle polygon requests
+
+    p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(fill=!! dplyr::sym(fill_name)),alpha = 0.7, lwd=0.3)
+
+
+    if (fill_name %in% c('terr_status', 'user_class')) {
+      if(fill_name=='terr_status'){
+        leg_tit <- 'Auto territory status'
+      } else {
+        leg_tit <- 'User territory status'
+      }
+      p <- p + ggplot2::scale_fill_manual(values = c(fill_col[1],fill_col[2], fill_col[3]),
+                                          limits = levels(c('Activity', 'Possible', 'Territory')),
+                                          name=leg_tit)
+    } else if(fill_name == 'mean_fd') {
+      if (is.null(trans_type)){
+        p <- p + ggplot2::scale_fill_viridis_c(name= 'Mean Forage Density')
+      } else {
+        p <- p + ggplot2::scale_fill_viridis_c(name= 'Mean Forage Density', trans=trans_type)
+      }
+
+    } else if(fill_name == 'sum_fd') {
+      if (is.null(trans_type)){
+        p <- p + ggplot2::scale_fill_viridis_c(name= 'Sum Forage Density')
+      } else {
+        p <- p + ggplot2::scale_fill_viridis_c(name= 'Sum Forage Density', trans=trans_type)
+      }
+    } else if(fill_name == 'id') {
+
+      # Define the number of colors you want
+      nb.cols <- nrow(terr_poly)
+      if (!is.na(seed)){
+        set.seed(seed)
+      }
+      mycolors <-random_palette(nb.cols)
+
+      p <- p + ggplot2::scale_fill_manual(values = mycolors)
+    }
+  }
+
+  #set theme stuff
+  p <- p + ggplot2::theme_bw() +
     ggplot2::theme(legend.title=ggplot2::element_text(size=10))
 
 
-  if (fill_name %in% c('terr_status', 'user_class')) {
-    if(fill_name=='terr_status'){
-      leg_tit <- 'Auto territory status'
-    } else {
-      leg_tit <- 'User territory status'
-    }
-    p <- p + ggplot2::scale_fill_manual(values = c(fill_col[1],fill_col[2], fill_col[3]),
-                                        limits = levels(c('Activity', 'Possible', 'Territory')),
-                                        name=leg_tit)
-  } else if(fill_name == 'mean_fd') {
-    if (is.null(trans_type)){
-      p <- p + ggplot2::scale_fill_viridis_c(name= 'Mean Forage Density')
-    } else {
-      p <- p + ggplot2::scale_fill_viridis_c(name= 'Mean Forage Density', trans=trans_type)
-    }
-
-  } else if(fill_name == 'sum_fd') {
-    if (is.null(trans_type)){
-      p <- p + ggplot2::scale_fill_viridis_c(name= 'Sum Forage Density')
-    } else {
-      p <- p + ggplot2::scale_fill_viridis_c(name= 'Sum Forage Density', trans=trans_type)
-    }
-  } else if(fill_name == 'id') {
-
-    # Define the number of colors you want
-    nb.cols <- nrow(terr_poly)
-    # mycolors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Set1"))(nb.cols)
-    if (!is.na(seed)){
-      set.seed(seed)
-    }
-    mycolors <-random_palette(nb.cols)
-
-    p <- p + ggplot2::scale_fill_manual(values = mycolors)
-  }
 
   if (isTRUE(label)){
     p <- p + ggrepel::geom_label_repel(dplyr::filter(terr_poly, terr_status!='Activity'),
