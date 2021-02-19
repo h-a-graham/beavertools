@@ -77,7 +77,7 @@ create a textured basemap.}
 \item{plot_extent}{'bbox', 'sf' or 'sp' object defining the desired plot extent.}
 }
 \value{
-ggplot object of the territory check map.
+ggplot object of a confirmatory signs map.
 }
 \description{
 function to create a ggplot for the feeding points or confirmatory signs. This is just a lazy wrapper for

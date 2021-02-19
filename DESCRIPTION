@@ -1,18 +1,35 @@
 Package: beavertools
-Title: What the Package Does (One Line, Title Case)
+Title: Tools to monitor the expansion of beaver populations and predict future territory capacity.
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Hugh",
+           family = "Graham",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "hugh.a.graham@gmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+Description: The selection of tools presented in this package provide: i) a range of analytical tools to quantify and map the distribution of beavers across a given catchment; ii) Functions to estimate the number of territories that exist in a catchment based off field-sign surveys; iii) Experimental functions to generate spatially explicit predictions of the maximum number of beaver territories that can be supported within a given catchment based on available resources and the available space.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Depends: 
     R (>= 2.10)
+Imports: 
+    dplyr,
+    purrr,
+    ggspatial,
+    ggplot2,
+    parallel,
+    foreach,
+    magrittr,
+    sf,
+    progress,
+    raster,
+    spatialEco,
+    doParallel,
+    tcltk,
+    lwgeom,
+    magick,
+    osmdata,
+    gridExtra
