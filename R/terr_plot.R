@@ -17,6 +17,7 @@
 #' @param north_arrow_size numeric vector for the arrow
 #' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
+#' @param guide_pos character denoting the position of the legend c('left, 'right, 'bottom', 'top)
 #' @param seed numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.
 #' @param drop_act  Boolean to remove areas classified as 'activity' this creates a plot which shows only possibl
 #' and confirmed territories
@@ -58,7 +59,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
                              label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
                              scalebar=TRUE, scalebar_loc = 'tl',
                              north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                             wsg=FALSE, guide=TRUE, seed=NA, drop_act=FALSE, trans_type=NULL,
+                             wsg=FALSE, guide=TRUE, guide_pos = "right", seed=NA, drop_act=FALSE, trans_type=NULL,
                              catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
 
   # define extent
@@ -110,6 +111,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
     weight_levs <- terr_poly %>%
       select(!! dplyr::sym(fill_name)) %>%
       sf::st_drop_geometry() %>%
+      dplyr::arrange(dplyr::desc(!! dplyr::sym(fill_name)))%>%
       unique() %>%
       pull()
 
@@ -224,7 +226,9 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
   }
 
   if (isFALSE(guide)) {
-    p <- p + ggplot2::guides(fill=FALSE)
+    p <- p + ggplot2::guides(fill=FALSE, colour=FALSE, size=FALSE)
+  } else {
+    p <- p + theme(legend.position = guide_pos)
   }
 
   rm(.Random.seed, envir=globalenv())

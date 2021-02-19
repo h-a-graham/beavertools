@@ -26,11 +26,23 @@
 #' \describe{
 #'   \item{SurveySeason}{The winter season during which the sign was surveyed}
 #'   \item{RecordDate}{The date that a sign was recorded}
-#'   \item{FeedCat}{Character String describing the effort exerted by beaver on a given sign}
+#'   \item{SignType}{Character String describing the type of sign}
 #'   \item{geometry}{The geometry data for the point location}
 #' }
 #' @source \url{https://www.exeter.ac.uk/creww/research/beavertrial/}
 "RivOtter_OtherSigns"
 
+#' River Otter Catchment Area.
+#'
+#' A dataset ('sf' object) provides the River Otter Catchment area. This can be used in various plotting
+#' functions to mask areas outside of the Otter catchment.
+#'
+#' @format An sf object with 1 rows and 3 variables:
+#' \describe{
+#'   \item{Name}{Simply the name of the catchment}
+#'   \item{geometry}{The geometry data for the catchment}
+#' }
+#' @source \url{generated from OS Terrain 5: https://www.ordnancesurvey.co.uk/business-government/products/terrain-5 using GRASS GIS (https://grass.osgeo.org/)}
+"RivOtter_Catch_Area"
 
 

@@ -19,6 +19,7 @@ plot_territories(
   north_arrow_size = 0.75,
   wsg = FALSE,
   guide = TRUE,
+  guide_pos = "right",
   seed = NA,
   drop_act = FALSE,
   trans_type = NULL,
@@ -57,6 +58,8 @@ choose from: 'terr_status', 'user_class', 'mean_fd', sum_fd' or 'id'.}
 \item{wsg}{Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)}
 
 \item{guide}{Boolean to include a legend}
+
+\item{guide_pos}{character denoting the position of the legend c('left, 'right, 'bottom', 'top)}
 
 \item{seed}{numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.}
 

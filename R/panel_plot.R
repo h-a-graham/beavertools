@@ -10,6 +10,8 @@
 #' @param north_arrow_loc character vector to determine the north arrow location on final plot:
 #' 'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
 #' @param north_arrow_size numeric to set the size of the north arrow
+#' @param guide Boolean - if TRUE then the legend is extracted from the list of figures and places below the panels
+#' @param guide_fig_height numeric vector length 2 - giving the heights for the figure and lengend objects.
 #' @returns TableGrob obect of a multi-panel map.
 #' @export
 #' @examples
@@ -49,17 +51,21 @@
 #'# save to disk if you like...
 #'# ggsave('panel_plot_map.png',plot = kde_panel)
 #'
-panel_plot <- function(terr_plot_list, scalebar=TRUE, scalebar_loc = 'tl',
-                                 north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.5){
+panel_plot <- function(terr_plot_list, scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE,
+                       north_arrow_loc = 'br', north_arrow_size = 0.5, guide = FALSE, guide_fig_height = c(30,1)){
   n <- length(terr_plot_list)
 
+  #remove all legends from plots
+  terr_plot_listNL <- terr_plot_list %>%
+    purrr::map(., .f = function(x) x + ggplot2::guides(fill=F, colour=F, size=F))
+
   if (isTRUE(scalebar)){
-    terr_plot_list[[n]] <- terr_plot_list[[n]] +
+    terr_plot_listNL[[n]] <- terr_plot_listNL[[n]] +
       ggspatial::annotation_scale(location= scalebar_loc)
   }
 
   if (isTRUE(north_arrow)){
-    terr_plot_list[[n]] <- terr_plot_list[[n]] +
+    terr_plot_listNL[[n]] <- terr_plot_listNL[[n]] +
       ggspatial::annotation_north_arrow(location = north_arrow_loc, which_north = "true",
                                         height = ggplot2::unit(north_arrow_size, "cm"),
                                         width = ggplot2::unit(north_arrow_size, "cm"),
@@ -67,7 +73,15 @@ panel_plot <- function(terr_plot_list, scalebar=TRUE, scalebar_loc = 'tl',
                                                                                     fill = c("black", "black")))
   }
 
-
   nCol <- ceiling(sqrt(n))
-  do.call(gridExtra::grid.arrange, c(terr_plot_list, ncol=nCol))
+  p <- do.call(gridExtra::grid.arrange, c(terr_plot_listNL, ncol=nCol))
+
+  #extract legend
+  if (isTRUE(guide)){
+    leg <- ggpubr::get_legend(terr_plot_list, position = "bottom") %>%
+      ggpubr::as_ggplot()
+    p <- gridExtra::grid.arrange(p, leg, ncol=1, heights=c(guide_fig_height[1], guide_fig_height[2]))
+  }
+
+  return(p)
 }

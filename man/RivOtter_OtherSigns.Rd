@@ -9,7 +9,7 @@ An sf object with 3683 rows and 4 variables:
 \describe{
 \item{SurveySeason}{The winter season during which the sign was surveyed}
 \item{RecordDate}{The date that a sign was recorded}
-\item{FeedCat}{Character String describing the effort exerted by beaver on a given sign}
+\item{SignType}{Character String describing the type of sign}
 \item{geometry}{The geometry data for the point location}
 }
 }

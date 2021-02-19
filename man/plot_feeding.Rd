@@ -19,6 +19,7 @@ plot_feeding(
   north_arrow_size = 0.75,
   wsg = FALSE,
   guide = TRUE,
+  guide_pos = "bottom",
   seed = NA,
   drop_act = FALSE,
   trans_type = NULL,
