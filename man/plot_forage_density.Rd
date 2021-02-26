@@ -21,7 +21,9 @@ plot_forage_density(
   catchment = NULL,
   rivers = FALSE,
   add_hillshade = FALSE,
-  plot_extent = NULL
+  plot_extent = NULL,
+  attribute = TRUE,
+  guide_width = NULL
 )
 }
 \arguments{
@@ -55,12 +57,15 @@ plot_forage_density(
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.}
 
-\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package)}
+\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+'sf' which can be generated beforehand using \code{beavertools::get_rivers()}.}
 
 \item{add_hillshade}{Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
 create a textured basemap.}
 
 \item{plot_extent}{'bbox', 'sf' or 'sp' object used to set the plot extent.}
+
+\item{attribute}{Boolean to include an open street map attribution.}
 }
 \value{
 ggplot object of Kernel Density Map

@@ -19,6 +19,7 @@ plot_other_signs(
   north_arrow_size = 0.75,
   wsg = FALSE,
   guide = TRUE,
+  guide_pos = "bottom",
   seed = NA,
   drop_act = FALSE,
   trans_type = NULL,
@@ -58,6 +59,8 @@ Alternative signs will be labelled as 'other'}
 
 \item{guide}{Boolean to include a legend}
 
+\item{guide_pos}{character vector describing the desired position of the guide c("left", "right", "bottom", "top")}
+
 \item{seed}{numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.}
 
 \item{drop_act}{Boolean to remove areas classified as 'activity' this creates a plot which shows only possibl
@@ -69,7 +72,8 @@ and confirmed territories}
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.}
 
-\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package)}
+\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+'sf' which can be generated beforehand using \code{beavertools::get_rivers()}.}
 
 \item{add_hillshade}{Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
 create a textured basemap.}

@@ -19,6 +19,7 @@
 #' @param north_arrow_size numeric vector for the arrow
 #' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
+#' @param guide_pos character vector describing the desired position of the guide c("left", "right", "bottom", "top")
 #' @param seed numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.
 #' @param drop_act  Boolean to remove areas classified as 'activity' this creates a plot which shows only possibl
 #' and confirmed territories
@@ -26,7 +27,8 @@
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 #' map region outside of desired AOI.
-#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package)
+#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+#' 'sf' which can be generated beforehand using `beavertools::get_rivers()`.
 #' @param add_hillshade Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
 #' create a textured basemap.
 #' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
@@ -82,6 +84,7 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
 #' @param north_arrow_size numeric vector for the arrow
 #' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
+#' @param guide_pos character vector describing the desired position of the guide c("left", "right", "bottom", "top")
 #' @param seed numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.
 #' @param drop_act  Boolean to remove areas classified as 'activity' this creates a plot which shows only possibl
 #' and confirmed territories
@@ -89,7 +92,8 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 #' map region outside of desired AOI.
-#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package)
+#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+#' 'sf' which can be generated beforehand using `beavertools::get_rivers()`.
 #' @param add_hillshade Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
 #' create a textured basemap.
 #' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
@@ -108,13 +112,14 @@ plot_other_signs <- function(beav_points, size = 2.5, fill_col = c("#e41a1c", "#
                          label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
                          scalebar=TRUE, scalebar_loc = 'tl',
                          north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                         wsg=FALSE, guide=TRUE, seed=NA, drop_act=FALSE, trans_type=NULL,
+                         wsg=FALSE, guide=TRUE, guide_pos = "bottom", seed=NA, drop_act=FALSE, trans_type=NULL,
                          catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
 
   beav_points %>%
     mutate(SignType = as.character(SignType)) %>%
     dplyr::mutate(othersigns = ifelse(SignType=='Dwelling',  SignType,
                                       ifelse(SignType=='Dam', SignType, 'Other'))) %>%
+    dplyr::mutate(othersigns = forcats::fct_relevel(othersigns, 'Dam','Dwelling')) %>%
     dplyr::mutate(p_size = size) %>%
     plot_territories(., 'othersigns', fill_col, label, basemap, basemap_type, axes_units,
                      scalebar, scalebar_loc, north_arrow, north_arrow_loc, north_arrow_size,

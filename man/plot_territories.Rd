@@ -72,7 +72,8 @@ and confirmed territories}
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.}
 
-\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package)}
+\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+'sf' which can be generated beforehand using \code{beavertools::get_rivers()}.}
 
 \item{add_hillshade}{Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
 create a textured basemap.}

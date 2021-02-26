@@ -33,4 +33,5 @@ Imports:
     magick,
     osmdata,
     gridExtra,
-    ggpubr
+    ggpubr,
+    exactextractr

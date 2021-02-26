@@ -80,7 +80,9 @@ panel_plot <- function(terr_plot_list, scalebar=TRUE, scalebar_loc = 'tl', north
   if (isTRUE(guide)){
     leg <- ggpubr::get_legend(terr_plot_list, position = "bottom") %>%
       ggpubr::as_ggplot()
-    p <- gridExtra::grid.arrange(p, leg, ncol=1, heights=c(guide_fig_height[1], guide_fig_height[2]))
+    p <- gridExtra::grid.arrange(p, leg, ncol=1, heights=c(guide_fig_height[1], guide_fig_height[2]),
+                                 bottom=grid::textGrob("© OpenStreetMap contributors",
+                                                       gp=grid::gpar(fontsize=6)))
   }
 
   return(p)

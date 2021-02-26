@@ -25,7 +25,8 @@
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 #' map region outside of desired AOI.
-#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package)
+#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+#' 'sf' which can be generated beforehand using `beavertools::get_rivers()`.
 #' @param add_hillshade Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
 #' create a textured basemap.
 #' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
@@ -104,6 +105,8 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
       river_sf <- get_rivers(catchment)
       p <- p + ggspatial::annotation_spatial(river_sf, colour = "#5699FA", alpha=0.9, size=0.2)
     }
+  } else if(class(rivers)[1] == "sf"){
+    p <- p + ggspatial::annotation_spatial(rivers, colour = "#5699FA", alpha=0.9, size=0.2)
   }
 
  # dealing with points first
@@ -134,9 +137,10 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
 
 
   } else if (fill_name == 'othersigns'){
-    p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(colour=othersigns),alpha = 0.7,
+    p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(colour=othersigns),alpha = 0.5,
                               size = dplyr::pull(terr_poly, p_size)[1]) +
-      ggplot2::scale_colour_manual(values = c(fill_col[1],fill_col[2], fill_col[3]), name='Sign Type')
+      ggplot2::scale_colour_manual(values = c(fill_col[1],fill_col[2]), name='Sign Type',
+                                   labels = c('Dam', 'Dwelling'), breaks = c('Dam', 'Dwelling'),drop=FALSE)
 
   } else { # Now we tackle polygon requests
 
