@@ -10,8 +10,22 @@ create_mask <- function(sf_obj){
     sf::st_difference(., sf_obj)
 }
 
-# returns osm river network to be added to maps for additional info
+#' Retrieve an Open Street Map River Network for a given catchment area
+#'
+#' This function allows you to download a river network layer in 'sf' format for
+#' a catchment area of your choice. This can be useful when making many plots of the
+#' same area and saves frequent calls to the OSM server for each plot when using river = TRUE
+#' in the `beavertools::terr_plot()` and `beavertools::plot_forage_density()` functions.
+#'
+#' @param catchment An sf object or an sf-readable file of the catchment area or area of interest.
+#' See sf::st_drivers() for available drivers.
+#' @export
+#' @examples
+#' # this generates an sf object for the river network of the R. Otter catchment.
+#' get_rivers(RivOtter_Catch_Area)
+#'
 get_rivers <- function(catchment){
+  catchment <- check_spatial_feature(catchment)
 
   catch_wgs <- catchment %>%
     st_transform(crs = 4326)

@@ -32,4 +32,6 @@ Imports:
     lwgeom,
     magick,
     osmdata,
-    gridExtra
+    gridExtra,
+    ggpubr,
+    exactextractr

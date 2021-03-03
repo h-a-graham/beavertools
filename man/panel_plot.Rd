@@ -10,7 +10,9 @@ panel_plot(
   scalebar_loc = "tl",
   north_arrow = TRUE,
   north_arrow_loc = "br",
-  north_arrow_size = 0.5
+  north_arrow_size = 0.5,
+  guide = FALSE,
+  guide_fig_height = c(30, 1)
 )
 }
 \arguments{
@@ -27,6 +29,10 @@ panel_plot(
 'tl', 'bl', 'tr', 'br' Meaning "top left" etc.}
 
 \item{north_arrow_size}{numeric to set the size of the north arrow}
+
+\item{guide}{Boolean - if TRUE then the legend is extracted from the list of figures and places below the panels}
+
+\item{guide_fig_height}{numeric vector length 2 - giving the heights for the figure and lengend objects.}
 }
 \value{
 TableGrob obect of a multi-panel map.

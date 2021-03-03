@@ -20,10 +20,12 @@
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 #' map region outside of desired AOI.
-#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package)
+#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+#' 'sf' which can be generated beforehand using `beavertools::get_rivers()`.
 #' @param add_hillshade Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
 #' create a textured basemap.
 #' @param plot_extent 'bbox', 'sf' or 'sp' object used to set the plot extent.
+#' @param attribute Boolean to include an open street map attribution.
 #' @return ggplot object of Kernel Density Map
 #' @export
 #' @examples
@@ -40,7 +42,7 @@
 #'
 plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgrayscale", trans_fill = TRUE, trans_type = 'log10',
                      axes_units = TRUE, scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                     wsg=FALSE, guide=TRUE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
+                     wsg=FALSE, guide=TRUE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, attribute = TRUE, guide_width =NULL){
 
 
   # define extent
@@ -75,7 +77,8 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
       river_sf <- get_rivers(catchment)
       p <- p + ggspatial::annotation_spatial(river_sf, colour = "#5699FA", alpha=0.9, size=0.2)
     }
-
+  } else if(class(rivers)[1] == "sf"){
+    p <- p + ggspatial::annotation_spatial(rivers, colour = "#5699FA", alpha=0.9, size=0.2)
   }
 
   p <- p + ggspatial::layer_spatial(kd_raster, ggspatial::aes(fill=stat(band1)),alpha = 0.7) +
@@ -84,7 +87,8 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
 
 
   if (isTRUE(trans_fill)){
-    p <- p + ggplot2::scale_fill_viridis_c(na.value = NA, name= sprintf('%s Forage Density', trans_type), trans=trans_type)
+    p <- p + ggplot2::scale_fill_viridis_c(na.value = NA, name= sprintf('%s Forage Density', trans_type), trans=trans_type,
+                                           n.breaks=3)
   } else {
     p <- p + ggplot2::scale_fill_viridis_c(na.value = NA, name='Forage Density')
   }
@@ -126,9 +130,18 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
     p <- p + ggplot2::guides(fill=FALSE)
   }
 
-  if (isTRUE(basemap)|isTRUE(rivers)|isTRUE(add_hillshade))
-  p <- p +
-    labs(caption = 'Copyright OpenStreetMap contributors')
+  if (!is.null(guide_width)){
+    p <- p + ggplot2::guides(fill = guide_colourbar(barheight = guide_width))
+  }
+
+  if (isTRUE(basemap)|isTRUE(rivers)|isTRUE(add_hillshade)){
+    if (isTRUE(attribute)){
+      p <- p +
+        ggplot2::labs(caption = '© OpenStreetMap contributors') +
+        ggplot2::theme(plot.caption = ggplot2::element_text(size=6))
+    }
+  }
+
 
   return(p)
 }
