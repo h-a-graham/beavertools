@@ -46,3 +46,18 @@
 "RivOtter_Catch_Area"
 
 
+#' River Otter Beaver Network.
+#'
+#' A dataset ('sf' object) provides the River Otter Beaver Network. This is a line feature netowkr for the rivers in the R. Otter catchment
+#' with associated reach values for Beaver Dam Capacity (BDC) and Beaver Forage Index (BFI). This dataset can be used in the territory simulation
+#' functions to estimate the number of territories that can be supported within the network. River Network is from the OS Open Rivers Network.
+#' Methods for generating the Beaver Network can be found in this paper: https://doi.org/10.1007/s10344-020-01379-w and the
+#' current repo can be found here: https://github.com/h-a-graham/BDC_V1.2. A National scale Beaver Network is to be released asap.
+#'
+#' @format An sf object with 1289 features and 26 fields:
+#' \describe{
+#'   \item{BDC}{Beaver Dam Capacity}
+#'   \item{BDC_cat}{The category assigned based on BDC.}
+#' }
+#' @source \url{https://doi.org/10.1007/s10344-020-01379-w}
+"RivOtter_BeaverNet"
