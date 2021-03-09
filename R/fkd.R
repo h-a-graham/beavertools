@@ -4,7 +4,7 @@
 #' @param forage_points The foraging sign point data - must be either an sf object or an sf-readable file.
 #'See sf::st_drivers() for available drivers
 #' @param impact_cat A character vector of length one containing the column name which describes the feeding
-#'impact category (i.e. Low, Medium, or high). If not provided kernel density is not weighted
+#'impact category (i.e. Low, Medium, or High). If not provided kernel density is not weighted
 #' @param grid_size The raster grid cell size desired.
 #' @param kern_bw The bandwidth for the kernel denisty search radius.
 #' @param kd_extent The desired extent of the output raster.

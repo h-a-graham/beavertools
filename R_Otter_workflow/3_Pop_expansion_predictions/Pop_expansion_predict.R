@@ -6,14 +6,18 @@ library(patchwork)
 library(ggfortify)
 devtools::load_all()
 
+#----- Define some directories -----------------
+
+plot_dir <- file.path(here::here(),"R_Otter_workflow/3_Pop_expansion_predictions/plots")
 
 # ---- Read in Data Territroy count data --------------
-
 reclass_terr_list <- readRDS(file='R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list.Rds')
+# get unique names for survey years...
+plot_names <- unique(RivOtter_FeedSigns$SurveySeason)
 
-# What is the capacity of the catchment?
-lower_capacity = 89
-upper_capacity = 150
+# What is the capacity of the catchment? WILL NEED UPDATING WITH RANGES ETC WHEN SIMULATIONS ARE DONE.
+lower_capacity = 76
+upper_capacity = 257
 
 # set up dataframe for observed territory counts...
 date_list <- lubridate::dmy(c("30-12-2014", "30-12-2015", "30-12-2016",
@@ -42,12 +46,14 @@ broom::tidy(.logmodel, exponentiate=T, conf.int=T)
 
 
 # get half capacity prediction date...
-HalfCap <- function(cap){ tibble(years_since = seq(0,50, by=0.1)) %>%
+HalfCap <- function(cap){
+  yearsVal <- tibble(years_since = seq(0,50, by=0.01)) %>%
     broom::augment(.logmodel, newdata=., se_fit=T, type.predict = "response",
                    type.residuals = "deviance") %>%
     mutate(.fitround = floor(.fitted)) %>%
     filter(.fitround==round(cap/2)) %>%
     pull(years_since)
+  yearsVal[1]
 }
 
 #create new df with anchor points.
@@ -106,19 +112,19 @@ terr_pred <- ggplot(hacked_df, aes(x=year_adj, y=.fitted, colour=cap_name, fill=
   #               method.args = list(family = poisson(link = 'log')), fullrange=TRUE) +
 
   # geom_vline(xintercept=HalfCap, linetype=4, lwd=0.3)+
-  annotate("text", x=2015.5, y = lower_capacity + 3, label = "Predicted territory capacity: Open Network", size=3) +
-  annotate("text", x=2015, y = upper_capacity + 3, label = "Predicted territory capacity: MM Network", size=3) +
+  annotate("text", x=2015.5, y = lower_capacity + 5, label = "Predicted territory capacity: Open Network", size=3) +
+  annotate("text", x=2015, y = upper_capacity + 5, label = "Predicted territory capacity: MM Network", size=3) +
   scale_fill_manual(values = c("#d95f02", "#7570b3"), name=NULL)+
   scale_colour_manual(values = c("#d95f02", "#7570b3"), name=NULL)+
   # xlim(lubridate::dmy(c("30-12-2007", "30-12-2050"))) +
   # xlim(0,100) +
   # ylim(0,1000) +
   # coord_cartesian(ylim=c(0,100), xlim = c(0,50))+
-  coord_cartesian(ylim=c(0,155), xlim = c(2007,2045))+
+  coord_cartesian(ylim=c(0,260), xlim = c(2007, 2055))+
   # coord_cartesian(ylim=c(0,100), xlim = lubridate::dmy(c("30-12-2007", "30-12-2031")))+
   labs(x = 'year', y="n territories", subtitle="Beaver territory expansion in R. Otter Catchment???")+
   theme_bw() +
   theme(legend.position = "bottom")
 terr_pred
-ggsave('R_Otter_workflow/3_Pop_expansion_predictions/plots/Territory_predictionMMvsORN.png',
+ggsave(file.path(plot_dir, 'Territory_predictionMMvsORN.png'),
        plot = terr_pred, dpi=300, height=7, width=7)

@@ -1,3 +1,18 @@
+
+#Notes:
+# Let's revisit the literature for mean territory sizes - need to consider if we're currently using
+# a distribution which is either too narrow or too small - also is a normal distribution the right
+# way to go? perhaps a uniform distribution is more appropriate?
+
+# Would beavers use all branches to make the most of a territory in a pressured scenario or is their
+# behaviour too dependent on linear movement?
+
+# we should really include minBDC as a variable in the simulation to consider a range of possible values...
+
+
+
+
+
 # ------------ imports --------------------
 devtools::install()
 # devtools::document()
@@ -6,61 +21,112 @@ library(sf)
 library(broom)
 library(patchwork)
 devtools::load_all()
+#-------------define folder root -------------
+
+export_dir <- file.path(here::here(),"R_Otter_workflow/2_Territory_simulations/exports")
+plot_dir <- file.path(here::here(),"R_Otter_workflow/2_Territory_simulations/plots")
 # ----- generate extent and titles for mapping ------
 target_ext <- inflate_bbox(RivOtter_Catch_Area, 10)
 # ------------ Read Data ------------------
-# This is the high res version of the Beaver Network and cannot be released with the package due to
-# licensing issues. When we produce the OPen BeaverNetwork the network for the R. Otter will be included as
-# a built in dataset.
 
-BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
+Real_terrs <- readRDS('R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list.Rds')
 
-# --------
-p1 <- BeavNetOtter %>%
-  filter(Drain_Area > 1) %>%
-  ggplot(., aes(colour=as.factor(Str_order)))+
-    geom_sf()+
-  scale_colour_brewer(palette = 'Dark2') +
-  guides(colour=F)
+# MasterMap River Network not released with the package due to licensing issues.
+MMRN_BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg') # MasterMap Data
 
-p2 <- BeavNetOtter %>%
-  filter(Drain_Area > 0.5) %>%
-  ggplot(., aes(colour=as.factor(Str_order)))+
-  geom_sf()+
-  scale_colour_brewer(palette = 'Dark2') +
-  guides(colour=F)
+# OS Open Rivers Network - included with the package
+ORN_BeavNetOtter <- RivOtter_BeaverNet
 
-p3 <- BeavNetOtter %>%
-  ggplot(., aes(colour=as.factor(Str_order)))+
-  geom_sf()+
-  scale_colour_brewer(palette = 'Dark2')
+# ---------- run terriroty generation for all reaches for each network
+run_terr_gen <- function(riv_network, overwrite=FALSE, save_out=TRUE){
+  fileName <- file.path(export_dir, paste('PT_', deparse(substitute(riv_network)),'.Rds', sep=""))
+  # print(fileName)
+  if (file.exists(fileName) && isFALSE(overwrite)){
+    message(sprintf("Potential territrories created in: %s", fileName))
+    message("Loading previously generated file...")
+    terr_out <- readRDS(fileName)
+  } else{
+    t1 <- Sys.time()
+    terr_out <-  gen_territories(riv_network)
+    if (isTRUE(save_out)){
+      saveRDS(terr_out, file=fileName)
+    }
+    message(sprintf('Potential Territory Generation Run Time = %s minutes', round(Sys.time()-t1,1)))
+  }
+  return(terr_out)
+}
+ORN_BeavNetOtterNEW <- ORN_BeavNetOtter
+MMRN_BeavNetOtterNEW <-MMRN_BeavNetOtter
+# t_out <- gen_territories(ORN_BeavNetOtterNEW, multicore = T)
 
-
-p1 + p2 + p3
-
-
-
-
-
-# ---------- Subset dataset for now - > 1st order streams only -----------
-
-# BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 1,]
-
-# BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
-
-BeavNetOtter <- BeavNetOtter%>%
-  filter(Drain_Area > 1)
-
-# ---------- run terriroty generation for all reaches
-t1 <- Sys.time()
-test_out <-  gen_territories(BeavNetOtter)
-Sys.time()-t1
-
-# sf::st_write(sf::st_buffer(test_out, 10), 'QGIS/To_test/All_terr_3.gpkg', driver=, "GPKG", append=FALSE, overwrite=T)
+ORN_pot_terr <- run_terr_gen(ORN_BeavNetOtterNEW, overwrite = T)
+MMRN_pot_terr <- run_terr_gen(MMRN_BeavNetOtterNEW)
 
 # ------------- Run territory cap -------------
-t1 <- Sys.time()
-test_TC_par <-territory_cap(test_out, min_veg = 2.5 , multicore = TRUE)
-Sys.time()-t1
+run_terr_cap <- function(pot_terrs, veg, overwrite=FALSE, save_out=TRUE){
+  fileName <- file.path(export_dir, paste('TC_', deparse(substitute(pot_terrs)),'.Rds', sep=""))
+  # print(fileName)
+  if (file.exists(fileName) && isFALSE(overwrite)){
+    message(sprintf("Territory capacity created in: %s", fileName))
+    message("Loading previously generated file...")
+    cap_out <- readRDS(fileName)
+  } else {
+    t1 <- Sys.time()
+    cap_out <-territory_cap(pot_terrs, min_veg = veg , multicore = TRUE)
+    if (isTRUE(save_out)){
+      saveRDS(cap_out, file=fileName)
+    }
+    message(sprintf('Territory Capacity Run Time = %s minutes', round(Sys.time()-t1,1)))
+  }
+  return(cap_out)
+}
+ORN_pot_terrNEW <-ORN_pot_terr
+MMRN_pot_terrNEW <- MMRN_pot_terr
+ORN_terr_cap <- run_terr_cap(ORN_pot_terrNEW, 1.5, overwrite = T)
+MMRN_terr_cap <- run_terr_cap(MMRN_pot_terrNEW, 1.5)
+
+# MMRN_pot_terr2_5 <- MMRN_pot_terr
+# MMRN_terr_cap <- run_terr_cap(MMRN_pot_terr2_5, 2.5)
+# ---------- Plot Territory Capacities for both Networks ---------
+
+capacity_plot <- function(ORN_cap, MMRN_cap){
+  p1 <- plot_capacity(ORN_cap, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
+                      river_net = ORN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
+                      scalebar = F, axes_units = F)
+  p2 <- plot_capacity(MMRN_cap, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
+                      river_net = MMRN_BeavNetOtter, plot_extent = target_ext, axes_units = F)
+  p3 <- p1 + p2 + plot_annotation(
+    caption = 'Contains: © OpenStreetMap contributors, \n
+    OS data © Crown copyright and database right 2021'
+  )
+  return(p3)
+}
+
+capacity_plot(ORN_terr_cap, MMRN_terr_cap) %>%
+  ggsave(filename = file.path(plot_dir, 'OSMM_terrs.jpg'),plot = ., dpi=300, height=7, width=10)
+
+
 sf::st_write(sf::st_buffer(test_TC_par, 50), 'QGIS/To_test/terr_sim_1kmCont.gpkg', driver=, "GPKG", append=FALSE, overwrite=T)
-plot_capacity(test_TC_par, buffer=50, basemap = F, catchment = RivOtter_Catch_Area, river_net = BeavNetOtter, plot_extent = target_ext)
+
+
+
+#------- Observed territory Habitat stats ----------
+# need to calculate some stats here and find out what kind of BFI values we're currently seeing on the Otter.
+
+plot_names <- unique(RivOtter_FeedSigns$SurveySeason)
+
+
+Real_terrs %>%
+  purrr::map2(.x=., .y=plot_names, ~ mutate(.x, SurveySeason = .y)) %>%
+  bind_rows() %>%
+  st_drop_geometry() %>%
+  filter(user_class %in% c('Territory', 'Possibly'))
+
+MMRN_terr_cap %>%
+  ggplot(., aes(y=BFI_40m))+
+  geom_boxplot()
+
+
+
+
+
