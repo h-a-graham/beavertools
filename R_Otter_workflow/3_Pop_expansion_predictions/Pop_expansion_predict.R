@@ -16,8 +16,8 @@ reclass_terr_list <- readRDS(file='R_Otter_workflow/1_Feed_Sign_Mapping/exports/
 plot_names <- unique(RivOtter_FeedSigns$SurveySeason)
 
 # What is the capacity of the catchment? WILL NEED UPDATING WITH RANGES ETC WHEN SIMULATIONS ARE DONE.
-lower_capacity = 76
-upper_capacity = 257
+lower_capacity = 69
+upper_capacity = 176
 
 # set up dataframe for observed territory counts...
 date_list <- lubridate::dmy(c("30-12-2014", "30-12-2015", "30-12-2016",
@@ -120,7 +120,7 @@ terr_pred <- ggplot(hacked_df, aes(x=year_adj, y=.fitted, colour=cap_name, fill=
   # xlim(0,100) +
   # ylim(0,1000) +
   # coord_cartesian(ylim=c(0,100), xlim = c(0,50))+
-  coord_cartesian(ylim=c(0,260), xlim = c(2007, 2055))+
+  coord_cartesian(ylim=c(0,200), xlim = c(2007, 2050))+
   # coord_cartesian(ylim=c(0,100), xlim = lubridate::dmy(c("30-12-2007", "30-12-2031")))+
   labs(x = 'year', y="n territories", subtitle="Beaver territory expansion in R. Otter Catchment???")+
   theme_bw() +

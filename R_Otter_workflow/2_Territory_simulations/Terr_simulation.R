@@ -11,16 +11,16 @@
 
 
 
-
-
 # ------------ imports --------------------
+devtools::load_all()
+# devtools::uninstall()
 devtools::install()
 # devtools::document()
 library(tidyverse)
 library(sf)
 library(broom)
 library(patchwork)
-devtools::load_all()
+library(beavertools)
 #-------------define folder root -------------
 
 export_dir <- file.path(here::here(),"R_Otter_workflow/2_Territory_simulations/exports")
@@ -47,7 +47,7 @@ run_terr_gen <- function(riv_network, overwrite=FALSE, save_out=TRUE){
     terr_out <- readRDS(fileName)
   } else{
     t1 <- Sys.time()
-    terr_out <-  gen_territories(riv_network)
+    terr_out <-  gen_territories(riv_network, multicore = T, progbar = T)
     if (isTRUE(save_out)){
       saveRDS(terr_out, file=fileName)
     }
@@ -57,11 +57,19 @@ run_terr_gen <- function(riv_network, overwrite=FALSE, save_out=TRUE){
 }
 ORN_BeavNetOtterNEW <- ORN_BeavNetOtter
 MMRN_BeavNetOtterNEW <-MMRN_BeavNetOtter
-# t_out <- gen_territories(ORN_BeavNetOtterNEW, multicore = T)
 
 ORN_pot_terr <- run_terr_gen(ORN_BeavNetOtterNEW, overwrite = T)
-MMRN_pot_terr <- run_terr_gen(MMRN_BeavNetOtterNEW)
+MMRN_pot_terr <- run_terr_gen(MMRN_BeavNetOtterNEW, overwrite = T)
 
+
+ggplot(MMRN_pot_terr, aes(x=Terr_Leng))+
+  geom_density()
+
+# v1 <- tibble(vals =  rnorm(1000, 1630, 293), func = 'rnorm')
+# v2 <- tibble(vals =  runif(1000, min = 1630-293, max = 1630+293), func = 'runif')
+# v3 <- bind_rows(v1, v2)
+# ggplot(v3, aes(x=vals, fill=func)) +
+#   geom_histogram()
 # ------------- Run territory cap -------------
 run_terr_cap <- function(pot_terrs, veg, overwrite=FALSE, save_out=TRUE){
   fileName <- file.path(export_dir, paste('TC_', deparse(substitute(pot_terrs)),'.Rds', sep=""))
@@ -83,7 +91,7 @@ run_terr_cap <- function(pot_terrs, veg, overwrite=FALSE, save_out=TRUE){
 ORN_pot_terrNEW <-ORN_pot_terr
 MMRN_pot_terrNEW <- MMRN_pot_terr
 ORN_terr_cap <- run_terr_cap(ORN_pot_terrNEW, 1.5, overwrite = T)
-MMRN_terr_cap <- run_terr_cap(MMRN_pot_terrNEW, 1.5)
+MMRN_terr_cap <- run_terr_cap(MMRN_pot_terr, 1.5)
 
 # MMRN_pot_terr2_5 <- MMRN_pot_terr
 # MMRN_terr_cap <- run_terr_cap(MMRN_pot_terr2_5, 2.5)
@@ -104,6 +112,12 @@ capacity_plot <- function(ORN_cap, MMRN_cap){
 
 capacity_plot(ORN_terr_cap, MMRN_terr_cap) %>%
   ggsave(filename = file.path(plot_dir, 'OSMM_terrs.jpg'),plot = ., dpi=300, height=7, width=10)
+
+plot_capacity(MMRN_terr_cap, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
+              river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
+              scalebar = F, axes_units = F) %>%
+  ggsave(filename = file.path(plot_dir, 'OSMM_OLD.jpg'),plot = ., dpi=300, height=7, width=5)
+
 
 
 sf::st_write(sf::st_buffer(test_TC_par, 50), 'QGIS/To_test/terr_sim_1kmCont.gpkg', driver=, "GPKG", append=FALSE, overwrite=T)
