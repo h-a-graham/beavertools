@@ -49,8 +49,8 @@ Otter_fs_list <- RivOtter_FeedSigns %>%
 
 feed_panel <- Otter_fs_list %>%
   purrr::map2(.x=., .y= plot_names,  ~fs_ggplot(.x, .y))%>%
-  panel_plot(., guide=TRUE)
-ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterFeedSignsNBM.png',plot = feed_panel, dpi=300, height=7, width=7)
+  panel_plot(., guide=TRUE, n_col = 4)
+ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterFeedSignsNBMb.png',plot = feed_panel, dpi=300, height=7, width=10)
 
 # ------------- Confirmatory sign Maps --------------
 conf_ggplot <- function(.data, pNames){
@@ -74,8 +74,8 @@ Otter_conf_list <- RivOtter_OtherSigns %>%
 # generate list of sf objects with estimated territory locations/status
 other_panel <- Otter_conf_list %>%
   purrr::map2(.x=., .y= plot_names,  ~conf_ggplot(.x, .y))%>%
-  panel_plot(., guide=TRUE)
-ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterOtherSigns.png',plot = other_panel, dpi=300, height=7, width=7)
+  panel_plot(., guide=TRUE, n_col = 4)
+ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterOtherSignsb.png',plot = other_panel, dpi=300, height=7, width=10)
 
 
 # -------------- Feeding Density Maps ---------------
@@ -96,8 +96,8 @@ kde_ras_list <- RivOtter_FeedSigns %>%
 
 kde_panel <- kde_ras_list %>%
   purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y)) %>%
-  panel_plot(., guide=TRUE)
-ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterFeedDensity.png',plot = kde_panel, dpi=300, height=7, width=7)
+  panel_plot(., guide=TRUE, n_col = 4)
+ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterFeedDensityb.png',plot = kde_panel, dpi=300, height=7, width=10)
 
 # ---------- Territory Classification Maps ----------
 terr_ggplot <- function(.data, pNames, fill.name, .lab ){
@@ -118,13 +118,13 @@ Otter_confirm_list <- RivOtter_OtherSigns %>%
 # generate list of sf objects with estimated territory locations/status
 auto_terr_list <- kde_ras_list %>%
   purrr::map2(.x = ., .y= Otter_confirm_list,
-              .f = ~ estimate_territories(.x, .y))
+              .f = ~ estimate_territories(.x, .y, upper_thresh =0.95))
 
 # create panel plot of territory locations
 terr_panel <- auto_terr_list %>%
   purrr::map2(.x=., .y=plot_names, ~terr_ggplot(.x, .y, 'terr_status', TRUE))%>%
-  panel_plot(., guide=TRUE)
-ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterTerrsAuto.png',plot = terr_panel, dpi=300, height=7, width=7)
+  panel_plot(., guide=TRUE, n_col = 4)
+ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterTerrsAutob.png',plot = terr_panel, dpi=300, height=7, width=10)
 
 # edit automated classifications
 terr_reclass <- list(c(2), # Pre 2015
@@ -132,13 +132,15 @@ terr_reclass <- list(c(2), # Pre 2015
                      c(), # 2016 - 2017
                      c(14, 15), # 2017 - 2018
                      c(6,19), # 2018 - 2019
-                     c(12, 31, 32)) # 2019 - 2020
+                     c(12, 31, 32), # 2019 - 2020
+                     c(1, 11, 18, 24, 30)) # 2020 - 2021
 
 poss_reclass <- list(c(), # Pre 2015
                      c(), # 2015 - 2016
                      c(), # 2016 - 2017
                      c(), # 2017 - 2018
                      c(), # 2018 - 2019
+                     c(),
                      c()) # 2019 - 2020
 
 # reclass territories where needed...
@@ -149,8 +151,8 @@ saveRDS(reclass_terr_list, file='R_Otter_workflow/1_Feed_Sign_Mapping/exports/re
 # plot corrected territory classes
 User_terr_panel <- reclass_terr_list %>%
   purrr::map2(.x=., .y=plot_names, ~terr_ggplot(.x, .y, 'user_class', FALSE))%>%
-  panel_plot(., guide=TRUE)
-ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterTerrsUser.png',plot = User_terr_panel, dpi=300, height=7, width=7)
+  panel_plot(., guide=TRUE, n_col=4)
+ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterTerrsUserb.png',plot = User_terr_panel, dpi=300, height=7, width=10)
 
 
 
@@ -200,4 +202,4 @@ obj_list <- list(Otter_fs_list, kde_ras_list, reclass_terr_list, plot_names)
 # map the above function to the list and animate it.
 joint_animation <- purrr::pmap(.l=obj_list, ~sidebyside_ggplot(..1, ..2, ..3, ..4))
 
-animate_maps(joint_animation, filename = 'R_Otter_workflow/1_Feed_Sign_Mapping/maps/AnimatedFeeding.gif')
+animate_maps(joint_animation, filename = 'R_Otter_workflow/1_Feed_Sign_Mapping/maps/AnimatedFeedingb.gif')

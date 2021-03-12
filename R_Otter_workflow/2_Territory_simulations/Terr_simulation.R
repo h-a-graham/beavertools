@@ -14,8 +14,8 @@
 # ------------ imports --------------------
 devtools::load_all()
 # devtools::uninstall()
-devtools::install()
-# devtools::document()
+# devtools::install()
+devtools::document()
 library(tidyverse)
 library(sf)
 library(broom)
@@ -35,7 +35,19 @@ Real_terrs <- readRDS('R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr
 MMRN_BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg') # MasterMap Data
 
 # OS Open Rivers Network - included with the package
-ORN_BeavNetOtter <- RivOtter_BeaverNet
+# ORN_BeavNetOtter <- RivOtter_BeaverNet
+
+#------- Observed territory Habitat stats ----------
+# need to calculate some stats here and find out what kind of BFI values we're currently seeing on the Otter.
+terr_list <- readRDS(file=file.path(here::here(),'R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list.Rds'))
+survey_years <- unique(RivOtter_FeedSigns$SurveySeason)
+source(file.path(here::here(), 'R_Otter_workflow/2_Territory_simulations/terr_BFI_df.R'))
+
+Terr_df <- terr_BFI_df(terr_list, MMRN_BeavNetOtter, survey_years)
+
+lower_BFI <- round(min(Terr_df$mean_BFI_40m),1)
+upper_BFI <- round(mean(Terr_df$mean_BFI_40m), 1)
+
 
 # ---------- run terriroty generation for all reaches for each network
 run_terr_gen <- function(riv_network, overwrite=FALSE, save_out=TRUE){
@@ -55,21 +67,13 @@ run_terr_gen <- function(riv_network, overwrite=FALSE, save_out=TRUE){
   }
   return(terr_out)
 }
-ORN_BeavNetOtterNEW <- ORN_BeavNetOtter
-MMRN_BeavNetOtterNEW <-MMRN_BeavNetOtter
 
-ORN_pot_terr <- run_terr_gen(ORN_BeavNetOtterNEW, overwrite = T)
-MMRN_pot_terr <- run_terr_gen(MMRN_BeavNetOtterNEW, overwrite = T)
+RivOtter_Terrs <- run_terr_gen(MMRN_BeavNetOtter)
 
 
-ggplot(MMRN_pot_terr, aes(x=Terr_Leng))+
-  geom_density()
+# ggplot(MMRN_pot_terr, aes(x=Terr_Leng))+
+#   geom_density()
 
-# v1 <- tibble(vals =  rnorm(1000, 1630, 293), func = 'rnorm')
-# v2 <- tibble(vals =  runif(1000, min = 1630-293, max = 1630+293), func = 'runif')
-# v3 <- bind_rows(v1, v2)
-# ggplot(v3, aes(x=vals, fill=func)) +
-#   geom_histogram()
 # ------------- Run territory cap -------------
 run_terr_cap <- function(pot_terrs, veg, overwrite=FALSE, save_out=TRUE){
   fileName <- file.path(export_dir, paste('TC_', deparse(substitute(pot_terrs)),'.Rds', sep=""))
@@ -88,16 +92,16 @@ run_terr_cap <- function(pot_terrs, veg, overwrite=FALSE, save_out=TRUE){
   }
   return(cap_out)
 }
-ORN_pot_terrNEW <-ORN_pot_terr
-MMRN_pot_terrNEW <- MMRN_pot_terr
-ORN_terr_cap <- run_terr_cap(ORN_pot_terrNEW, 1.5, overwrite = T)
-MMRN_terr_cap <- run_terr_cap(MMRN_pot_terr, 1.5)
+
+
+terr_cap_lowBFI <- run_terr_cap(RivOtter_Terrs, lower_BFI)
+terr_cap_uppBFI <- run_terr_cap(RivOtter_Terrs, upper_BFI)
 
 # MMRN_pot_terr2_5 <- MMRN_pot_terr
 # MMRN_terr_cap <- run_terr_cap(MMRN_pot_terr2_5, 2.5)
 # ---------- Plot Territory Capacities for both Networks ---------
 
-capacity_plot <- function(ORN_cap, MMRN_cap){
+capacity_plot <- function(cap_lowBFI, cap_uppBFI){
   p1 <- plot_capacity(ORN_cap, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = ORN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
                       scalebar = F, axes_units = F)
@@ -110,37 +114,41 @@ capacity_plot <- function(ORN_cap, MMRN_cap){
   return(p3)
 }
 
-capacity_plot(ORN_terr_cap, MMRN_terr_cap) %>%
-  ggsave(filename = file.path(plot_dir, 'OSMM_terrs.jpg'),plot = ., dpi=300, height=7, width=10)
+capacity_plot(terr_cap_lowBFI, terr_cap_uppBFI) %>%
+  ggsave(filename = file.path(plot_dir, 'Lower_Upper_Capacity_maps.jpg'),plot = ., dpi=300, height=7, width=10)
 
-plot_capacity(MMRN_terr_cap, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
-              river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
-              scalebar = F, axes_units = F) %>%
-  ggsave(filename = file.path(plot_dir, 'OSMM_OLD.jpg'),plot = ., dpi=300, height=7, width=5)
+# plot_capacity(MMRN_terr_cap, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
+#               river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
+#               scalebar = F, axes_units = F) %>%
+#   ggsave(filename = file.path(plot_dir, 'OSMM_3_5.jpg'),plot = ., dpi=300, height=7, width=5)
+#
 
-
-
-sf::st_write(sf::st_buffer(test_TC_par, 50), 'QGIS/To_test/terr_sim_1kmCont.gpkg', driver=, "GPKG", append=FALSE, overwrite=T)
-
-
-
-#------- Observed territory Habitat stats ----------
-# need to calculate some stats here and find out what kind of BFI values we're currently seeing on the Otter.
-
-plot_names <- unique(RivOtter_FeedSigns$SurveySeason)
+#
+# sf::st_write(sf::st_buffer(test_TC_par, 50), 'QGIS/To_test/terr_sim_1kmCont.gpkg', driver=, "GPKG", append=FALSE, overwrite=T)
 
 
-Real_terrs %>%
-  purrr::map2(.x=., .y=plot_names, ~ mutate(.x, SurveySeason = .y)) %>%
-  bind_rows() %>%
-  st_drop_geometry() %>%
-  filter(user_class %in% c('Territory', 'Possibly'))
+# ------- Run Territory simulation based on the desired upper and lower  minimum BFI requirements. -----------
+t1 <- Sys.time()
+sim_terr <- sim_terr_cap(MMRN_BeavNetOtter, n_p_terr_sim=10, n_hab_sim=2, min_veg = c(lower_BFI, upper_BFI))
+saveRDS(sim_terr, file.path(export_dir, 'sim_terr.Rds'))
+Sys.time()-t1
 
-MMRN_terr_cap %>%
-  ggplot(., aes(y=BFI_40m))+
-  geom_boxplot()
+# plot simulation results...
+sim_terr <- read_rds(file.path(export_dir, 'sim_terr.Rds'))
+sim_terr %>%
+  mutate(min_BFI_c = as.character(min_BFI)) %>%
+  ggplot(., aes(x=min_BFI_c, y=n, fill=min_BFI_c)) +
+  geom_point(shape = 21, alpha = 0.7,position = position_jitterdodge(
+    jitter.width = 0.1), stroke = 0.5,show.legend = F) +
+  geom_boxplot(show.legend = F, alpha=0.5, width=0.3, outlier.shape =NA) +
+  scale_fill_brewer(palette = "Dark2", ) +
+  coord_cartesian(y=c(100,200))+
+  labs(y= "n territories", x = 'Beaver Forage Index (BFI) Value') +
+  theme_bw() +
+  ggsave(filename = file.path(plot_dir, 'SimulationResults1.jpg'), dpi=300, height=7, width=7)
 
-
-
-
+sim_terr %>%
+  sf::st_drop_geometry() %>%
+  summarise(lowest = min(n),
+            highest = max(n))
 
