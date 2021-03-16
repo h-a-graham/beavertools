@@ -1,26 +1,14 @@
-
-#Notes:
-# Let's revisit the literature for mean territory sizes - need to consider if we're currently using
-# a distribution which is either too narrow or too small - also is a normal distribution the right
-# way to go? perhaps a uniform distribution is more appropriate?
-
-# Would beavers use all branches to make the most of a territory in a pressured scenario or is their
-# behaviour too dependent on linear movement?
-
-# we should really include minBDC as a variable in the simulation to consider a range of possible values...
-
-
-
 # ------------ imports --------------------
-devtools::load_all()
+# devtools::document()
+# devtools::load_all()
 # devtools::uninstall()
-# devtools::install()
-devtools::document()
+devtools::install()
+library(beavertools)
 library(tidyverse)
 library(sf)
 library(broom)
 library(patchwork)
-library(beavertools)
+
 #-------------define folder root -------------
 
 export_dir <- file.path(here::here(),"R_Otter_workflow/2_Territory_simulations/exports")
@@ -71,7 +59,7 @@ run_terr_gen <- function(riv_network, overwrite=FALSE, save_out=TRUE){
 RivOtter_Terrs <- run_terr_gen(MMRN_BeavNetOtter)
 
 
-# ggplot(MMRN_pot_terr, aes(x=Terr_Leng))+
+# ggplot(RivOtter_Terrs, aes(x=Terr_Leng))+
 #   geom_density()
 
 # ------------- Run territory cap -------------
@@ -93,48 +81,85 @@ run_terr_cap <- function(pot_terrs, veg, overwrite=FALSE, save_out=TRUE){
   return(cap_out)
 }
 
+RivOtter_Terrs_upper <- RivOtter_Terrs
 
 terr_cap_lowBFI <- run_terr_cap(RivOtter_Terrs, lower_BFI)
-terr_cap_uppBFI <- run_terr_cap(RivOtter_Terrs, upper_BFI)
+terr_cap_uppBFI <- run_terr_cap(RivOtter_Terrs_upper, upper_BFI)
 
-# MMRN_pot_terr2_5 <- MMRN_pot_terr
-# MMRN_terr_cap <- run_terr_cap(MMRN_pot_terr2_5, 2.5)
+Terr_Cap_df <- terr_cap_lowBFI %>%
+  mutate(sim=as.character(lower_BFI)) %>%
+  bind_rows(., terr_cap_uppBFI %>%
+              mutate(sim=as.character(upper_BFI)))
+
+# plot showing the territory length distributions for each of these example simulations.
+ggplot(Terr_Cap_df, aes(x=Terr_Leng, fill=sim, after_stat(count))) +
+  geom_density(alpha=0.5) +
+  labs(x='territory length (m)', fill='minimum BFI threshold') +
+  scale_fill_brewer(palette = "Dark2")+
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  ggsave(filename = file.path(plot_dir, 'TerritoryLengthDist.jpg'), dpi=300, height=7, width=7)
+
+# summary stats for territory length if needed
+Terr_sum_df <- Terr_Cap_df %>%
+  sf::st_drop_geometry()%>%
+  group_by(sim) %>%
+  summarise(mean_length = mean(Terr_Leng),
+            stdev_Length = sd(Terr_Leng),
+            n_terrs = n())
+
 # ---------- Plot Territory Capacities for both Networks ---------
 
 capacity_plot <- function(cap_lowBFI, cap_uppBFI){
-  p1 <- plot_capacity(ORN_cap, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
-                      river_net = ORN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
-                      scalebar = F, axes_units = F)
-  p2 <- plot_capacity(MMRN_cap, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
-                      river_net = MMRN_BeavNetOtter, plot_extent = target_ext, axes_units = F)
+  p1 <- plot_capacity(cap_lowBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
+                      river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
+                      scalebar = F, axes_units = F)+
+    annotate("text", x = 304000, y = 82000, size = 2,
+             label = sprintf('n territories = %s',
+                             Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(lower_BFI)]))+
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank())
+
+  p2 <- plot_capacity(cap_uppBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
+                      river_net = MMRN_BeavNetOtter, plot_extent = target_ext, axes_units = F)+
+    annotate("text", x = 304000, y = 82000, size = 2,
+             label = sprintf('n territories = %s',
+                             Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(upper_BFI)]))+
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank())
+
   p3 <- p1 + p2 + plot_annotation(
-    caption = 'Contains: © OpenStreetMap contributors, \n
-    OS data © Crown copyright and database right 2021'
-  )
+    caption = 'Contains: OS data © Crown copyright and database right 2021', #© OpenStreetMap contributors,
+    theme = theme(plot.caption = element_text(size = 6)))
+
   return(p3)
 }
 
-capacity_plot(terr_cap_lowBFI, terr_cap_uppBFI) %>%
-  ggsave(filename = file.path(plot_dir, 'Lower_Upper_Capacity_maps.jpg'),plot = ., dpi=300, height=7, width=10)
-
-# plot_capacity(MMRN_terr_cap, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
-#               river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
-#               scalebar = F, axes_units = F) %>%
-#   ggsave(filename = file.path(plot_dir, 'OSMM_3_5.jpg'),plot = ., dpi=300, height=7, width=5)
-#
-
-#
-# sf::st_write(sf::st_buffer(test_TC_par, 50), 'QGIS/To_test/terr_sim_1kmCont.gpkg', driver=, "GPKG", append=FALSE, overwrite=T)
+# **NOTE** - plot not quite perfect will need some tweaking...
+TerrCapPlot <- capacity_plot(terr_cap_lowBFI, terr_cap_uppBFI)
+ggsave(filename = file.path(plot_dir, 'Lower_Upper_Capacity_maps.jpg'), plot=TerrCapPlot, dpi=300, height=7, width=9.5)
 
 
 # ------- Run Territory simulation based on the desired upper and lower  minimum BFI requirements. -----------
-t1 <- Sys.time()
-sim_terr <- sim_terr_cap(MMRN_BeavNetOtter, n_p_terr_sim=10, n_hab_sim=2, min_veg = c(lower_BFI, upper_BFI))
-saveRDS(sim_terr, file.path(export_dir, 'sim_terr.Rds'))
-Sys.time()-t1
 
-# plot simulation results...
-sim_terr <- read_rds(file.path(export_dir, 'sim_terr.Rds'))
+
+run_terr_simulation <- function(fileName, overwrite=FALSE){
+  if (file.exists(fileName) && isFALSE(overwrite)){
+    message(sprintf("Simulation results already generated. See: %s", fileName))
+    message("Loading previously generated file...")
+    sim_terr <- readRDS(fileName)
+  } else {
+  t1 <- Sys.time()
+  sim_terr <- sim_terr_cap(MMRN_BeavNetOtter, n_p_terr_sim=100, n_hab_sim=2, min_veg = c(lower_BFI, upper_BFI))
+  saveRDS(sim_terr, fileName)
+  Sys.time()-t1
+  }
+
+}
+
+sim_terr <- run_terr_simulation(file.path(export_dir, 'sim_terr.Rds'))
+
+# plot simulation results... load again if needed.
 sim_terr %>%
   mutate(min_BFI_c = as.character(min_BFI)) %>%
   ggplot(., aes(x=min_BFI_c, y=n, fill=min_BFI_c)) +
@@ -147,6 +172,7 @@ sim_terr %>%
   theme_bw() +
   ggsave(filename = file.path(plot_dir, 'SimulationResults1.jpg'), dpi=300, height=7, width=7)
 
+# quick summary to retrieve the highest and lowest possible capacity values.
 sim_terr %>%
   sf::st_drop_geometry() %>%
   summarise(lowest = min(n),

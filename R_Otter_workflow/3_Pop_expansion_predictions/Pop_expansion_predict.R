@@ -9,14 +9,14 @@ devtools::load_all()
 #----- Define some directories -----------------
 
 plot_dir <- file.path(here::here(),"R_Otter_workflow/3_Pop_expansion_predictions/plots")
-
+sim_dir <- file.path(here::here(),"R_Otter_workflow/2_Territory_simulations/exports")
 # ---- Read in Data Territroy count data --------------
 reclass_terr_list <- readRDS(file='R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list.Rds')
 # get unique names for survey years...
 plot_names <- unique(RivOtter_FeedSigns$SurveySeason)
 
 # What is the capacity of the catchment? WILL NEED UPDATING WITH RANGES ETC WHEN SIMULATIONS ARE DONE.
-cap_limits <- read_rds(file.path(export_dir, 'sim_terr.Rds')) %>%
+cap_limits <- read_rds(file.path(sim_dir, 'sim_terr.Rds')) %>%
   sf::st_drop_geometry() %>%
   summarise(lowest = min(n),
             highest = max(n))
@@ -51,6 +51,17 @@ terr_counts <-  purrr::pmap(count_obj_list, ~get_terr_counts(..1, ..2, ..3, ..4)
 
 .logmodel <- glm(terr_count ~ years_since, family=poisson(link='log'), data=terr_counts)
 
+# --- visualise initial model ------
+tibble(years_since  = seq(0,50, by=0.01)) %>%
+  broom::augment(.logmodel, newdata=., se_fit=T, type.predict = "response") %>%
+  ggplot(., aes(x=years_since, y = .fitted))+
+  geom_point(data=terr_counts, aes(x=years_since, y=terr_count), inherit.aes = F, alpha=0.6)+
+  geom_line() +
+  geom_ribbon(aes(ymin=.fitted -(1.96*.se.fit),ymax=.fitted +(1.96*.se.fit) ), alpha=0.3)+
+  coord_cartesian(ylim=c(0,upper_capacity +10))+
+  theme_bw()
+
+
 ## ----- uncomment for model diagnosticss. -------
 # autoplot(.logmodel, which = 1:6, label.size = 3)
 # summary(.logmodel)
@@ -73,9 +84,9 @@ hacked_df_func <- function(cap){
   terr_counts %>%
     sf::st_drop_geometry() %>%
     bind_rows(tibble(terr_count=round(cap), season="Full Cap",
-                     years_since=HalfCap(cap) * 2, year_adj=years_since + 2007))%>%
+                     years_since=HalfCap(cap) * 2, year_adj=years_since + 2007)) %>%
     bind_rows(tibble(terr_count=round(cap), season="Future Full Cap",
-                     years_since=HalfCap(cap) * 2 + 50, year_adj=years_since + 2007))
+                     years_since=HalfCap(cap) * 2 + 100, year_adj=years_since + 2007))
 
 }
 
@@ -111,12 +122,11 @@ hacked_df <-  seq(lower_capacity, upper_capacity, by=1) %>%
   purrr::map(., ~model_capacity(.)) %>%
   bind_rows()
 
-ribbon_df <- tibble(year_adj = seq(2000,2070, by=70),
-                    .fitted = seq(0,200, by=200))
+ribbon_df <- function() tibble(year_adj = seq(2000,2070, by=70),.fitted = seq(0,200, by=200))
 
 hacked_df %>%
   ggplot(., aes(x=year_adj, y=.fitted))+
-  geom_ribbon(data=ribbon_df, aes(ymin=lower_capacity, ymax=upper_capacity, xmin=2000),
+  geom_ribbon(data=ribbon_df(), aes(ymin=lower_capacity, ymax=upper_capacity, xmin=2000),
               fill='grey70', size=0.1, alpha=0.3, linetype=2, color="grey20") +
   # geom_hline(yintercept=lower_capacity, linetype=1, lwd=0.1)+
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high, group=cap_name),
@@ -130,12 +140,21 @@ hacked_df %>%
   # annotate("text", x=2015, y = upper_capacity + 5, label = "max predicted territory capacity", size=3) +
 
   # geom_hline(yintercept=upper_capacity, linetype=1, lwd=0.1)+
-  coord_cartesian(ylim=c(0,upper_capacity +10), xlim = c(2007, 2050))+
+  coord_cartesian(ylim=c(0,upper_capacity +10), xlim = c(2007, 2075))+
   labs(x = 'year', y="n territories", subtitle="Projected beaver territory expansion in R. Otter Catchment")+
   theme_bw() +
   theme(legend.position = "bottom") +
   ggsave(file.path(plot_dir, 'TerritoryPredictionc.png'),
           dpi=300, height=7, width=7)
+
+# without CIs...
+hacked_df %>%
+  ggplot(., aes(x=year_adj, y=.fitted))+
+  geom_ribbon(data=ribbon_df(), aes(ymin=lower_capacity, ymax=upper_capacity, xmin=2000),
+              fill='grey70', size=0.1, alpha=0.3, linetype=2, color="grey20") +
+  geom_line(aes(group=cap_name),alpha=0.1, lwd=2) +
+  coord_cartesian(ylim=c(0,upper_capacity +10), xlim = c(2007, 2075))+
+  theme_bw()
 
 
 
@@ -175,3 +194,43 @@ hacked_df %>%
 # terr_pred
 # ggsave(file.path(plot_dir, 'Territory_predictionMMvsORN.png'),
 #        plot = terr_pred, dpi=300, height=7, width=7)
+
+
+## IDEAS ABOUT USING NLS INSTEAD OF SPLINES....
+alt_df_func <- function(cap){
+  terr_counts %>%
+    sf::st_drop_geometry() %>%
+    bind_rows(tibble(terr_count=round(cap)/2, season= "Half Cap",
+                     years_since=HalfCap(cap), year_adj=years_since + 2007)) %>%
+    bind_rows(tibble(terr_count=round(cap), season=" Full Cap",
+                     years_since=HalfCap(cap) * 2 , year_adj=years_since + 2007))
+
+}
+df1 <- alt_df_func(150)
+df2 <- hacked_df_func(150)
+
+# mod1 <- nls(terr_count ~ SSlogis(years_since, Asym, xmid, scal) ,terr_counts)
+#
+# require(minpack.lm)
+# fit <- nlsLM(terr_count ~ SSlogis(years_since, Asym=max(df$terr_count), xmid, scal), data=df)
+
+mod1 <- nls(terr_count ~ SSlogis(years_since, Asym, xmid, scal), algorithm='port' ,df1)
+
+mod2 <- glm(terr_count ~ splines::ns(years_since,df=1, knots=c(HalfCap(150), ),
+                                           Boundary.knots=c(0, HalfCap(150)*2+10)),
+                  family=poisson(link='log'), data=df1)
+
+# create new data with predictions
+new_data <- tibble(years_since = seq(0,50, by=0.1)) %>%
+  broom::augment(mod2, newdata=., se_fit=F, type.predict = "response",
+                 type.residuals = "deviance") %>%
+  rename(.fitted_spline = .fitted) %>%
+  broom::augment(mod1, newdata = .) %>%
+  rename(.fitted_logistic = .fitted) %>%
+  pivot_longer(., !years_since, names_to='model')
+
+
+ggplot(new_data, aes(x=years_since, y = value, colour=model))+
+  geom_line() +
+  theme_bw()
+
