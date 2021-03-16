@@ -12,6 +12,8 @@
 #' @param north_arrow_size numeric to set the size of the north arrow
 #' @param guide Boolean - if TRUE then the legend is extracted from the list of figures and places below the panels
 #' @param guide_fig_height numeric vector length 2 - giving the heights for the figure and lengend objects.
+#' @param n_col integer denoting the number of columns the panel should use. if NULL (the default) the number is generated
+#' automatically with `ceiling(sqrt(length(terr_plot_list)))`.
 #' @returns TableGrob obect of a multi-panel map.
 #' @export
 #' @examples
@@ -52,7 +54,8 @@
 #'# ggsave('panel_plot_map.png',plot = kde_panel)
 #'
 panel_plot <- function(terr_plot_list, scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE,
-                       north_arrow_loc = 'br', north_arrow_size = 0.5, guide = FALSE, guide_fig_height = c(30,1)){
+                       north_arrow_loc = 'br', north_arrow_size = 0.5, guide = FALSE, guide_fig_height = c(30,1),
+                       n_col=NULL){
   n <- length(terr_plot_list)
 
   #remove all legends from plots
@@ -73,7 +76,12 @@ panel_plot <- function(terr_plot_list, scalebar=TRUE, scalebar_loc = 'tl', north
                                                                                     fill = c("black", "black")))
   }
 
-  nCol <- ceiling(sqrt(n))
+  if (!is.null(n_col)){
+    nCol = n_col
+  } else {
+    nCol <- ceiling(sqrt(n))
+  }
+
   p <- do.call(gridExtra::grid.arrange, c(terr_plot_listNL, ncol=nCol))
 
   #extract legend
