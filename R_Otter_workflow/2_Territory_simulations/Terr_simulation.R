@@ -2,7 +2,7 @@
 # devtools::document()
 # devtools::load_all()
 # devtools::uninstall()
-devtools::install()
+# devtools::install()
 library(beavertools)
 library(tidyverse)
 library(sf)
@@ -113,16 +113,17 @@ Terr_sum_df <- Terr_Cap_df %>%
 capacity_plot <- function(cap_lowBFI, cap_uppBFI){
   p1 <- plot_capacity(cap_lowBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
-                      scalebar = F, axes_units = F)+
-    annotate("text", x = 304000, y = 82000, size = 2,
+                      scalebar = F, axes_units = F, add_hillshade =T)+
+    annotate("text", x = 304000, y = 82000, size = 2.4,
              label = sprintf('n territories = %s',
                              Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(lower_BFI)]))+
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
 
   p2 <- plot_capacity(cap_uppBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
-                      river_net = MMRN_BeavNetOtter, plot_extent = target_ext, axes_units = F)+
-    annotate("text", x = 304000, y = 82000, size = 2,
+                      river_net = MMRN_BeavNetOtter, plot_extent = target_ext,
+                      axes_units = F, add_hillshade =T)+
+    annotate("text", x = 304000, y = 82000, size = 2.4,
              label = sprintf('n territories = %s',
                              Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(upper_BFI)]))+
     theme(panel.grid.major = element_blank(),
@@ -135,9 +136,8 @@ capacity_plot <- function(cap_lowBFI, cap_uppBFI){
   return(p3)
 }
 
-# **NOTE** - plot not quite perfect will need some tweaking...
 TerrCapPlot <- capacity_plot(terr_cap_lowBFI, terr_cap_uppBFI)
-ggsave(filename = file.path(plot_dir, 'Lower_Upper_Capacity_maps.jpg'), plot=TerrCapPlot, dpi=300, height=7, width=9.5)
+ggsave(filename = file.path(plot_dir, 'Lower_Upper_Capacity_maps2.jpg'), plot=TerrCapPlot, dpi=300, height=7, width=9.5)
 
 
 # ------- Run Territory simulation based on the desired upper and lower  minimum BFI requirements. -----------

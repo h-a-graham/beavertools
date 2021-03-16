@@ -67,170 +67,81 @@ tibble(years_since  = seq(0,50, by=0.01)) %>%
 # summary(.logmodel)
 # broom::tidy(.logmodel, exponentiate=T, conf.int=T)
 
-# ----- functions to fit sigmoidal growth model -------
-# get half capacity prediction date...
-HalfCap <- function(cap){
-  yearsVal <- tibble(years_since = seq(0,50, by=0.01)) %>%
-    broom::augment(.logmodel, newdata=., se_fit=T, type.predict = "response",
-                   type.residuals = "deviance") %>%
-    mutate(.fitround = floor(.fitted)) %>%
-    filter(.fitround==round(cap/2)) %>%
-    pull(years_since)
-  yearsVal[1]
-}
 
-#create new df with anchor points.
-hacked_df_func <- function(cap){
-  terr_counts %>%
-    sf::st_drop_geometry() %>%
-    bind_rows(tibble(terr_count=round(cap), season="Full Cap",
-                     years_since=HalfCap(cap) * 2, year_adj=years_since + 2007)) %>%
-    bind_rows(tibble(terr_count=round(cap), season="Future Full Cap",
-                     years_since=HalfCap(cap) * 2 + 100, year_adj=years_since + 2007))
+# ----- functions to fit logistic growth model -------
 
-}
+model_population <- function(cap_val){
+  # get half capacity prediction date...
+  HalfCap <- function(cap){
+    yearsVal <- tibble(years_since = seq(0,50, by=0.01)) %>%
+      broom::augment(.logmodel, newdata=., se_fit=T, type.predict = "response",
+                     type.residuals = "deviance") %>%
+      mutate(.fitround = floor(.fitted)) %>%
+      filter(.fitround==round(cap/2)) %>%
+      pull(years_since)
+    yearsVal[1]
+  }
+
+  #create new df with anchor points.
+  hacked_df_func <- function(cap){
+    terr_counts %>%
+      sf::st_drop_geometry() %>%
+      bind_rows(tibble(terr_count=round(cap)/2, season= "Half Cap",
+                       years_since=HalfCap(cap), year_adj=years_since + 2007)) %>%
+      bind_rows(tibble(terr_count=round(cap), season=" Full Cap",
+                       years_since=HalfCap(cap) * 2 , year_adj=years_since + 2007))
+
+  }
+
+  # function to fit new spline
+  fit_n_predict <- function(df, cap){
+    .logistic_model <- nls(terr_count ~ SSlogis(years_since, Asym, xmid, scal),df)
+
+    # create new data with predictions
+    new_data <- tibble(years_since = seq(0,50, by=0.01)) %>%
+      broom::augment(.logistic_model, newdata=.) %>%
+      mutate(year_adj = years_since + 2007,
+             cap_name = cap)
+  }
 
 
-# function to fit new spline
-fit_n_predict <- function(df, cap){
-  # fit new model
-  .splinemod <- glm(terr_count ~ splines::ns(years_since,df=1, knots=c(HalfCap(cap)),
-                                             Boundary.knots=c(0, HalfCap(cap)*2)),
-                    family=poisson(link='log'), data=df)
-
-  # create new data with predictions
-  new_data <- tibble(years_since = seq(0,50, by=0.1)) %>%
-    broom::augment(.splinemod, newdata=., se_fit=T, type.predict = "response",
-                   type.residuals = "deviance") %>%
-    mutate(conf.low = .fitted - (.se.fit*1.96),
-           conf.high = .fitted + (.se.fit*1.96)) %>%
-    mutate(
-      .fitted = ifelse(.fitted>cap, cap, .fitted),
-           # conf.low = ifelse(conf.low < 0, 0, conf.low),
-           conf.high = ifelse(conf.high > cap, cap, conf.high),
-           year_adj = years_since + 2007,
-           cap_name = cap)
-}
-
-model_capacity <- function(cap_val){
   hacked_df_func(cap_val) %>%
     fit_n_predict(., cap_val)
 }
 
-
+# generate logistic models...
 hacked_df <-  seq(lower_capacity, upper_capacity, by=1) %>%
-  purrr::map(., ~model_capacity(.)) %>%
+  purrr::map(., ~model_population(.)) %>%
   bind_rows()
 
+# function to create capcity ribbon for plot.
 ribbon_df <- function() tibble(year_adj = seq(2000,2070, by=70),.fitted = seq(0,200, by=200))
 
+mid_cap <- function() lower_capacity + ((upper_capacity-lower_capacity)*0.5)
+
+# create plot.
 hacked_df %>%
   ggplot(., aes(x=year_adj, y=.fitted))+
   geom_ribbon(data=ribbon_df(), aes(ymin=lower_capacity, ymax=upper_capacity, xmin=2000),
-              fill='grey70', size=0.1, alpha=0.3, linetype=2, color="grey20") +
-  # geom_hline(yintercept=lower_capacity, linetype=1, lwd=0.1)+
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, group=cap_name),
-              alpha=0.04, lwd=NA, fill="#4daf4a") +
-  stat_summary(aes(y=conf.high),fun = max, geom = 'line', size=0.1, alpha=0.6, linetype=2, color="grey20") +
-  stat_summary(aes(y=conf.low),fun = min, geom = 'line', size=0.1, alpha=0.6, linetype=2, color="grey20") +
+              fill='grey90', size=0.1, alpha=0.2, linetype=2, color="grey10") +
+  geom_line(aes(group=cap_name),alpha=0.1, lwd=0.6, colour="#00B76F") +
   stat_summary(fun = mean, geom = 'line', size=0.6, alpha=0.6, linetype=1, color="grey20") +
+  stat_summary(fun = min, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
+  stat_summary(fun = max, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
   geom_point(data=terr_counts, aes(x=year_adj, y=terr_count), inherit.aes = F, alpha=0.6)+
-  annotate("text", x=2015, y = lower_capacity + ((upper_capacity-lower_capacity)*0.5),
-           label = "Predicted territory capacity range", size=3) +
-  # annotate("text", x=2015, y = upper_capacity + 5, label = "max predicted territory capacity", size=3) +
-
-  # geom_hline(yintercept=upper_capacity, linetype=1, lwd=0.1)+
-  coord_cartesian(ylim=c(0,upper_capacity +10), xlim = c(2007, 2075))+
-  labs(x = 'year', y="n territories", subtitle="Projected beaver territory expansion in R. Otter Catchment")+
+  annotate("text", x=2020, y = mid_cap(),
+           label = "predicted territory capacity range", size=3) +
+  geom_segment(aes(x = 2020, y = mid_cap() + 5, xend = 2020, yend = upper_capacity -1),
+               arrow = arrow(length = unit(0.01, "npc")),lwd=0.5, color="grey20") +
+  geom_segment(aes(x = 2020, y = mid_cap() - 5, xend = 2020, yend = lower_capacity +1),
+               arrow = arrow(length = unit(0.01, "npc")), lwd=0.5, color="grey20") +
+  coord_cartesian(ylim=c(0,upper_capacity +10), xlim = c(2007, 2050))+
+  labs(x = 'Year', y="Number of Territories")+
   theme_bw() +
-  theme(legend.position = "bottom") +
+  theme(legend.position = "bottom",
+        axis.title.y = element_text(margin = margin(t = 0, r = 3, b = 0, l = 0)),
+        axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0))) +
   ggsave(file.path(plot_dir, 'TerritoryPredictionc.png'),
           dpi=300, height=7, width=7)
 
-# without CIs...
-hacked_df %>%
-  ggplot(., aes(x=year_adj, y=.fitted))+
-  geom_ribbon(data=ribbon_df(), aes(ymin=lower_capacity, ymax=upper_capacity, xmin=2000),
-              fill='grey70', size=0.1, alpha=0.3, linetype=2, color="grey20") +
-  geom_line(aes(group=cap_name),alpha=0.1, lwd=2) +
-  coord_cartesian(ylim=c(0,upper_capacity +10), xlim = c(2007, 2075))+
-  theme_bw()
-
-
-
-
-
-
-#==========================#
-#===========SS=============#
-#==========================#
-
-# terr_pred <- ggplot(hacked_df, aes(x=year_adj, y=.fitted, colour=cap_name, fill=cap_name))+
-#   geom_hline(yintercept=lower_capacity, linetype=4, lwd=0.3)+
-#   geom_hline(yintercept=upper_capacity, linetype=4, lwd=0.3)+
-#   # geom_line(data=new_data, aes(y = .log.fitted), colour='#000E54', lwd=1.2, linetype=3) +
-#   geom_line(lwd=1.2) +
-#   geom_ribbon(aes(ymin = conf.low, ymax = conf.high),
-#               alpha=0.2, linetype=2, lwd=0.2) +
-#   geom_point(data=terr_counts, aes(x=year_adj, y=terr_count), inherit.aes = F, alpha=0.8)+
-#   # stat_smooth(method="lm",formula='y ~ poly(x, 2)', fullrange=TRUE, colour='#43B1FF', se=F) +
-#   # geom_smooth(method = "glm", formula = y~x,
-#   #               method.args = list(family = poisson(link = 'log')), fullrange=TRUE) +
-#
-#   # geom_vline(xintercept=HalfCap, linetype=4, lwd=0.3)+
-#   annotate("text", x=2015.5, y = lower_capacity + 5, label = "Predicted territory capacity: Open Network", size=3) +
-#   annotate("text", x=2015, y = upper_capacity + 5, label = "Predicted territory capacity: MM Network", size=3) +
-#   scale_fill_manual(values = c("#d95f02", "#7570b3"), name=NULL)+
-#   scale_colour_manual(values = c("#d95f02", "#7570b3"), name=NULL)+
-#   # xlim(lubridate::dmy(c("30-12-2007", "30-12-2050"))) +
-#   # xlim(0,100) +
-#   # ylim(0,1000) +
-#   # coord_cartesian(ylim=c(0,100), xlim = c(0,50))+
-#   coord_cartesian(ylim=c(0,200), xlim = c(2007, 2050))+
-#   # coord_cartesian(ylim=c(0,100), xlim = lubridate::dmy(c("30-12-2007", "30-12-2031")))+
-#   labs(x = 'year', y="n territories", subtitle="Beaver territory expansion in R. Otter Catchment???")+
-#   theme_bw() +
-#   theme(legend.position = "bottom")
-# terr_pred
-# ggsave(file.path(plot_dir, 'Territory_predictionMMvsORN.png'),
-#        plot = terr_pred, dpi=300, height=7, width=7)
-
-
-## IDEAS ABOUT USING NLS INSTEAD OF SPLINES....
-alt_df_func <- function(cap){
-  terr_counts %>%
-    sf::st_drop_geometry() %>%
-    bind_rows(tibble(terr_count=round(cap)/2, season= "Half Cap",
-                     years_since=HalfCap(cap), year_adj=years_since + 2007)) %>%
-    bind_rows(tibble(terr_count=round(cap), season=" Full Cap",
-                     years_since=HalfCap(cap) * 2 , year_adj=years_since + 2007))
-
-}
-df1 <- alt_df_func(150)
-df2 <- hacked_df_func(150)
-
-# mod1 <- nls(terr_count ~ SSlogis(years_since, Asym, xmid, scal) ,terr_counts)
-#
-# require(minpack.lm)
-# fit <- nlsLM(terr_count ~ SSlogis(years_since, Asym=max(df$terr_count), xmid, scal), data=df)
-
-mod1 <- nls(terr_count ~ SSlogis(years_since, Asym, xmid, scal), algorithm='port' ,df1)
-
-mod2 <- glm(terr_count ~ splines::ns(years_since,df=1, knots=c(HalfCap(150), ),
-                                           Boundary.knots=c(0, HalfCap(150)*2+10)),
-                  family=poisson(link='log'), data=df1)
-
-# create new data with predictions
-new_data <- tibble(years_since = seq(0,50, by=0.1)) %>%
-  broom::augment(mod2, newdata=., se_fit=F, type.predict = "response",
-                 type.residuals = "deviance") %>%
-  rename(.fitted_spline = .fitted) %>%
-  broom::augment(mod1, newdata = .) %>%
-  rename(.fitted_logistic = .fitted) %>%
-  pivot_longer(., !years_since, names_to='model')
-
-
-ggplot(new_data, aes(x=years_since, y = value, colour=model))+
-  geom_line() +
-  theme_bw()
 
