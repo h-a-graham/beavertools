@@ -4,6 +4,8 @@ library(magrittr)
 library(tidyverse)
 library(patchwork)
 library(ggfortify)
+library(investr)
+library(colorspace)
 devtools::load_all()
 
 #----- Define some directories -----------------
@@ -40,7 +42,8 @@ count_obj_list <- list(reclass_terr_list, plot_names, date_list, years_since_rel
 terr_counts <-  purrr::pmap(count_obj_list, ~get_terr_counts(..1, ..2, ..3, ..4)) %>%
   bind_rows() %>%
   mutate(year_adj = years_since + 2007) %>%
-  mutate(terr_count = ifelse(season %in% c('2020 - 2021'), terr_count+1, terr_count )) # required because
+  mutate(terr_count = ifelse(season %in% c('2018 - 2019', '2019 - 2020'), terr_count+1,
+                             ifelse(season %in% c('2020 - 2021'),terr_count + 2, terr_count))) # required because
 
 # reclass_terr_list[[1]] %>% # for double checking only.
 #   filter(user_class == "Territory") %>%
@@ -70,48 +73,11 @@ tibble(years_since  = seq(0,50, by=0.01)) %>%
 
 # ----- functions to fit logistic growth model -------
 
-model_population <- function(cap_val){
-  # get half capacity prediction date...
-  HalfCap <- function(cap){
-    yearsVal <- tibble(years_since = seq(0,50, by=0.01)) %>%
-      broom::augment(.logmodel, newdata=., se_fit=T, type.predict = "response",
-                     type.residuals = "deviance") %>%
-      mutate(.fitround = floor(.fitted)) %>%
-      filter(.fitround==round(cap/2)) %>%
-      pull(years_since)
-    yearsVal[1]
-  }
-
-  #create new df with anchor points.
-  hacked_df_func <- function(cap){
-    terr_counts %>%
-      sf::st_drop_geometry() %>%
-      bind_rows(tibble(terr_count=round(cap)/2, season= "Half Cap",
-                       years_since=HalfCap(cap), year_adj=years_since + 2007)) %>%
-      bind_rows(tibble(terr_count=round(cap), season=" Full Cap",
-                       years_since=HalfCap(cap) * 2 , year_adj=years_since + 2007))
-
-  }
-
-  # function to fit new spline
-  fit_n_predict <- function(df, cap){
-    .logistic_model <- nls(terr_count ~ SSlogis(years_since, Asym, xmid, scal),df)
-
-    # create new data with predictions
-    new_data <- tibble(years_since = seq(0,50, by=0.01)) %>%
-      broom::augment(.logistic_model, newdata=.) %>%
-      mutate(year_adj = years_since + 2007,
-             cap_name = cap)
-  }
-
-
-  hacked_df_func(cap_val) %>%
-    fit_n_predict(., cap_val)
-}
+source(file.path(here::here(),"R_Otter_workflow/3_Pop_expansion_predictions", 'logistic_growth.R'))
 
 # generate logistic models...
 hacked_df <-  seq(lower_capacity, upper_capacity, by=1) %>%
-  purrr::map(., ~model_population(.)) %>%
+  purrr::map(., ~logistic_growth(., .logmodel)) %>%
   bind_rows()
 
 # function to create capcity ribbon for plot.
@@ -119,23 +85,28 @@ ribbon_df <- function() tibble(year_adj = seq(2000,2070, by=70),.fitted = seq(0,
 
 mid_cap <- function() lower_capacity + ((upper_capacity-lower_capacity)*0.5)
 
+
 # create plot.
 hacked_df %>%
+  # filter(cap_name==115)%>%
   ggplot(., aes(x=year_adj, y=.fitted))+
-  geom_ribbon(data=ribbon_df(), aes(ymin=lower_capacity, ymax=upper_capacity, xmin=2000),
-              fill='grey90', size=0.1, alpha=0.2, linetype=2, color="grey10") +
-  geom_line(aes(group=cap_name),alpha=0.1, lwd=0.6, colour="#00B76F") +
+  # geom_ribbon(data=ribbon_df(), aes(ymin=lower_capacity, ymax=upper_capacity, xmin=2000),
+  #             fill='grey90', size=0.1, alpha=0.2, linetype=2, color="grey10") +
+  # annotate("text", x=2020, y = mid_cap(),
+  #          label = "predicted territory capacity range", size=3) +
+  # geom_segment(aes(x = 2020, y = mid_cap() + 5, xend = 2020, yend = upper_capacity -1),
+  #              arrow = arrow(length = unit(0.01, "npc")),lwd=0.5, color="grey20") +
+  # geom_segment(aes(x = 2020, y = mid_cap() - 5, xend = 2020, yend = lower_capacity +1),
+  # arrow = arrow(length = unit(0.01, "npc")), lwd=0.5, color="grey20") +
+  geom_ribbon(aes(ymin=pred.lwr, ymax = pred.upr, group=reorder(cap_name, rev(cap_name)), fill=cap_name), colour=NA) +
   stat_summary(fun = mean, geom = 'line', size=0.6, alpha=0.6, linetype=1, color="grey20") +
-  stat_summary(fun = min, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
-  stat_summary(fun = max, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
-  geom_point(data=terr_counts, aes(x=year_adj, y=terr_count), inherit.aes = F, alpha=0.6)+
-  annotate("text", x=2020, y = mid_cap(),
-           label = "predicted territory capacity range", size=3) +
-  geom_segment(aes(x = 2020, y = mid_cap() + 5, xend = 2020, yend = upper_capacity -1),
-               arrow = arrow(length = unit(0.01, "npc")),lwd=0.5, color="grey20") +
-  geom_segment(aes(x = 2020, y = mid_cap() - 5, xend = 2020, yend = lower_capacity +1),
-               arrow = arrow(length = unit(0.01, "npc")), lwd=0.5, color="grey20") +
-  coord_cartesian(ylim=c(0,upper_capacity +10), xlim = c(2007, 2050))+
+  stat_summary(aes(y=pred.lwr), fun = min, geom = 'line', size=0.3, alpha=0.6, linetype=1, color="grey20") +
+  stat_summary(aes(y=pred.upr),fun = max, geom = 'line', size=0.3, alpha=0.6, linetype=1, color="grey20") +
+  scale_fill_continuous_sequential("TealGrn", rev=F) +
+  guides(fill = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
+  geom_point(data=terr_counts, aes(x=year_adj, y=terr_count), inherit.aes = F, alpha=0.6, colour='grey10')+
+
+  coord_cartesian(ylim=c(0,upper_capacity +5), xlim = c(2007, 2045))+
   labs(x = 'Year', y="Number of Territories")+
   theme_bw() +
   theme(legend.position = "bottom",
@@ -143,5 +114,39 @@ hacked_df %>%
         axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0))) +
   ggsave(file.path(plot_dir, 'TerritoryPredictionc.png'),
           dpi=300, height=7, width=7)
+
+# -------- pop dynamcis plots -----------
+
+long_df <- hacked_df %>%
+  pivot_longer(., cols=c(growth_rate, n_terr_growth, hartman_rate), names_to = "mid", values_to = 'mid.long')%>%
+  mutate(mid = ifelse(mid=='growth_rate', "Expansion Rate",
+                      ifelse(mid=="n_terr_growth","New Territories per Year", "Expansion Rate / time")),
+         density = .fitted/(as.numeric(sf::st_area(RivOtter_Catch_Area))/1e+6))
+
+# function to generate the desired pop dynamics plots.
+pop.dynams <- function(df, x_val, x_lab, leg_pos){
+  ggplot(df, aes(x=!! dplyr::sym(x_val) , y=mid.long , colour=cap_name))+
+    # geom_ribbon(aes(ymin=lwr.long, ymax = upr.long, group=reorder(cap_name, rev(cap_name)), fill=cap_name), lwd=0.9) +
+    geom_line(aes(group=c(reorder(cap_name, rev(cap_name)))),lwd=1.6) +
+    # scale_fill_continuous_sequential("Batlow", rev=F) +
+    scale_colour_continuous_sequential("TealGrn", rev=F) +
+    guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
+    labs(x = x_lab, y='')+
+    theme_bw() +
+    theme(legend.position = leg_pos,
+          axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 6, l = 0))) +
+    facet_wrap(~mid, scales = "free")
+}
+
+
+# create stacked plot.
+long_df %>%
+  pop.dynams(., 'years_since', "Years since establishment", "none")/
+
+long_df %>%
+  pop.dynams(., 'density', expression(paste("Density ", (territories/km) ^2)), "bottom") +
+  theme(strip.background = element_blank(), strip.text = element_blank()) +
+  ggsave(file.path(plot_dir, 'TerritoryDynamics.png'),
+         dpi=300, height=7, width=10)
 
 

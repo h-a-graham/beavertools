@@ -113,7 +113,7 @@ Terr_sum_df <- Terr_Cap_df %>%
 capacity_plot <- function(cap_lowBFI, cap_uppBFI){
   p1 <- plot_capacity(cap_lowBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
-                      scalebar = F, axes_units = F, add_hillshade =T)+
+                      scalebar = F, axes_units = F, add_hillshade =F)+
     annotate("text", x = 304000, y = 82000, size = 2.4,
              label = sprintf('n territories = %s',
                              Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(lower_BFI)]))+
@@ -122,7 +122,7 @@ capacity_plot <- function(cap_lowBFI, cap_uppBFI){
 
   p2 <- plot_capacity(cap_uppBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = MMRN_BeavNetOtter, plot_extent = target_ext,
-                      axes_units = F, add_hillshade =T)+
+                      axes_units = F, add_hillshade =F)+
     annotate("text", x = 304000, y = 82000, size = 2.4,
              label = sprintf('n territories = %s',
                              Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(upper_BFI)]))+

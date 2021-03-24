@@ -16,7 +16,7 @@ check_user_terr(
   north_arrow = TRUE,
   north_arrow_loc = "br",
   north_arrow_size = 0.75,
-  wsg = FALSE,
+  wgs = TRUE,
   guide = TRUE,
   plot_extent
 )
@@ -44,7 +44,7 @@ check_user_terr(
 
 \item{north_arrow_size}{numeric vector for the arrow}
 
-\item{wsg}{Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)}
+\item{wgs}{Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)}
 
 \item{guide}{Boolean to include a legend}
 

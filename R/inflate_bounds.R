@@ -4,6 +4,7 @@
 #'
 #' @param sp_obj Either an sf object or an sf-readable file. See sf::st_drivers() for available drivers. used as the basis for the bounding box.
 #' @param value A numeric distance (in the units of the spatial object) to inflate the bounds by.
+#' @param wgs Boolean to determine if box should be defined in WGS84 CRS. default is TRUE as this plays more nicely with ggspatial...
 #' @return object of class "bbox" containing the spatial coordinates of a bounding area
 #' @export
 #' @examples
@@ -11,7 +12,7 @@
 #' # generate inflated (by 10m) bounding box for ROBT feeding signs
 #' inflate_bbox(RivOtter_FeedSigns, 10)
 #'
-inflate_bbox <- function(sp_obj, value){
+inflate_bbox <- function(sp_obj, value, wgs=TRUE){
   sp_obj <- check_spatial_feature(sp_obj, 'sp_obj')
   bounds <- sf::st_bbox(sp_obj)
 
@@ -19,6 +20,8 @@ inflate_bbox <- function(sp_obj, value){
   bounds[2] <- bounds[2] - value
   bounds[3] <- bounds[3] + value
   bounds[4] <- bounds[4] + value
+
+  bounds <- sf::st_sf(geometry=sf::st_as_sfc(bounds))
 
   return(bounds)
 

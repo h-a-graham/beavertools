@@ -33,8 +33,9 @@ OSM_rivers <- get_rivers(RivOtter_Catch_Area)
 
 # --------------- Feeding Sign Maps -----------------
 fs_ggplot <- function(.data, pNames){
-      fs <- plot_feeding(.data, weight_aes = c(0.75,1.5,3), basemap = F, axes_units = FALSE, north_arrow = FALSE, scalebar = FALSE,
-                         catchment = RivOtter_Catch_Area, rivers = OSM_rivers, plot_extent = target_ext, guide=T, guide_pos='bottom') +
+      fs <- plot_feeding(.data, weight_aes = c(0.75,1.5,3), basemap = T, axes_units = T, north_arrow = FALSE, scalebar = FALSE,
+                         catchment = RivOtter_Catch_Area, rivers = OSM_rivers, plot_extent = target_ext, guide=T,
+                         guide_pos='bottom', wgs = F) +
         labs(subtitle =  pNames) +
         theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank())
@@ -124,19 +125,20 @@ auto_terr_list <- kde_ras_list %>%
 terr_panel <- auto_terr_list %>%
   purrr::map2(.x=., .y=plot_names, ~terr_ggplot(.x, .y, 'terr_status', TRUE))%>%
   panel_plot(., guide=TRUE, n_col = 4)
-ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterTerrsAutob.png',plot = terr_panel, dpi=300, height=7, width=10)
+ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterTerrsAutoc.png',plot = terr_panel, dpi=300, height=7, width=10)
 
 # edit automated classifications
-terr_reclass <- list(c(2), # Pre 2015
-                     c(3, 5), # 2015 - 2016
+terr_reclass <- list(c(), # Pre 2015
+                     c(3), # 2015 - 2016
                      c(), # 2016 - 2017
-                     c(14, 15), # 2017 - 2018
-                     c(6,19), # 2018 - 2019
-                     c(12, 31, 32), # 2019 - 2020
-                     c(1, 11, 18, 24, 30)) # 2020 - 2021
+                     c(15), # 2017 - 2018
+                     c(9,19), # 2018 - 2019 Bicton + Otterton
+                     c(12, 31, 32, 49), # 2019 - 2020 Bicton + Otterton
+                     c(1, 11, 14, 18, 27, 30)) # 2020 - 2021  Bicton + Otterton, 3 on the Tale
+                                           # (DC, Not Mapped, tiny pond) (11, 14, 18, 27, 30
 
 poss_reclass <- list(c(), # Pre 2015
-                     c(), # 2015 - 2016
+                     c(9), # 2015 - 2016
                      c(), # 2016 - 2017
                      c(), # 2017 - 2018
                      c(), # 2018 - 2019

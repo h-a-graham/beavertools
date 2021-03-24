@@ -102,20 +102,30 @@ forage_density <- function(forage_points, impact_cat, grid_size = 20, kern_bw = 
 
 
 # function to create appropriate bounds for bbox object
-define_extent_bbox <- function(sf_bbox, offset) {
+define_extent_bbox <- function(sf_bbox, offset=NULL) {
 
-  xmin_ <- plyr::round_any(sf_bbox[[1]] - offset, offset, f = floor)
-  ymin_ <- plyr::round_any(sf_bbox[[2]] - offset, offset, f = floor)
-  xmax_ <- plyr::round_any(sf_bbox[[3]] + offset, offset, f = ceiling)
-  ymax_ <- plyr::round_any(sf_bbox[[4]] + offset, offset, f = ceiling)
+  if (is.null(offset)){
+    xmin_ <- sf_bbox[[1]]
+    ymin_ <- sf_bbox[[2]]
+    xmax_ <- sf_bbox[[3]]
+    ymax_ <- sf_bbox[[4]]
+  } else {
+    xmin_ <- plyr::round_any(sf_bbox[[1]] - offset, offset, f = floor)
+    ymin_ <- plyr::round_any(sf_bbox[[2]] - offset, offset, f = floor)
+    xmax_ <- plyr::round_any(sf_bbox[[3]] + offset, offset, f = ceiling)
+    ymax_ <- plyr::round_any(sf_bbox[[4]] + offset, offset, f = ceiling)
+  }
+
 
   return(c(xmin_, xmax_, ymin_, ymax_))
 
 }
 
 # function to create appropriate bounds for sp, sf or raster object
-define_extent_sp <- function(sp_obj, offset){
-  bounds <- sf::st_bbox(sp_obj)
+define_extent_sp <- function(sp_obj, offset=NULL){
+  bounds <- sp_obj %>%
+    sf::st_bbox(.)
+
   return(define_extent_bbox(bounds, offset))
 
 }
