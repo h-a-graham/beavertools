@@ -5,7 +5,7 @@ get_highest_ <- function(reach, network, progbar){
 
   network %>%
     dplyr::filter(lengths(sf::st_intersects(., reach))>0) %>%
-    dplyr::arrange(., desc(Str_Ord), desc(BFI_40m)) %>%
+    dplyr::arrange(., desc(mean_Str_order), desc(mean_BFI_40m)) %>%
     dplyr::slice(1L)
 
 }
@@ -109,8 +109,8 @@ best_territories_ <- function(territories, terr_original=NULL, keep_terr=NULL, p
 territory_cap <- function(territories, min_veg = 2.5, min_bdc = 1, progbars = TRUE, multicore=FALSE, ncores){
 
   terrs <- territories %>%
-    dplyr::filter(BFI_40m >= min_veg) %>%
-    dplyr::mutate(discard = ifelse(Str_Ord < 5 & BDC <= min_bdc, 'True', 'False')) %>%
+    dplyr::filter(mean_BFI_40m >= min_veg) %>%
+    dplyr::mutate(discard = ifelse(Str_Ord < 5 & mean_BDC <= min_bdc, 'True', 'False')) %>%
     dplyr::filter(discard == 'False') %>%
     dplyr::select(!discard)
 
@@ -168,12 +168,12 @@ territory_cap <- function(territories, min_veg = 2.5, min_bdc = 1, progbars = TR
 
   }
 
-  accept_names <- c("id", "Terr_Leng", "BFI_40m", "BDC", "Str_Ord", "geom", "geometry")
+  accept_names <- c("id", "Terr_Leng", "mean_BFI_40m", "mean_BDC","mean_Str_order", "Str_Ord", "geom", "geometry")
   junk_names <- colnames(final_terrs)[!accept_names %in% colnames(final_terrs)]
 
   final_terrs <- final_terrs %>%
     dplyr::select(!junk_names) %>%
-    dplyr::arrange(., desc(Str_Ord), desc(BFI_40m)) %>%
+    dplyr::arrange(., desc(mean_Str_order), desc(mean_BFI_40m)) %>%
     dplyr::mutate(id = dplyr::row_number())
 
 

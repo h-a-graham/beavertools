@@ -34,10 +34,16 @@ terr_checks <- function(reach, river, terr_line,  terr_leng, t_length, buff, old
 
 
 create_territories <- function(reach, river, t_length=NULL,  new_buff= NULL, old_buff=NULL, attempt=0) {
+  s_ord <- reach %>%
+    dplyr::pull(Str_order)
+
+  river <- river %>%
+    dplyr::filter(Str_order >= s_ord)
 
   if (is.null(t_length)){
     # Here the random territory size is generated - based on Literature - add details...
-    t_length <- rnorm(1, 1630, 293)
+    # t_length <- rnorm(1, 1630, 293) # think this is wrong...
+    t_length <-runif(1, min = 1630-293, max = 1630+293)
   }
 
   if (is.null(new_buff)){
@@ -52,8 +58,9 @@ create_territories <- function(reach, river, t_length=NULL,  new_buff= NULL, old
     sf::st_buffer(buff) %>%
     sf::st_intersection(river) %>%
     dplyr::mutate(Leng = as.numeric(sf::st_length(.))) %>%
-    dplyr::summarise(dplyr::across(c("BFI_40m", "BDC"), ~ weighted.mean(.x, w= Leng, na.rm = TRUE)))%>%
-    sf::st_buffer(0.1)
+    sf::st_buffer(0.1) %>%
+    dplyr::summarise(dplyr::across(c("BFI_40m", "BDC", "Str_order"),
+                                   ~ weighted.mean(.x, w= Leng, na.rm = TRUE), .names = "mean_{.col}"))
 
 
   if (sf::st_geometry_type(terr_line)=='MULTIPOLYGON'){
@@ -63,18 +70,20 @@ create_territories <- function(reach, river, t_length=NULL,  new_buff= NULL, old
       dplyr::filter(area == max(area))  %>%
       sf::st_intersection(river) %>%
       dplyr::mutate(Leng = as.numeric(sf::st_length(.))) %>%
-      dplyr::summarise(across(c("BFI_40m", "BDC"), ~ weighted.mean(.x, w= Leng, na.rm = TRUE)))%>%
-      sf::st_buffer(0.1)
+      sf::st_buffer(0.1) %>%
+      dplyr::summarise(across(c("BFI_40m", "BDC", "Str_order"),
+                              ~ weighted.mean(.x, w= Leng, na.rm = TRUE), .names = "mean_{.col}"))
+
 
     terr_leng <- as.numeric(lwgeom::st_perimeter(sf::st_buffer(terr_line, 0.1)))/2
 
-    if ( att >=5){
+    if ( att >=3){
       stop('Cannot generate territory of accecptable size - discard for reach.')
     }
 
     #threshold of within 40% of target applied to allow adjustment of territories.
     # max and min will still fall within max and min values reported in literature.
-    return(terr_checks(reach, river, terr_line,  terr_leng, t_length, buff, old_buff, new_buff, thresh = 0.4, att=att))
+    return(terr_checks(reach, river, terr_line,  terr_leng, t_length, buff, old_buff, new_buff, thresh = 0.1, att=att))
 
   }
 
@@ -121,30 +130,11 @@ gen_territories <- function(BeaverNetwork, progbar=TRUE, multicore=TRUE, ncores)
   oldw <- getOption("warn")
   options(warn = -1)
 
-  #setup parallel backend to use many processors
-  if (isFALSE(multicore)){
-    ncores <- 1
-  }
+  # function to safely call the territory generation:
+  gen_terr_safe <- function(x, it, pbar) {
 
-  if (missing(ncores)){
-    cores=parallel::detectCores()[1]-2
-  } else {
-    cores <- ncores
-  }
-
-  cl <- parallel::makeCluster(cores)
-
-  doParallel::registerDoParallel(cl)
-
-  split_df <- BeaverNetwork %>%
-    dplyr::group_by((dplyr::row_number()-1) %/% (dplyr::n()/cores)) %>%
-    dplyr::group_split()
-
-
-  gen_terr_safe <- function(x, it, progbar) {
-
-    if (!is.null(progbar)){
-      tcltk::setTkProgressBar(progbar, it)
+    if (!is.null(pbar)){
+      tcltk::setTkProgressBar(pbar, it)
     }
 
     f = purrr::safely(function() create_territories(reach = x, river = BeaverNetwork))
@@ -152,39 +142,90 @@ gen_territories <- function(BeaverNetwork, progbar=TRUE, multicore=TRUE, ncores)
     f()
 
   }
-  # run paralell territory generation...
-  out <- foreach::foreach(i = seq_along(split_df), .combine = rbind,
-                         .packages = c("dplyr", "sf", "purrr", "lwgeom", "magrittr", "tcltk"),
-                         .export = c("gen_terr_safe", "create_territories", "terr_checks")) %dopar% {
+
+  # function to generate tcltk progress bar.
+  create_progbar <- function(n){
+    if (isTRUE(progbar)){
+      if(!exists("counter")) counter <- 0
+      counter <- counter + 1
+      if(!exists("pb")) pb <- tcltk::tkProgressBar("Generating potential territories", min=1, max=n)
+    } else {
+      pb <- NULL
+    }
+    return(pb)
+  }
+
+  #setup parallel backend to use many processors
+  if (isFALSE(multicore)){
+    # ncores <- 1
+
+    pb <- create_progbar(n=nrow(BeaverNetwork))
+
+    out <- BeaverNetwork %>%
+      dplyr::mutate(id = dplyr::row_number()) %>%
+      dplyr::group_by(id) %>%
+      dplyr::group_split() %>%
+      purrr::imap( ~ gen_terr_safe(x = .x, it = .y, pbar = pb)) %>%
+      purrr::map(., ~ .$result) %>%
+      dplyr::bind_rows()
+
+    if (!is.null(pb)){
+      close(pb)
+    }
+
+  } else {
+    if (missing(ncores)){
+      cores=parallel::detectCores()[1]-2
+    } else {
+      cores <- ncores
+    }
+
+    cl <- parallel::makeCluster(cores)
+
+    doParallel::registerDoParallel(cl)
+
+    split_df <- BeaverNetwork %>%
+      dplyr::group_by((dplyr::row_number()-1) %/% (dplyr::n()/cores)) %>%
+      dplyr::group_split()
+
+    # run paralell territory generation...
+    out <- foreach::foreach(i = seq_along(split_df), .combine = rbind,
+                            .packages = c("dplyr", "sf", "purrr", "lwgeom", "magrittr", "tcltk"),
+                            .export = c("gen_terr_safe", "create_territories", "terr_checks")) %dopar% {
 
 
-                           if (i == 1) {
-                             if (isTRUE(progbar)){
-                               n <- nrow(split_df[[i]])
-                               if(!exists("counter")) counter <- 0
-                               counter <- counter + 1
-                               if(!exists("pb")) pb <- tcltk::tkProgressBar("Generating potential territories", min=1, max=n)
-                             } else {
-                               pb <- NULL
-                             }
+                              if (i == 1) {
+                                n <- nrow(split_df[[i]])
+                                pb <- create_progbar(n=n)
+                                # if (isTRUE(progbar)){
+                                #   n <- nrow(split_df[[i]])
+                                #   if(!exists("counter")) counter <- 0
+                                #   counter <- counter + 1
+                                #   if(!exists("pb")) pb <- tcltk::tkProgressBar("Generating potential territories", min=1, max=n)
+                                # } else {
+                                #   pb <- NULL
+                                # }
 
-                           } else {
-                             pb <- NULL
-                           }
+                              } else {
+                                pb <- NULL
+                              }
 
 
-                           par_terrs <- split_df[[i]] %>%
-                             dplyr::mutate(id = dplyr::row_number()) %>%
-                             dplyr::group_by(id) %>%
-                             dplyr::group_split() %>%
-                             purrr::imap( ~ gen_terr_safe(x = .x, it = .y, progbar = pb)) %>%
-                             purrr::map(., ~ .$result) %>%
-                             dplyr::bind_rows()
+                              par_terrs <- split_df[[i]] %>%
+                                dplyr::mutate(id = dplyr::row_number()) %>%
+                                dplyr::group_by(id) %>%
+                                dplyr::group_split() %>%
+                                purrr::imap( ~ gen_terr_safe(x = .x, it = .y, pbar = pb)) %>%
+                                purrr::map(., ~ .$result) %>%
+                                dplyr::bind_rows()
 
-                           return(par_terrs)
-                         }
+                              return(par_terrs)
+                            }
 
-  parallel::stopCluster(cl)
+    parallel::stopCluster(cl)
+  }
+
+
 
   #enable warnings
   options(warn = oldw)

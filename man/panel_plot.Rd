@@ -12,7 +12,8 @@ panel_plot(
   north_arrow_loc = "br",
   north_arrow_size = 0.5,
   guide = FALSE,
-  guide_fig_height = c(30, 1)
+  guide_fig_height = c(30, 1),
+  n_col = NULL
 )
 }
 \arguments{
@@ -33,6 +34,9 @@ panel_plot(
 \item{guide}{Boolean - if TRUE then the legend is extracted from the list of figures and places below the panels}
 
 \item{guide_fig_height}{numeric vector length 2 - giving the heights for the figure and lengend objects.}
+
+\item{n_col}{integer denoting the number of columns the panel should use. if NULL (the default) the number is generated
+automatically with \code{ceiling(sqrt(length(terr_plot_list)))}.}
 }
 \value{
 TableGrob obect of a multi-panel map.

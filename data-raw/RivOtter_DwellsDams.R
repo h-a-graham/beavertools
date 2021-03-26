@@ -66,10 +66,21 @@ Dam_19_20 <- read_sf('data-raw/Otter_survey_raw/Dam_Dwelling.gpkg', layer='Dam_1
   prep_data(., 'Dam', '2019 - 2020')
 
 
+# Witer 19 - 20
+Dwell_20_21 <- read_sf(file.path(here::here(), 'data-raw', 'Otter_survey_raw', 'Otter_FS_20_21', 'Dwellings16.SHP')) %>%
+  rename(geom=geometry)%>%
+  prep_data(., 'Dwelling', '2020 - 2021')
+
+Dam_20_21 <- read_sf(file.path(here::here(), 'data-raw', 'Otter_survey_raw', 'Otter_FS_20_21', 'Dam16.SHP')) %>%
+  rename(geom=geometry)%>%
+  prep_data(., 'Dam', '2020 - 2021')
+
+
+
 #  --------------- combine data ---------------------------------
 
 RivOtter_OtherSigns <- list(Dwell_Pre15, Dwell_15_16, Dam_15_16, Dwell_16_17, Dam_16_17, Dwell_17_18, Dam_17_18,
-                    Dwell_18_19, Dam_18_19, Dwell_19_20, Dam_19_20) %>%
+                    Dwell_18_19, Dam_18_19, Dwell_19_20, Dam_19_20, Dwell_20_21, Dam_20_21) %>%
   bind_rows() %>%
   mutate(SurveySeason = fct_relevel(SurveySeason, 'Pre 2015')) %>%
   mutate(SignType = fct_relevel(SignType, 'Dwelling'))%>%

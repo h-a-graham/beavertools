@@ -17,7 +17,7 @@
 #' @param north_arrow Boolean to include a north arrow
 #' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
 #' @param north_arrow_size numeric vector for the arrow
-#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param wgs Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
 #' @param guide_pos character vector describing the desired position of the guide c("left", "right", "bottom", "top")
 #' @param seed numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.
@@ -47,7 +47,7 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
                              label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
                              scalebar=TRUE, scalebar_loc = 'tl',
                              north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                             wsg=FALSE, guide=TRUE, guide_pos = "bottom", seed=NA, drop_act=FALSE, trans_type=NULL,
+                             wgs=TRUE, guide=TRUE, guide_pos = "bottom", seed=NA, drop_act=FALSE, trans_type=NULL,
                              catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
 
   if (length(weight_aes)==1){
@@ -60,7 +60,7 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
         dplyr::mutate(FeedCat = forcats::fct_relevel(FeedCat, 'High', 'Med', 'Low')) %>%
         plot_territories(., 'feedsigns', fill_col, label, basemap, basemap_type, axes_units,
                          scalebar, scalebar_loc, north_arrow, north_arrow_loc, north_arrow_size,
-                         wsg, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent)
+                         wgs, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent)
 
 }
 
@@ -82,7 +82,7 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
 #' @param north_arrow Boolean to include a north arrow
 #' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
 #' @param north_arrow_size numeric vector for the arrow
-#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param wgs Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
 #' @param guide_pos character vector describing the desired position of the guide c("left", "right", "bottom", "top")
 #' @param seed numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.
@@ -112,7 +112,7 @@ plot_other_signs <- function(beav_points, size = 2.5, fill_col = c("#e41a1c", "#
                          label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
                          scalebar=TRUE, scalebar_loc = 'tl',
                          north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                         wsg=FALSE, guide=TRUE, guide_pos = "bottom", seed=NA, drop_act=FALSE, trans_type=NULL,
+                         wgs=TRUE, guide=TRUE, guide_pos = "bottom", seed=NA, drop_act=FALSE, trans_type=NULL,
                          catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
 
   beav_points %>%
@@ -123,7 +123,7 @@ plot_other_signs <- function(beav_points, size = 2.5, fill_col = c("#e41a1c", "#
     dplyr::mutate(p_size = size) %>%
     plot_territories(., 'othersigns', fill_col, label, basemap, basemap_type, axes_units,
                      scalebar, scalebar_loc, north_arrow, north_arrow_loc, north_arrow_size,
-                     wsg, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent)
+                     wgs, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent)
 
 }
 

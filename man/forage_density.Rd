@@ -20,7 +20,7 @@ forage_density(
 See sf::st_drivers() for available drivers}
 
 \item{impact_cat}{A character vector of length one containing the column name which describes the feeding
-impact category (i.e. Low, Medium, or high). If not provided kernel density is not weighted}
+impact category (i.e. Low, Medium, or High). If not provided kernel density is not weighted}
 
 \item{grid_size}{The raster grid cell size desired.}
 

@@ -4,7 +4,7 @@
 #' @param forage_points The foraging sign point data - must be either an sf object or an sf-readable file.
 #'See sf::st_drivers() for available drivers
 #' @param impact_cat A character vector of length one containing the column name which describes the feeding
-#'impact category (i.e. Low, Medium, or high). If not provided kernel density is not weighted
+#'impact category (i.e. Low, Medium, or High). If not provided kernel density is not weighted
 #' @param grid_size The raster grid cell size desired.
 #' @param kern_bw The bandwidth for the kernel denisty search radius.
 #' @param kd_extent The desired extent of the output raster.
@@ -102,20 +102,30 @@ forage_density <- function(forage_points, impact_cat, grid_size = 20, kern_bw = 
 
 
 # function to create appropriate bounds for bbox object
-define_extent_bbox <- function(sf_bbox, offset) {
+define_extent_bbox <- function(sf_bbox, offset=NULL) {
 
-  xmin_ <- plyr::round_any(sf_bbox[[1]] - offset, offset, f = floor)
-  ymin_ <- plyr::round_any(sf_bbox[[2]] - offset, offset, f = floor)
-  xmax_ <- plyr::round_any(sf_bbox[[3]] + offset, offset, f = ceiling)
-  ymax_ <- plyr::round_any(sf_bbox[[4]] + offset, offset, f = ceiling)
+  if (is.null(offset)){
+    xmin_ <- sf_bbox[[1]]
+    ymin_ <- sf_bbox[[2]]
+    xmax_ <- sf_bbox[[3]]
+    ymax_ <- sf_bbox[[4]]
+  } else {
+    xmin_ <- plyr::round_any(sf_bbox[[1]] - offset, offset, f = floor)
+    ymin_ <- plyr::round_any(sf_bbox[[2]] - offset, offset, f = floor)
+    xmax_ <- plyr::round_any(sf_bbox[[3]] + offset, offset, f = ceiling)
+    ymax_ <- plyr::round_any(sf_bbox[[4]] + offset, offset, f = ceiling)
+  }
+
 
   return(c(xmin_, xmax_, ymin_, ymax_))
 
 }
 
 # function to create appropriate bounds for sp, sf or raster object
-define_extent_sp <- function(sp_obj, offset){
-  bounds <- sf::st_bbox(sp_obj)
+define_extent_sp <- function(sp_obj, offset=NULL){
+  bounds <- sp_obj %>%
+    sf::st_bbox(.)
+
   return(define_extent_bbox(bounds, offset))
 
 }

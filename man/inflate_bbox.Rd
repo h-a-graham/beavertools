@@ -4,12 +4,14 @@
 \alias{inflate_bbox}
 \title{A function to generate an inflated bbox for input to Kernel Density function}
 \usage{
-inflate_bbox(sp_obj, value)
+inflate_bbox(sp_obj, value, wgs = TRUE)
 }
 \arguments{
 \item{sp_obj}{Either an sf object or an sf-readable file. See sf::st_drivers() for available drivers. used as the basis for the bounding box.}
 
 \item{value}{A numeric distance (in the units of the spatial object) to inflate the bounds by.}
+
+\item{wgs}{Boolean to determine if box should be defined in WGS84 CRS. default is TRUE as this plays more nicely with ggspatial...}
 }
 \value{
 object of class "bbox" containing the spatial coordinates of a bounding area

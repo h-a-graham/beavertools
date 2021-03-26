@@ -15,7 +15,7 @@
 #' @param north_arrow Boolean to include a north arrow
 #' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
 #' @param north_arrow_size numeric vector for the arrow
-#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param wgs Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
@@ -42,8 +42,10 @@
 #'
 plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgrayscale", trans_fill = TRUE, trans_type = 'log10',
                      axes_units = TRUE, scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                     wsg=FALSE, guide=TRUE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, attribute = TRUE, guide_width =NULL){
+                     wgs=TRUE, guide=TRUE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, attribute = TRUE, guide_width =NULL){
 
+  orig_crs <- sf::st_crs(kd_raster)
+  kd_raster <- raster::projectRaster(kd_raster, crs=sp::CRS(sprintf('+init=EPSG:%s',sf::st_crs(4326)$epsg)))
 
   # define extent
   set_lims <- TRUE
@@ -66,7 +68,8 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
 
   if (!is.null(catchment)){
     catchment <- check_spatial_feature(catchment, 'catchment')
-    catch_mask <- create_mask(catchment)
+    catch_mask <- create_mask(catchment)%>%
+      sf::st_transform(crs = 4326)
     p <- p + ggspatial::annotation_spatial(catch_mask, fill = "grey50", alpha=0.5)
   }
 
@@ -78,6 +81,8 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
       p <- p + ggspatial::annotation_spatial(river_sf, colour = "#5699FA", alpha=0.9, size=0.2)
     }
   } else if(class(rivers)[1] == "sf"){
+    rivers <- rivers %>%
+      sf::st_transform(crs = 4326)
     p <- p + ggspatial::annotation_spatial(rivers, colour = "#5699FA", alpha=0.9, size=0.2)
   }
 
@@ -115,15 +120,35 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
                                                                                            fill = c("black", "black")))
   }
 
-  if (isTRUE(set_lims)){
-    p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
-      ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
+  if (isTRUE(set_lims) && isTRUE(wgs)){
+    # p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
+    #   ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
 
+    p <- p + coord_sf(xlim=c(plot_extent[1], plot_extent[2]), ylim=c(plot_extent[3], plot_extent[4]),
+                      crs=sf::st_crs(kd_raster))
   }
 
+  if (isFALSE(wgs)) {
+    if (isTRUE(set_lims)) {
 
-  if (isFALSE(wsg)) {
-    p <- p + ggplot2::coord_sf(crs = sf::st_crs(kd_raster), datum =  sf::st_crs(kd_raster))
+      pe <- sf::st_bbox(plot_extent)
+      pe[[1]] <- plot_extent[1]
+      pe[[2]] <- plot_extent[3]
+      pe[[3]] <- plot_extent[2]
+      pe[[4]] <- plot_extent[4]
+
+      pe <- sf::st_as_sfc(pe) %>%
+        sf::st_set_crs(sf::st_crs(kd_raster))%>%
+        sf::st_transform(orig_crs) %>%
+        st_bbox() %>%
+        define_extent_bbox()
+
+      p <- p + ggplot2::coord_sf(xlim=c(pe[1], pe[2]), ylim=c(pe[3], pe[4]),
+                                 crs = orig_crs, datum = orig_crs)
+    } else{
+      p <- p + ggplot2::coord_sf(crs = orig_crs, datum = orig_crs)
+    }
+
   }
 
   if (isFALSE(guide)) {

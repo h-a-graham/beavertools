@@ -15,7 +15,7 @@
 #' @param north_arrow Boolean to include a north arrow
 #' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
 #' @param north_arrow_size numeric vector for the arrow
-#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param wgs Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
 #' @param guide_pos character denoting the position of the legend c('left, 'right, 'bottom', 'top)
 #' @param seed numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.
@@ -60,8 +60,13 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
                              label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
                              scalebar=TRUE, scalebar_loc = 'tl',
                              north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                             wsg=FALSE, guide=TRUE, guide_pos = "right", seed=NA, drop_act=FALSE, trans_type=NULL,
+                             wgs=TRUE, guide=TRUE, guide_pos = "right", seed=NA, drop_act=FALSE, trans_type=NULL,
                              catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
+
+  orig_crs <- sf::st_crs(terr_poly)
+
+  terr_poly <- terr_poly%>%
+    sf::st_transform(crs = 4326)
 
   # define extent
   set_lims <- TRUE
@@ -94,7 +99,9 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
 
   if (!is.null(catchment)){
     catchment <- check_spatial_feature(catchment, 'catchment')
-    catch_mask <- create_mask(catchment)
+    catch_mask <- create_mask(catchment) %>%
+      sf::st_transform(crs = 4326)
+
     p <- p + ggspatial::annotation_spatial(catch_mask, fill = "grey50", alpha=0.5)
   }
 
@@ -106,6 +113,8 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
       p <- p + ggspatial::annotation_spatial(river_sf, colour = "#5699FA", alpha=0.9, size=0.2)
     }
   } else if(class(rivers)[1] == "sf"){
+    rivers <- rivers %>%
+      sf::st_transform(crs = 4326)
     p <- p + ggspatial::annotation_spatial(rivers, colour = "#5699FA", alpha=0.9, size=0.2)
   }
 
@@ -120,7 +129,8 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
 
     if (length(weight_levs)==3){
       p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(colour=FeedCat,
-                                                                  size=!! dplyr::sym(fill_name)),alpha = 0.7) +
+                                                                  size=!! dplyr::sym(fill_name)),alpha = 0.7,
+                                inherit.aes = FALSE) +
         ggplot2::scale_colour_manual(values = c(fill_col[1],fill_col[2], fill_col[3]), breaks = (c('Low', 'Med', 'High')),
                                      labels = (c('Low', 'Med', 'High')), name='Impact level') +
         ggplot2::scale_size(range = c(weight_levs[3], weight_levs[1]),
@@ -189,10 +199,9 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
 
 
   if (isTRUE(label)){
-    p <- p + ggrepel::geom_label_repel(dplyr::filter(terr_poly, terr_status!='Activity'),
-                             mapping = aes(label = id, geometry=geometry), position =position_dodge2(width=10),
-                             arrow = arrow(length = unit(0.02, "npc"), angle = 25, type = "open", ends = "first"),
-                             force = 10, inherit.aes = F, fill=NA, seed=seed, show.legend=F,stat = "sf_coordinates")
+    p <- p + ggplot2::geom_sf_label(dplyr::filter(terr_poly, terr_status!='Activity'),
+                             mapping = aes(label = id, geometry=geometry),
+                             angle = 25, inherit.aes = F, fill='grey70', alpha=0.5,  show.legend=F)
   }
 
 
@@ -219,14 +228,35 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
   }
 
 
-  if (isTRUE(set_lims)){
-    p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
-      ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
+  if (isTRUE(set_lims) && isTRUE(wgs)){
+    # p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
+    #   ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
 
+    p <- p + coord_sf(xlim=c(plot_extent[1], plot_extent[2]), ylim=c(plot_extent[3], plot_extent[4]),
+                crs=sf::st_crs(terr_poly))
   }
 
-  if (isFALSE(wsg)) {
-    p <- p + ggplot2::coord_sf(crs = sf::st_crs(terr_poly), datum =  sf::st_crs(terr_poly))
+  if (isFALSE(wgs)) {
+    if (isTRUE(set_lims)) {
+
+      pe <- sf::st_bbox(plot_extent)
+      pe[[1]] <- plot_extent[1]
+      pe[[2]] <- plot_extent[3]
+      pe[[3]] <- plot_extent[2]
+      pe[[4]] <- plot_extent[4]
+
+      pe <- sf::st_as_sfc(pe) %>%
+        sf::st_set_crs(sf::st_crs(terr_poly))%>%
+        sf::st_transform(orig_crs) %>%
+        st_bbox() %>%
+        define_extent_bbox()
+
+      p <- p + ggplot2::coord_sf(xlim=c(pe[1], pe[2]), ylim=c(pe[3], pe[4]),
+                                 crs = orig_crs, datum = orig_crs)
+    } else{
+      p <- p + ggplot2::coord_sf(crs = orig_crs, datum = orig_crs)
+    }
+
   }
 
   if (isFALSE(guide)) {
@@ -257,7 +287,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
 #' @param north_arrow Boolean to include a north arrow
 #' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
 #' @param north_arrow_size numeric vector for the arrow
-#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param wgs Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
 #' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
 #' @return ggplot object of the territory check map.
@@ -286,19 +316,19 @@ check_auto_terr <- function(terr_poly, fill_col = c("#7EAAC7", "#F87223", "#61E2
                             basemap=FALSE, basemap_type = "osmgrayscale", axes_units = TRUE,
                             scalebar=TRUE, scalebar_loc = 'tl',
                             north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                            wsg=FALSE, guide=TRUE, plot_extent){
+                            wgs=TRUE, guide=TRUE, plot_extent){
 if (missing(plot_extent)){
   plot_territories(terr_poly=terr_poly, fill_name='terr_status', fill_col=fill_col, label=label,
                    basemap=basemap, basemap_type=basemap_type, axes_units=axes_units,
                    scalebar=scalebar, scalebar_loc=scalebar_loc,
                    north_arrow=north_arrow, north_arrow_loc=north_arrow_loc, north_arrow_size=north_arrow_size,
-                   wsg=wsg, guide=guide)
+                   wgs=wgs, guide=guide)
 } else {
   plot_territories(terr_poly=terr_poly, fill_name='terr_status', fill_col=fill_col, label=label,
                    basemap=basemap, basemap_type=basemap_type, axes_units=axes_units,
                    scalebar=scalebar, scalebar_loc=scalebar_loc,
                    north_arrow=north_arrow, north_arrow_loc=north_arrow_loc, north_arrow_size=north_arrow_size,
-                   wsg=wsg, guide=guide, plot_extent=plot_extent)
+                   wgs=wgs, guide=guide, plot_extent=plot_extent)
 }
 
 
@@ -321,7 +351,7 @@ if (missing(plot_extent)){
 #' @param north_arrow Boolean to include a north arrow
 #' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
 #' @param north_arrow_size numeric vector for the arrow
-#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param wgs Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
 #' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
 #' @return ggplot object of the territory check map.
@@ -353,19 +383,19 @@ check_user_terr <- function(terr_poly, fill_col = c("#7EAAC7", "#F87223", "#61E2
                             basemap=FALSE, basemap_type = "osmgrayscale", axes_units = TRUE,
                             scalebar=TRUE, scalebar_loc = 'tl',
                             north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                            wsg=FALSE, guide=TRUE, plot_extent){
+                            wgs=TRUE, guide=TRUE, plot_extent){
   if (missing(plot_extent)){
   plot_territories(terr_poly=terr_poly, fill_name = 'user_class', fill_col=fill_col, label=label,
                    basemap=basemap, basemap_type=basemap_type, axes_units=axes_units,
                    scalebar=scalebar, scalebar_loc=scalebar_loc,
                    north_arrow=north_arrow, north_arrow_loc=north_arrow_loc, north_arrow_size=north_arrow_size,
-                   wsg=wsg, guide=guide)
+                   wgs=wgs, guide=guide)
   } else {
     plot_territories(terr_poly=terr_poly, fill_name = 'user_class', fill_col=fill_col, label=label,
                      basemap=basemap, basemap_type=basemap_type, axes_units=axes_units,
                      scalebar=scalebar, scalebar_loc=scalebar_loc,
                      north_arrow=north_arrow, north_arrow_loc=north_arrow_loc, north_arrow_size=north_arrow_size,
-                     wsg=wsg, guide=guide, plot_extent=plot_extent)
+                     wgs=wgs, guide=guide, plot_extent=plot_extent)
 }
 
 

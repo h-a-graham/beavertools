@@ -3,7 +3,7 @@
 create_mask <- function(sf_obj){
 
     sf_obj %>%
-    sf::st_buffer(2000) %>%
+    sf::st_buffer(2500) %>%
     sf::st_bbox()%>%
     sf::st_as_sfc() %>%
     sf::st_as_sf() %>%
@@ -28,7 +28,7 @@ get_rivers <- function(catchment){
   catchment <- check_spatial_feature(catchment)
 
   catch_wgs <- catchment %>%
-    st_transform(crs = 4326)
+    sf::st_transform(crs = 4326)
 
   box <- catch_wgs %>%
     st_bbox()
@@ -41,8 +41,7 @@ get_rivers <- function(catchment){
     sf::st_union()%>%
     sf::st_transform(crs = 4326) %>%
     sf::st_sf() %>%
-    dplyr::mutate(river = 'River Network') %>%
-    sf::st_transform(crs = 27700)
+    dplyr::mutate(river = 'River Network')
 }
 
 
