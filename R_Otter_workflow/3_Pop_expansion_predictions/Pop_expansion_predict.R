@@ -6,6 +6,8 @@ library(patchwork)
 library(ggfortify)
 library(investr)
 library(colorspace)
+library(grid)
+library(gtable)
 devtools::load_all()
 
 #----- Define some directories -----------------
@@ -43,7 +45,8 @@ terr_counts <-  purrr::pmap(count_obj_list, ~get_terr_counts(..1, ..2, ..3, ..4)
   bind_rows() %>%
   mutate(year_adj = years_since + 2007) %>%
   mutate(terr_count = ifelse(season %in% c('2018 - 2019', '2019 - 2020'), terr_count+1,
-                             ifelse(season %in% c('2020 - 2021'),terr_count + 2, terr_count))) # required because
+                             ifelse(season %in% c('2020 - 2021'),terr_count + 2, terr_count))) %>% # required because some territories not correctly identified due to semi-automate process.
+  mutate(name = 'Observed Data')
 
 # reclass_terr_list[[1]] %>% # for double checking only.
 #   filter(user_class == "Territory") %>%
@@ -119,7 +122,7 @@ hacked_df %>%
   #adds mean model to plot
   stat_summary(fun = mean, geom = 'line', size=0.6, alpha=0.6, linetype=1, color="grey20") +
   # adds original data
-  geom_point(data=terr_counts, aes(x=year_adj, y=terr_count), inherit.aes = F, colour='grey5')+
+  geom_point(data=terr_counts, aes(x=year_adj, y=terr_count),fill='#FFB815', colour='black', shape=23, size=1.5)+
   # define plot style n stuff
   coord_cartesian(ylim=c(0,upper_capacity +5), xlim = c(2007, 2045))+
   labs(x = 'Year', y="Number of Territories")+
@@ -129,6 +132,7 @@ hacked_df %>%
         axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0))) +
   ggsave(file.path(plot_dir, 'TerritoryPredictionc.png'),
           dpi=300, height=7, width=7)
+
 
 # -------- pop dynamcis plots -----------
 
@@ -153,7 +157,6 @@ pop.dynams <- function(df, x_val, x_lab, leg_pos){
     facet_wrap(~mid, scales = "free")
 }
 
-
 # create stacked plot.
 long_df %>%
   pop.dynams(., 'years_since', "Years since establishment", "none")/
@@ -166,8 +169,9 @@ long_df %>%
 
 
 # ------ management impacts ----------------
-# okay let's assume that in 2025 we start removing 5 territories each year...
-
+# This function fits the new management scenarios based on the time of management start and
+# how many territories are removed each year.
+source(file.path(here::here(), 'R_Otter_workflow/3_Pop_expansion_predictions/add_general_facet_labs.R'))
 
 mgmt_scenario <- function(df, .mgmt_start, .mgmt_n_terrs) {
 
@@ -175,47 +179,37 @@ mgmt_scenario <- function(df, .mgmt_start, .mgmt_n_terrs) {
     growth_vec <- vector("double", length(nrow(df)))
 
     for (i in seq_len(nrow(df))) {
-
       if (df$year_adj[i] < mgmt_start){
         g <- round(df$.fitted[i],2)
-
       } else{
         g_rate <- df$n_terr_growth[which.min(abs(df$.fitted - g))]
-
         g <- g + g_rate - mgmt_n_terrs
       }
       growth_vec[i] <- g
     }
-
     return(tibble(mgmt_growth = growth_vec,
                   mgmt_year = mgmt_start,
                   mgmt_removed = mgmt_n_terrs) %>%
              bind_cols(df))
   }
-
   dist_func <- function(.year, .nList){
     purrr::map(.nList, ~gen_mgmt_curve(.year, .)) %>%
       bind_rows()
   }
-
   purrr::map(.mgmt_start, ~dist_func(., .mgmt_n_terrs)) %>%
-    bind_rows()%>%
-    mutate_if(is.numeric, ~replace(., .<0, NA))
-
+    bind_rows() #%>%
+    # mutate_if(is.numeric, ~replace(., .<0, NA))
 }
-
-
-
 
 mgmt_df <- hacked_df %>%
   group_by(cap_name) %>%
   group_split() %>%
-  purrr::map(., ~ mgmt_scenario(., c(2022, 2025, 2030), c(5, 7, 10, 15))) %>%
+  purrr::map(., ~ mgmt_scenario(., c(2022, 2025, 2030, 2035), c(5, 7, 10, 15))) %>%
   bind_rows()
 
 
 # create plot.
-mgmt_df %>%
+p <- mgmt_df %>%
   # filter(cap_name==115)%>%
   ggplot(., aes(x=year_adj, y=.fitted))+
 
@@ -223,26 +217,27 @@ mgmt_df %>%
   stat_summary(fun = min, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
   stat_summary(fun = max, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
   ### This gives just the lines
-  geom_line(aes(y=mgmt_growth, group=reorder(cap_name, rev(cap_name)), color=cap_name), lwd=1, alpha=0.5)+
+  geom_line(aes(y=mgmt_growth, group=reorder(cap_name, rev(cap_name)), color=cap_name), lwd=0.5, alpha=0.5)+
   scale_colour_continuous_sequential("Batlow", rev=F) +
   guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
 
   facet_grid(mgmt_removed ~ mgmt_year ) +
 
   # define plot style n stuff
-  coord_cartesian(ylim=c(0,upper_capacity +5), xlim = c(2007, 2045))+
+  coord_cartesian(ylim=c(8,upper_capacity +5), xlim = c(2007, 2045))+
   labs(x = 'Year', y="Number of Territories")+
   theme_bw() +
   theme(legend.position = "bottom",
         axis.title.y = element_text(margin = margin(t = 0, r = 3, b = 0, l = 0)),
-        axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0)))+
-  ggsave(file.path(plot_dir, 'MgmtDynamics.png'),
-         dpi=300, height=7, width=10)
+        axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0)))
 
 
+add_general_facet_labs(p, 'n territories removed each year', ' Year managment starts') %>%
+  ggsave(file.path(plot_dir, 'MgmtDynamics.png'), .,
+          dpi=300, height=7, width=10)
 
 
-
+#------ SS -----------
 # plotting option with ribbon.
 # mgmt_df %>%
 #   filter(cap_name %in% c(min(hacked_df$cap_name),max(hacked_df$cap_name))) %>%
