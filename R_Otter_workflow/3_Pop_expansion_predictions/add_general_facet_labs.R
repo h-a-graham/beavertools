@@ -20,11 +20,11 @@ add_general_facet_labs <- function(p, labelR, labelT){
   # Construct the new strip grobs
   stripR <- gTree(name = "Strip_right", children = gList(
     rectGrob(gp = gpar(col = 'black', fill = "grey85")),
-    textGrob(labelR, rot = -90, gp = gpar(fontsize = 8.8, col = "grey10"))))
+    textGrob(labelR, rot = -90, gp = gpar(fontsize = 10, col = "grey10")))) # previously 8.8
 
   stripT <- gTree(name = "Strip_top", children = gList(
     rectGrob(gp = gpar(col = 'black', fill = "grey85")),
-    textGrob(labelT, gp = gpar(fontsize = 8.8, col = "grey10"))))
+    textGrob(labelT, gp = gpar(fontsize = 10, col = "grey10")))) # previously 8.8
 
   # Position the grobs in the gtable
   z <- gtable_add_grob(z, stripR, t = min(posR$t)+1, l = max(posR$r) + 1, b = max(posR$b)+1, name = "strip-right")
