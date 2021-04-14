@@ -29,7 +29,7 @@ This examples shows a modelling approach to allow for the prediction of territor
 ![Territory Capacity Scenarios](R_Otter_workflow/2_Territory_simulations/plots/Lower_Upper_Capacity_maps.jpg)
 
 
-Now that we know the territory capacity we can begin to model the population dynamics of the catchment. For the full code workflow check out [beavertools/R_Otter_workflow](beavertools/R_Otter_workflow).
+Now that we know the territory capacity we can begin to model the population dynamics of the catchment. For the full code workflow check out [beavertools/R_Otter_workflow](R_Otter_workflow).
 
 By combining the known territory numbers over time we estimate the exponential growth of the population and then derive the logistic curve based on this, given a range of territory capacities which are used to estimate the asymptote. 
 
