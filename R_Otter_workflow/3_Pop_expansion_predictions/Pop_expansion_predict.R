@@ -105,12 +105,12 @@ hacked_df %>%
   # arrow = arrow(length = unit(0.01, "npc")), lwd=0.5, color="grey20") +
 
   ### This gives just the lines
-  geom_line(aes(group=reorder(cap_name, rev(cap_name)), color=cap_name), lwd=0.5, alpha=0.7)+
+  geom_line(aes(group=reorder(cap_name, rev(cap_name)), color=cap_name), lwd=0.5, alpha=0.9)+
   stat_summary(fun = mean, geom = 'line', size=0.6, alpha=0.6, linetype=1, color="grey20") +
   # stat_summary(fun = min, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
   # stat_summary(fun = max, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
-  scale_colour_viridis_c(option='turbo')+
-  # scale_colour_continuous_sequential("Batlow", rev=F) +
+  # scale_colour_viridis_c(option='turbo')+
+  scale_colour_continuous_sequential("Batlow", rev=F) +
   guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
 
   ## this generates the Confidence interval version (CIs are very debatable - safer to levave?)
@@ -148,8 +148,8 @@ pop.dynams <- function(df, x_val, x_lab, leg_pos){
   ggplot(df, aes(x=!! dplyr::sym(x_val) , y=mid.long , colour=cap_name))+
     # geom_ribbon(aes(ymin=lwr.long, ymax = upr.long, group=reorder(cap_name, rev(cap_name)), fill=cap_name), lwd=0.9) +
     geom_line(aes(group=c(reorder(cap_name, rev(cap_name)))), lwd=0.5, alpha=0.7) +
-    scale_colour_viridis_c(option='turbo')+
-    # scale_colour_continuous_sequential("Batlow", rev=F) +
+    # scale_colour_viridis_c(option='turbo')+
+    scale_colour_continuous_sequential("Batlow", rev=F) +
     guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
     labs(x = x_lab, y='')+
     theme_bw() +
@@ -219,8 +219,8 @@ p <- mgmt_df %>%
   stat_summary(fun = max, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
   ### This gives just the lines
   geom_line(aes(y=mgmt_growth, group=reorder(cap_name, rev(cap_name)), color=cap_name), lwd=0.5, alpha=0.5)+
-  scale_colour_viridis_c(option='turbo') +
-  # scale_colour_continuous_sequential("Batlow", rev=F) +
+  # scale_colour_viridis_c(option='turbo') +
+  scale_colour_continuous_sequential("Batlow", rev=F) +
   guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
 
   facet_grid(mgmt_removed ~ mgmt_year ) +
