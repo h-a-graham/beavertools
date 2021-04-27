@@ -149,7 +149,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
   } else if (fill_name == 'othersigns'){
     p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(colour=othersigns),alpha = 0.5,
                               size = dplyr::pull(terr_poly, p_size)[1]) +
-      ggplot2::scale_colour_manual(values = c(fill_col[1],fill_col[2]), name='Sign Type',
+      ggplot2::scale_colour_manual(values = c(fill_col[1],fill_col[2]), name='Sign type',
                                    labels = c('Dam', 'Dwelling'), breaks = c('Dam', 'Dwelling'),drop=FALSE)
 
   } else { # Now we tackle polygon requests

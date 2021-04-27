@@ -15,7 +15,7 @@ devtools::load_all()
 plot_dir <- file.path(here::here(),"R_Otter_workflow/3_Pop_expansion_predictions/plots")
 sim_dir <- file.path(here::here(),"R_Otter_workflow/2_Territory_simulations/exports")
 # ---- Read in Data Territroy count data --------------
-reclass_terr_list <- readRDS(file='R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list.Rds')
+reclass_terr_list <- readRDS(file='R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list2.Rds')
 # get unique names for survey years...
 plot_names <- unique(RivOtter_FeedSigns$SurveySeason)
 
@@ -125,13 +125,13 @@ hacked_df %>%
   # adds original data
   geom_point(data=terr_counts, aes(x=year_adj, y=terr_count), shape=21, size=2)+
   # define plot style n stuff
-  coord_cartesian(ylim=c(0,upper_capacity +5), xlim = c(2007, 2045))+
+  coord_cartesian(ylim=c(0,upper_capacity +5), xlim = c(2007, 2040))+
   labs(x = 'Year', y="Number of Territories")+
   theme_bw() +
   theme(legend.position = "bottom",
         axis.title.y = element_text(margin = margin(t = 0, r = 3, b = 0, l = 0)),
         axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0))) +
-  ggsave(file.path(plot_dir, 'TerritoryPredictionc.png'),
+  ggsave(file.path(plot_dir, 'TerritoryPredictiond.png'),
           dpi=300, height=7, width=7)
 
 
@@ -205,7 +205,7 @@ mgmt_scenario <- function(df, .mgmt_start, .mgmt_n_terrs) {
 mgmt_df <- hacked_df %>%
   group_by(cap_name) %>%
   group_split() %>%
-  purrr::map(., ~ mgmt_scenario(., c(2022, 2025, 2030, 2035), c(5, 7, 10, 15))) %>%
+  purrr::map(., ~ mgmt_scenario(., c(2022, 2025, 2035), c(5, 7, 10, 15))) %>%
   bind_rows()
 
 
@@ -226,7 +226,7 @@ p <- mgmt_df %>%
   facet_grid(mgmt_removed ~ mgmt_year ) +
 
   # define plot style n stuff
-  coord_cartesian(ylim=c(8,upper_capacity +5), xlim = c(2007, 2045))+
+  coord_cartesian(ylim=c(8,upper_capacity +5), xlim = c(2007, 2060))+
   labs(x = 'Year', y="Number of Territories")+
   theme_bw() +
   theme(legend.position = "bottom",

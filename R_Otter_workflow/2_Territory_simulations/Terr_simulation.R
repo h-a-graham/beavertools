@@ -27,7 +27,7 @@ MMRN_BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg') # MasterMa
 
 #------- Observed territory Habitat stats ----------
 # need to calculate some stats here and find out what kind of BFI values we're currently seeing on the Otter.
-terr_list <- readRDS(file=file.path(here::here(),'R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list.Rds'))
+terr_list <- readRDS(file=file.path(here::here(),'R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list2.Rds'))
 survey_years <- unique(RivOtter_FeedSigns$SurveySeason)
 source(file.path(here::here(), 'R_Otter_workflow/2_Territory_simulations/terr_BFI_df.R'))
 
@@ -36,6 +36,7 @@ Terr_df <- terr_BFI_df(terr_list, MMRN_BeavNetOtter, survey_years)
 lower_BFI <- round(min(Terr_df$mean_BFI_40m),1)
 upper_BFI <- round(mean(Terr_df$mean_BFI_40m), 1)
 
+message(sprintf("Lower BFI threshold: %s \nUpper BFI threshold: %s",lower_BFI, upper_BFI))
 
 # ---------- run terriroty generation for all reaches for each network
 run_terr_gen <- function(riv_network, overwrite=FALSE, save_out=TRUE){
@@ -83,8 +84,8 @@ run_terr_cap <- function(pot_terrs, veg, overwrite=FALSE, save_out=TRUE){
 
 RivOtter_Terrs_upper <- RivOtter_Terrs
 
-terr_cap_lowBFI <- run_terr_cap(RivOtter_Terrs, lower_BFI)
-terr_cap_uppBFI <- run_terr_cap(RivOtter_Terrs_upper, upper_BFI)
+terr_cap_lowBFI <- run_terr_cap(RivOtter_Terrs, lower_BFI, overwrite=T)
+terr_cap_uppBFI <- run_terr_cap(RivOtter_Terrs_upper, upper_BFI, overwrite=T)
 
 Terr_Cap_df <- terr_cap_lowBFI %>%
   mutate(sim=as.character(lower_BFI)) %>%
@@ -157,7 +158,7 @@ run_terr_simulation <- function(fileName, overwrite=FALSE){
 
 }
 
-sim_terr <- run_terr_simulation(file.path(export_dir, 'sim_terr.Rds'))
+sim_terr <- run_terr_simulation(file.path(export_dir, 'sim_terr.Rds'), overwrite=T)
 
 # plot simulation results... load again if needed.
 sim_terr %>%
