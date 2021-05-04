@@ -2,4 +2,5 @@
 rosm.cache
 QGIS
 run
+*.gif
 *.Rds
