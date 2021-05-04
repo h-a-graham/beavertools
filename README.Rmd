@@ -20,7 +20,7 @@ For now, here is the workflow with some images...
 
 This example shows the kernel density estimate for feeding signs and the derived (automated) territory locations and their classification. This enables us to make estimates of the number of territories present in the catchment over time.
 
-![River Otter Beaver Trial Forage Density](R_Otter_workflow/1_Feed_Sign_Mapping/maps/AnimatedFeeding.gif)
+![River Otter Beaver Trial Forage Density](man/figures/AnimatedFeeding.gif)
 
 
 This examples shows a modelling approach to allow for the prediction of territory capacity within a catchment. Here we present two maps, one from a low minimum habitat scenario and another from a high minimum habitat scenario. We then run simulations on this to estimate the possible range of territory capacity within the catchment. 
