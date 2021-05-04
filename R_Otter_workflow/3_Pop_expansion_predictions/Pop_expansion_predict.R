@@ -111,7 +111,7 @@ hacked_df %>%
   # stat_summary(fun = max, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
   # scale_colour_viridis_c(option='turbo')+
   scale_colour_continuous_sequential("Batlow", rev=F) +
-  guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
+  guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity", title.vjust=1)) +
 
   ## this generates the Confidence interval version (CIs are very debatable - safer to levave?)
   # geom_ribbon(aes(ymin=pred.lwr, ymax = pred.upr, group=reorder(cap_name, rev(cap_name)), fill=cap_name), colour=NA) +
@@ -132,7 +132,7 @@ hacked_df %>%
         axis.title.y = element_text(margin = margin(t = 0, r = 3, b = 0, l = 0)),
         axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0))) +
   ggsave(file.path(plot_dir, 'TerritoryPredictiond.png'),
-          dpi=300, height=7, width=7)
+         dpi=600, height=180, width=180, units='mm')
 
 
 # -------- pop dynamcis plots -----------
@@ -150,7 +150,7 @@ pop.dynams <- function(df, x_val, x_lab, leg_pos){
     geom_line(aes(group=c(reorder(cap_name, rev(cap_name)))), lwd=0.5, alpha=0.7) +
     # scale_colour_viridis_c(option='turbo')+
     scale_colour_continuous_sequential("Batlow", rev=F) +
-    guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
+    guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity", title.vjust=1)) +
     labs(x = x_lab, y='')+
     theme_bw() +
     theme(legend.position = leg_pos,
@@ -166,7 +166,7 @@ long_df %>%
   pop.dynams(., 'density', expression(paste("Density ", (territories/km) ^2)), "bottom") +
   theme(strip.background = element_blank(), strip.text = element_blank()) +
   ggsave(file.path(plot_dir, 'TerritoryDynamics.png'),
-         dpi=300, height=7, width=10)
+         dpi=600, height=180, width=180, units='mm')
 
 
 # ------ management impacts ----------------
@@ -221,7 +221,7 @@ p <- mgmt_df %>%
   geom_line(aes(y=mgmt_growth, group=reorder(cap_name, rev(cap_name)), color=cap_name), lwd=0.5, alpha=0.5)+
   # scale_colour_viridis_c(option='turbo') +
   scale_colour_continuous_sequential("Batlow", rev=F) +
-  guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
+  guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity", title.vjust=1)) +
 
   facet_grid(mgmt_removed ~ mgmt_year ) +
 
@@ -236,7 +236,7 @@ p <- mgmt_df %>%
 
 add_general_facet_labs(p, 'n territories removed each year', ' Year managment starts') %>%
   ggsave(file.path(plot_dir, 'MgmtDynamics.png'), .,
-          dpi=300, height=7, width=10)
+         dpi=600, height=180, width=180, units='mm')
 
 
 #------ SS -----------

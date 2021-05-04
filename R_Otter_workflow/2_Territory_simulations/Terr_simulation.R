@@ -84,8 +84,8 @@ run_terr_cap <- function(pot_terrs, veg, overwrite=FALSE, save_out=TRUE){
 
 RivOtter_Terrs_upper <- RivOtter_Terrs
 
-terr_cap_lowBFI <- run_terr_cap(RivOtter_Terrs, lower_BFI, overwrite=T)
-terr_cap_uppBFI <- run_terr_cap(RivOtter_Terrs_upper, upper_BFI, overwrite=T)
+terr_cap_lowBFI <- run_terr_cap(RivOtter_Terrs, lower_BFI, overwrite=F)
+terr_cap_uppBFI <- run_terr_cap(RivOtter_Terrs_upper, upper_BFI, overwrite=F)
 
 Terr_Cap_df <- terr_cap_lowBFI %>%
   mutate(sim=as.character(lower_BFI)) %>%
@@ -99,7 +99,7 @@ ggplot(Terr_Cap_df, aes(x=Terr_Leng, fill=sim, after_stat(count))) +
   scale_fill_brewer(palette = "Dark2")+
   theme_bw() +
   theme(legend.position = "bottom") +
-  ggsave(filename = file.path(plot_dir, 'TerritoryLengthDist.jpg'), dpi=300, height=7, width=7)
+  ggsave(filename = file.path(plot_dir, 'TerritoryLengthDist.png'), dpi=600, height=180, width=180, units='mm')
 
 # summary stats for territory length if needed
 Terr_sum_df <- Terr_Cap_df %>%
@@ -112,21 +112,21 @@ Terr_sum_df <- Terr_Cap_df %>%
 # ---------- Plot Territory Capacities for both Networks ---------
 
 capacity_plot <- function(cap_lowBFI, cap_uppBFI){
-  p1 <- plot_capacity(cap_lowBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
+  p1 <- plot_capacity(cap_uppBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
                       scalebar = F, axes_units = F, add_hillshade =F)+
-    annotate("text", x = 304000, y = 82000, size = 2.4,
+    annotate("text", x = 304000, y = 81600, size = 2.4,
              label = sprintf('n territories = %s',
-                             Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(lower_BFI)]))+
+                             Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(upper_BFI)]))+
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
 
-  p2 <- plot_capacity(cap_uppBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
+  p2 <- plot_capacity(cap_lowBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = MMRN_BeavNetOtter, plot_extent = target_ext,
                       axes_units = F, add_hillshade =F)+
-    annotate("text", x = 304000, y = 82000, size = 2.4,
+    annotate("text", x = 304000, y = 81600, size = 2.4,
              label = sprintf('n territories = %s',
-                             Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(upper_BFI)]))+
+                             Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(lower_BFI)]))+
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
 
@@ -138,7 +138,8 @@ capacity_plot <- function(cap_lowBFI, cap_uppBFI){
 }
 
 TerrCapPlot <- capacity_plot(terr_cap_lowBFI, terr_cap_uppBFI)
-ggsave(filename = file.path(plot_dir, 'Lower_Upper_Capacity_maps2.jpg'), plot=TerrCapPlot, dpi=300, height=7, width=9.5)
+ggsave(filename = file.path(plot_dir, 'Lower_Upper_Capacity_maps.png'), plot=TerrCapPlot,
+       dpi=300, height=138, width=180, units='mm')
 
 
 # ------- Run Territory simulation based on the desired upper and lower  minimum BFI requirements. -----------
@@ -154,11 +155,12 @@ run_terr_simulation <- function(fileName, overwrite=FALSE){
   sim_terr <- sim_terr_cap(MMRN_BeavNetOtter, n_p_terr_sim=100, n_hab_sim=2, min_veg = c(lower_BFI, upper_BFI))
   saveRDS(sim_terr, fileName)
   Sys.time()-t1
+  return(sim_terr)
   }
 
 }
 
-sim_terr <- run_terr_simulation(file.path(export_dir, 'sim_terr.Rds'), overwrite=T)
+sim_terr <- run_terr_simulation(file.path(export_dir, 'sim_terr.Rds'), overwrite=F)
 
 # plot simulation results... load again if needed.
 sim_terr %>%
@@ -171,7 +173,7 @@ sim_terr %>%
   coord_cartesian(y=c(100,200))+
   labs(y= "n territories", x = 'Beaver Forage Index (BFI) Value') +
   theme_bw() +
-  ggsave(filename = file.path(plot_dir, 'SimulationResults1.jpg'), dpi=300, height=7, width=7)
+  ggsave(filename = file.path(plot_dir, 'SimulationResults1.png'), dpi=600, height=180, width=180, units='mm')
 
 # quick summary to retrieve the highest and lowest possible capacity values.
 sim_terr %>%

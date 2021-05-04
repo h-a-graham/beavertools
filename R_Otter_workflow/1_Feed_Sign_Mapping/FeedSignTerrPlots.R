@@ -50,7 +50,7 @@ Otter_fs_list <- RivOtter_FeedSigns %>%
 
 feed_panel <- Otter_fs_list %>%
   purrr::map2(.x=., .y= plot_names,  ~fs_ggplot(.x, .y))%>%
-  panel_plot(., guide=TRUE, n_col = 2) %>%
+  panel_plot(., guide=TRUE, n_col = 4) %>%
   ggsave('R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterFeedSigns.png',plot = .,
          dpi=300, height=152, width=180, units='mm')
 
