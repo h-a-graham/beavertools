@@ -20,6 +20,11 @@ terr_BFI_df <- function(t_list, BeavNet, survey_names){
       bind_cols(obs_terr,.)
   }
 
+  safe_hab_stats <- function(obs_terr, network){
+    f = purrr::safely(function() hab_stats(obs_terr=obs_terr, network=network))
+    f()$result
+  }
+
 
   CleanNcall <- function(Terrs, surv_name, net){
     Terrs%>%
@@ -27,7 +32,7 @@ terr_BFI_df <- function(t_list, BeavNet, survey_names){
       mutate(id = row_number())%>%
       group_by(id) %>%
       group_split() %>%
-      purrr::map(., ~hab_stats(., net)) %>%
+      purrr::map(., ~safe_hab_stats(., net)) %>%
       bind_rows() %>%
       mutate(survey_year = surv_name)
   }
@@ -37,3 +42,6 @@ terr_BFI_df <- function(t_list, BeavNet, survey_names){
     bind_rows()
 
 }
+
+
+

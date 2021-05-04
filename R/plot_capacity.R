@@ -17,7 +17,7 @@
 #' @param north_arrow Boolean to include a north arrow
 #' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
 #' @param north_arrow_size numeric vector for the arrow
-#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param wgs Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
@@ -49,12 +49,20 @@
 #'
 plot_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap=TRUE, basemap_type = "osmgrayscale",  axes_units = TRUE,
                           scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                          wsg=FALSE, guide=FALSE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, terr_colours = NULL){
+                          wgs=FALSE, guide=FALSE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, terr_colours = NULL){
 
   if (buffer > 0){
     terr_capacity <- terr_capacity %>%
       sf::st_buffer(., buffer, endCapStyle='FLAT')
   }
+
+  orig_crs <- sf::st_crs(terr_capacity)
+
+  terr_capacity <- terr_capacity %>%
+    sf::st_transform(crs = 4326)
+
+
+
 
   if (!is.null(river_net)){
     river_net <- check_spatial_feature(river_net, 'catchment')
@@ -130,16 +138,48 @@ plot_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap=TR
                                                                                     fill = c("black", "black")))
   }
 
-  if (isTRUE(set_lims)){
-    p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
-      ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
+  # if (isTRUE(set_lims)){
+  #   p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
+  #     ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
+  #
+  # }
+  #
+  #
+  # if (isFALSE(wgs)) {
+  #   p <- p + ggplot2::coord_sf(crs = sf::st_crs(terr_capacity), datum =  sf::st_crs(terr_capacity))
+  # }
+
+  if (isTRUE(set_lims) && isTRUE(wgs)){
+    # p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
+    #   ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
+
+    p <- p + coord_sf(xlim=c(plot_extent[1], plot_extent[2]), ylim=c(plot_extent[3], plot_extent[4]),
+                      crs=sf::st_crs(terr_capacity))
+  }
+
+  if (isFALSE(wgs)) {
+    if (isTRUE(set_lims)) {
+
+      pe <- sf::st_bbox(plot_extent)
+      pe[[1]] <- plot_extent[1]
+      pe[[2]] <- plot_extent[3]
+      pe[[3]] <- plot_extent[2]
+      pe[[4]] <- plot_extent[4]
+
+      pe <- sf::st_as_sfc(pe) %>%
+        sf::st_set_crs(sf::st_crs(terr_capacity))%>%
+        sf::st_transform(orig_crs) %>%
+        st_bbox() %>%
+        define_extent_bbox()
+
+      p <- p + ggplot2::coord_sf(xlim=c(pe[1], pe[2]), ylim=c(pe[3], pe[4]),
+                                 crs = orig_crs, datum = orig_crs)
+    } else{
+      p <- p + ggplot2::coord_sf(crs = orig_crs, datum = orig_crs)
+    }
 
   }
 
-
-  if (isFALSE(wsg)) {
-    p <- p + ggplot2::coord_sf(crs = sf::st_crs(terr_capacity), datum =  sf::st_crs(terr_capacity))
-  }
 
   if (isFALSE(guide)) {
     p <- p + ggplot2::guides(fill=FALSE)

@@ -71,7 +71,7 @@ estimate_territories <- function(forage_raster, confirm_signs, low_thresh = 0, u
                                          'Yes', 'No')) %>%
     dplyr::mutate(terr_status = ifelse(Upper_Thresh=='Yes' & Confirm_signs=='Yes', 'Territory',
                                        ifelse(Upper_Thresh=='Yes' & Confirm_signs=='No', 'Possible',
-                                              ifelse(Upper_Thresh=='No' & Confirm_signs=='Yes', 'Possible',
+                                              ifelse(Upper_Thresh=='No' & Confirm_signs=='Yes', 'Territory',
                                                      'Activity')))) %>%
     dplyr::mutate(mean_fd = exactextractr::exact_extract(forage_raster, ., 'mean', progress =F))%>%
     dplyr::mutate(sum_fd = exactextractr::exact_extract(forage_raster, ., 'sum', progress =F)) %>%

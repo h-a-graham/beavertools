@@ -93,7 +93,7 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
 
   if (isTRUE(trans_fill)){
     p <- p + ggplot2::scale_fill_viridis_c(na.value = NA, name= sprintf('%s Forage Density', trans_type), trans=trans_type,
-                                           n.breaks=3)
+                                           n.breaks=2)
   } else {
     p <- p + ggplot2::scale_fill_viridis_c(na.value = NA, name='Forage Density')
   }

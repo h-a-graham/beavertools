@@ -14,7 +14,7 @@ enables us to make estimates of the number of territories present in the
 catchment over time.
 
 ![River Otter Beaver Trial Forage
-Density](man/figures/Otter_comb_test1.gif)
+Density](R_Otter_workflow/1_Feed_Sign_Mapping/maps/AnimatedFeeding.gif)
 
 This examples shows a modelling approach to allow for the prediction of
 territory capacity within a catchment. Here we present two maps, one
@@ -23,7 +23,7 @@ habitat scenario. We then run simulations on this to estimate the
 possible range of territory capacity within the catchment.
 
 ![Territory Capacity
-Scenarios](R_Otter_workflow/2_Territory_simulations/plots/Lower_Upper_Capacity_maps.jpg)
+Scenarios](R_Otter_workflow/2_Territory_simulations/plots/Lower_Upper_Capacity_maps.png)
 
 Now that we know the territory capacity we can begin to model the
 population dynamics of the catchment. For the full code workflow check
@@ -35,7 +35,7 @@ based on this, given a range of territory capacities which are used to
 estimate the asymptote.
 
 ![Population Growth
-curve](R_Otter_workflow/3_Pop_expansion_predictions/plots/TerritoryPredictionc.png)
+curve](R_Otter_workflow/3_Pop_expansion_predictions/plots/TerritoryPredictiond.png)
 
 We can then dive into this a bit more and consider how the rate/absolute
 growth changes with time and population density…
