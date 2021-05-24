@@ -8,8 +8,8 @@ library(investr)
 library(colorspace)
 library(grid)
 library(gtable)
-devtools::load_all()
-
+# devtools::load_all()
+library(beavertools)
 #----- Define some directories -----------------
 
 plot_dir <- file.path(here::here(),"R_Otter_workflow/3_Pop_expansion_predictions/plots")
@@ -134,6 +134,20 @@ hacked_df %>%
   ggsave(file.path(plot_dir, 'TerritoryPredictiond.png'),
          dpi=600, height=180, width=180, units='mm')
 
+
+get_max_row <- function(.df){
+  .df %>%
+    arrange(.fitted)
+}
+
+# summary to show the earliest and latest that capacity will be met.
+hacked_df %>%
+  mutate(round_fit = round(.fitted)) %>%
+  group_by(cap_name)%>%
+  distinct(round_fit, .keep_all=TRUE)%>%
+  top_n(1, wt=(.fitted)) %>%
+  ungroup()%>%
+  summarise(min = min(year_adj), max= max(year_adj))
 
 # -------- pop dynamcis plots -----------
 

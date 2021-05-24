@@ -59,6 +59,17 @@ run_terr_gen <- function(riv_network, overwrite=FALSE, save_out=TRUE){
 
 RivOtter_Terrs <- run_terr_gen(MMRN_BeavNetOtter)
 
+(nrow(MMRN_BeavNetOtter) - nrow(RivOtter_Terrs))/nrow(MMRN_BeavNetOtter)*100
+
+# terrs_union <- sf::st_union(MMRN_BeavNetOtter) %>%
+#   st_as_sf()
+
+#plot to check that whole network is cvered by the theoretical territories.
+# ggplot()+
+#   geom_sf(MMRN_BeavNetOtter, mapping= aes(), colour='red')+
+#   geom_sf(terrs_union, mapping= aes(), colour='blue') +
+#
+#   theme_bw()
 
 # ggplot(RivOtter_Terrs, aes(x=Terr_Leng))+
 #   geom_density()
