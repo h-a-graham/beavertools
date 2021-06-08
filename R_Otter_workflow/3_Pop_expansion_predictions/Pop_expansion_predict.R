@@ -182,6 +182,12 @@ long_df %>%
   ggsave(file.path(plot_dir, 'TerritoryDynamics.png'),
          dpi=600, height=180, width=180, units='mm')
 
+# stats for paper:
+long_df %>%
+  filter(cap_name %in% c(120, 183)) %>%
+  group_by(cap_name) %>%
+  summarise(max_den = last(density))
+
 
 # ------ management impacts ----------------
 # This function fits the new management scenarios based on the time of management start and
@@ -195,7 +201,8 @@ mgmt_scenario <- function(df, .mgmt_start, .mgmt_n_terrs) {
 
     for (i in seq_len(nrow(df))) {
       if (df$year_adj[i] < mgmt_start){
-        g <- round(df$.fitted[i],2)
+        # g <- round(df$.fitted[i],6)
+        g <- df$.fitted[i]
       } else{
         g_rate <- df$n_terr_growth[which.min(abs(df$.fitted - g))]
         g <- g + g_rate - mgmt_n_terrs
@@ -222,6 +229,16 @@ mgmt_df <- hacked_df %>%
   purrr::map(., ~ mgmt_scenario(., c(2022, 2025, 2035), c(5, 7, 10, 15))) %>%
   bind_rows()
 
+# sum stats for paper:
+mgmt_df %>%
+  # filter(mgmt_year %in% c(2022, 2025, 2035)) %>%
+  filter(mgmt_removed == 5 | mgmt_removed == 7) %>%
+  filter(cap_name == 120 |cap_name == 183) %>%
+  group_by(mgmt_year, mgmt_removed, cap_name) %>%
+  summarise(mgmt_cap = last(mgmt_growth), max_cap = last(.fitted)) %>%
+  mutate(perc_decline = (max_cap-mgmt_cap)/max_cap*100)
+
+(120-106)/120*100
 
 # create plot.
 p <- mgmt_df %>%

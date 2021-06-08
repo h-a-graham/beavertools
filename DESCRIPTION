@@ -1,12 +1,12 @@
 Package: beavertools
 Title: Tools to monitor the expansion of beaver populations and predict future territory capacity.
-Version: 0.0.0.9000
+Version: 0.0.1.0
 Authors@R: 
     person(given = "Hugh",
            family = "Graham",
            role = c("aut", "cre"),
            email = "hugh.a.graham@gmail.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "https://orcid.org/0000-0001-9451-5010"))
 Description: The selection of tools presented in this package provide: i) a range of analytical tools to quantify and map the distribution of beavers across a given catchment; ii) Functions to estimate the number of territories that exist in a catchment based off field-sign surveys; iii) Experimental functions to generate spatially explicit predictions of the maximum number of beaver territories that can be supported within a given catchment based on available resources and the available space.
 License: GPL-3
 Encoding: UTF-8
@@ -35,3 +35,4 @@ Imports:
     gridExtra,
     ggpubr,
     exactextractr
+URL: https://github.com/h-a-graham/beavertools
