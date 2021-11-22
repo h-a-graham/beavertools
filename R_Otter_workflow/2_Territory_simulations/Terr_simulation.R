@@ -174,7 +174,7 @@ run_terr_simulation <- function(fileName, overwrite=FALSE){
 sim_terr <- run_terr_simulation(file.path(export_dir, 'sim_terr.Rds'), overwrite=F)
 
 # plot simulation results... load again if needed.
-sim_terr %>%
+st <- sim_terr %>%
   mutate(min_BFI_c = as.character(min_BFI)) %>%
   ggplot(., aes(x=min_BFI_c, y=n, fill=min_BFI_c)) +
   geom_point(shape = 21, alpha = 0.7,position = position_jitterdodge(
@@ -183,8 +183,16 @@ sim_terr %>%
   scale_fill_brewer(palette = "Dark2", ) +
   coord_cartesian(y=c(100,200))+
   labs(y= "n territories", x = 'Beaver Forage Index (BFI) Value') +
-  theme_bw() +
-  ggsave(filename = file.path(plot_dir, 'SimulationResults1.png'), dpi=600, height=180, width=180, units='mm')
+  theme_bw()
+
+ggsave(st, filename = file.path(plot_dir, 'SimulationResults1.png'), dpi=600, height=180, width=180, units='mm')
+
+
+sim_terr %>%
+  sf::st_drop_geometry() %>%
+  group_by(min_BFI) %>%
+  summarise(.mean=mean(n), .stdev=sd(n),
+            .min=min(n), .max=max(n))
 
 # quick summary to retrieve the highest and lowest possible capacity values.
 sim_terr %>%

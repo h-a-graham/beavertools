@@ -60,13 +60,15 @@ years_since_release <- c(8:14)
 get_terr_counts <- function(terr_map, .season, .year, .ysr){
   terr_map %>%
     dplyr::filter(user_class == 'Territory') %>%
-    summarise(n = n(), season= .season, year = .year, years_since = .ysr)
+    summarise(n = dplyr::n(), season= .season, year = .year, years_since = .ysr)
 
 }
 
 count_obj_list <- list(terr_list, survey_years, date_list, years_since_release)
 terr_counts <-  purrr::pmap(count_obj_list, ~get_terr_counts(..1, ..2, ..3, ..4)) %>%
   bind_rows() %>%
+  st_drop_geometry() %>%
+  tibble() %>%
   mutate(year_adj = years_since + 2007) %>%
   mutate(n = ifelse(season %in% c('2018 - 2019', '2019 - 2020'), n+1,
                              ifelse(season %in% c('2020 - 2021'),n + 2, n))) %>% # required because some territories not correctly identified due to semi-automate process.
@@ -79,3 +81,13 @@ p5 <- p1/ (p2 | p4)
 
 ggsave(filename = file.path(here(), 'R_Otter_workflow/4_summ_stats/plots/feeding_Terr_trends.png'), plot=p5,
        dpi=300, height=152, width=180, units='mm')
+
+
+# calc densities...
+
+MMRN_BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg') # MasterMap Data
+
+chan_leng <- as.numeric(sum(sf::st_length(MMRN_BeavNetOtter)))/1000
+
+message(sprintf('areal density range is: %s - %s', round(120/chan_leng,2), round(183/chan_leng, 2)))
+
