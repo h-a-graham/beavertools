@@ -14,7 +14,7 @@ enables us to make estimates of the number of territories present in the
 catchment over time.
 
 ![River Otter Beaver Trial Forage
-Density](R_Otter_workflow/1_Feed_Sign_Mapping/maps/AnimatedFeeding.gif)
+Density](man/figures/AnimatedFeeding.gif)
 
 This examples shows a modelling approach to allow for the prediction of
 territory capacity within a catchment. Here we present two maps, one
@@ -27,7 +27,7 @@ Scenarios](R_Otter_workflow/2_Territory_simulations/plots/Lower_Upper_Capacity_m
 
 Now that we know the territory capacity we can begin to model the
 population dynamics of the catchment. For the full code workflow check
-out [beavertools/R\_Otter\_workflow](R_Otter_workflow).
+out [beavertools/R_Otter_workflow](R_Otter_workflow).
 
 By combining the known territory numbers over time we estimate the
 exponential growth of the population and then derive the logistic curve
