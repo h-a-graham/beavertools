@@ -42,7 +42,8 @@
 #'
 plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgrayscale", trans_fill = TRUE, trans_type = 'log10',
                      axes_units = TRUE, scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                     wgs=TRUE, guide=TRUE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, attribute = TRUE, guide_width =NULL){
+                     wgs=TRUE, guide=TRUE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, attribute = TRUE, guide_width =NULL,
+                     mask_fill="grey50"){
 
   orig_crs <- sf::st_crs(kd_raster)
   kd_raster <- raster::projectRaster(kd_raster, crs=sp::CRS(sprintf('+init=EPSG:%s',sf::st_crs(4326)$epsg)))
@@ -70,7 +71,7 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
     catchment <- check_spatial_feature(catchment, 'catchment')
     catch_mask <- create_mask(catchment)%>%
       sf::st_transform(crs = 4326)
-    p <- p + ggspatial::annotation_spatial(catch_mask, fill = "grey50", alpha=0.5)
+    p <- p + ggspatial::annotation_spatial(catch_mask, fill = mask_fill, alpha=0.5)
   }
 
   if (isTRUE(rivers)){

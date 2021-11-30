@@ -17,7 +17,9 @@ sim_dir <- file.path(here::here(),"R_Otter_workflow/2_Territory_simulations/expo
 # ---- Read in Data Territroy count data --------------
 reclass_terr_list <- readRDS(file='R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list2.Rds')
 # get unique names for survey years...
-plot_names <- unique(RivOtter_FeedSigns$SurveySeason)
+plot_names <- RivOtter_FeedSigns %>%
+  filter(SurveySeason!= "Pre 2015") %>%
+  pull(SurveySeason) %>% unique()
 
 # What is the capacity of the catchment? WILL NEED UPDATING WITH RANGES ETC WHEN SIMULATIONS ARE DONE.
 cap_limits <- read_rds(file.path(sim_dir, 'sim_terr.Rds')) %>%
@@ -28,11 +30,15 @@ lower_capacity <- cap_limits$lowest
 upper_capacity <- cap_limits$highest
 
 #  ------- set up dataframe for observed territory counts... -------
-date_list <- lubridate::dmy(c("30-12-2014", "30-12-2015", "30-12-2016",
+# date_list <- lubridate::dmy(c("30-12-2014", "30-12-2015", "30-12-2016",
+#                               "30-12-2017", "30-12-2018", "30-12-2019",
+#                               "30-12-2020"))
+# years_since_release <- c(8:14)
+date_list <- lubridate::dmy(c("30-12-2015", "30-12-2016",
                               "30-12-2017", "30-12-2018", "30-12-2019",
                               "30-12-2020"))
-years_since_release <- c(8:14)
-
+years_since_release <- c(9:14)
+# years_since_release <- c(1:6)
 get_terr_counts <- function(terr_map, .season, .year, .ysr){
   terr_map %>%
     dplyr::filter(user_class == 'Territory') %>%
@@ -43,7 +49,7 @@ get_terr_counts <- function(terr_map, .season, .year, .ysr){
 count_obj_list <- list(reclass_terr_list, plot_names, date_list, years_since_release)
 terr_counts <-  purrr::pmap(count_obj_list, ~get_terr_counts(..1, ..2, ..3, ..4)) %>%
   bind_rows() %>%
-  mutate(year_adj = years_since + 2007) %>%
+  mutate(year_adj = years_since + 2007) %>% #2007
   mutate(terr_count = ifelse(season %in% c('2018 - 2019', '2019 - 2020'), terr_count+1,
                              ifelse(season %in% c('2020 - 2021'),terr_count + 2, terr_count))) %>% # required because some territories not correctly identified due to semi-automate process.
   mutate(name = 'Observed Data')
@@ -80,7 +86,7 @@ source(file.path(here::here(),"R_Otter_workflow/3_Pop_expansion_predictions", 'l
 
 # generate logistic models...
 hacked_df <-  seq(lower_capacity, upper_capacity, by=1) %>%
-  purrr::map(., ~logistic_growth(., .logmodel)) %>%
+  purrr::map(., ~logistic_growth(., .logmodel, st.date=2007)) %>%
   bind_rows()
 
 # function to create capcity ribbon for plot.
@@ -129,13 +135,13 @@ geom_ribbon(aes(ymin=pred.lwr, ymax = pred.upr,
   geom_point(data=terr_counts, aes(x=year_adj, y=terr_count), shape=21, size=1.5,
              stroke = 1.2)+
   # define plot style n stuff
-  coord_cartesian(ylim=c(0,upper_capacity +5), xlim = c(2007, 2045))+
+  coord_cartesian(ylim=c(0,upper_capacity +5), xlim = c(2015, 2045))+
   labs(x = 'Year', y="Number of Territories")+
   theme_bw() +
   theme(legend.position = "bottom",
         axis.title.y = element_text(margin = margin(t = 0, r = 3, b = 0, l = 0)),
         axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0))) #+
-  ggsave(file.path(plot_dir, 'TerritoryPredictiond.png'),
+  ggsave(file.path(plot_dir, 'TerritoryPredictiond2.png'),
          dpi=600, height=180, width=180, units='mm')
 
 
@@ -219,7 +225,7 @@ pop.dynams <- function(df, x_val, x_lab, leg_pos){
 # create stacked plot.
 pop_dyn_plot1 <- long_df %>%
   pop.dynams(., 'years_since', "Years since establishment", "none")+
-  coord_cartesian( xlim = c(0, 45))
+  coord_cartesian( xlim = c(9, 45))
 pop_dyn_plot2 <-long_df %>%
   pop.dynams(., 'density', expression(paste("Density ", (territories/km) ^2)), "bottom") +
   theme(strip.background = element_blank(), strip.text = element_blank())
@@ -286,7 +292,7 @@ mgmt_scenario <- function(df, .mgmt_start, .mgmt_n_terrs) {
 mgmt_df <- hacked_df %>%
   group_by(cap_name) %>%
   group_split() %>%
-  purrr::map(., ~ mgmt_scenario(., c(2022, 2026, 2030), c(3, 5, 10, 12))) %>%
+  purrr::map(., ~ mgmt_scenario(., c(2022, 2026, 2030), c(2, 3, 5, 8))) %>%
   bind_rows()
 
 # sum stats for paper:
@@ -298,7 +304,7 @@ mgmt_df %>%
   summarise(mgmt_cap = last(mgmt_growth), max_cap = last(.fitted)) %>%
   mutate(perc_decline = (max_cap-mgmt_cap)/max_cap*100)
 
-(120-106)/120*100###???
+# (120-106)/120*100###???
 
 # create plot.
 mgmt_plot <- function(df){
@@ -329,7 +335,7 @@ mgmt_plot <- function(df){
     facet_grid(mgmt_removed ~ mgmt_year ) +
 
     # define plot style n stuff
-    coord_cartesian(ylim=c(8,upper_capacity +5), xlim = c(2007, 2060))+
+    coord_cartesian(ylim=c(8,upper_capacity +5), xlim = c(2015, 2060))+
     labs(x = 'Year', y="Number of Territories")+
     theme_bw() +
     theme(legend.position = "bottom",
@@ -347,8 +353,8 @@ add_general_facet_labs(mgmt_p, 'n territories removed each year', ' Year managme
 mgmt_df_big <- hacked_df %>%
   group_by(cap_name) %>%
   group_split() %>%
-  purrr::map(., ~ mgmt_scenario(., seq(2022, 2036, by=2),
-                                seq(1, 13, by=2))) %>%
+  purrr::map(., ~ mgmt_scenario(., seq(2022, 2030, by=2),
+                                seq(2, 14, by=2))) %>%
   bind_rows()
 
 mgmt_p_matrix <- mgmt_plot(mgmt_df_big) +

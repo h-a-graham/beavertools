@@ -61,7 +61,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
                              scalebar=TRUE, scalebar_loc = 'tl',
                              north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
                              wgs=TRUE, guide=TRUE, guide_pos = "right", seed=NA, drop_act=FALSE, trans_type=NULL,
-                             catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
+                             catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, mask_fill="grey50"){
 
   orig_crs <- sf::st_crs(terr_poly)
 
@@ -102,7 +102,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
     catch_mask <- create_mask(catchment) %>%
       sf::st_transform(crs = 4326)
 
-    p <- p + ggspatial::annotation_spatial(catch_mask, fill = "grey50", alpha=0.5)
+    p <- p + ggspatial::annotation_spatial(catch_mask, fill = mask_fill, alpha=0.5)
   }
 
   if (isTRUE(rivers)){
@@ -154,18 +154,26 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
 
   } else { # Now we tackle polygon requests
 
+    # terr_poly <- terr_poly #%>%
+      # dplyr::mutate(!!dplyr::sym(fill_name) = as.factor(!!dplyr::sym(fill_name)))
+
     p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(fill=!! dplyr::sym(fill_name)),alpha = 0.7, lwd=0.3)
 
 
     if (fill_name %in% c('terr_status', 'user_class')) {
+
+
       if(fill_name=='terr_status'){
         leg_tit <- 'Auto territory status'
       } else {
         leg_tit <- 'User territory status'
       }
-      p <- p + ggplot2::scale_fill_manual(values = c(fill_col[1],fill_col[2], fill_col[3]),
-                                          limits = levels(c('Activity', 'Possible', 'Territory')),
-                                          name=leg_tit)
+      p <- p + ggplot2::scale_fill_manual(values = c('Activity' = fill_col[1],
+                                                     'Possible'= fill_col[2],
+                                                     'Territory' = fill_col[3]),
+                                          # limits = levels(c('Activity', 'Possible', 'Territory')),
+                                          # labels = c('Activity', 'Possible', 'Territory'),
+                                          name=leg_tit, drop=F)
     } else if(fill_name == 'mean_fd') {
       if (is.null(trans_type)){
         p <- p + ggplot2::scale_fill_viridis_c(name= 'Mean Forage Density')

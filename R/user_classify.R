@@ -38,11 +38,11 @@ user_classify <- function(territory_poly, territory=NULL, possible=NULL, activit
   }
 
   territory_poly %>%
-    dplyr::mutate(user_class = terr_status) %>%
-    dplyr::mutate(user_class = ifelse(id %in% territory, 'Territory',
+    # dplyr::mutate(user_class = terr_status) %>%
+    dplyr::mutate(user_class = as.factor(ifelse(id %in% territory, 'Territory',
                                       ifelse(id %in% possible, 'Possible',
                                              ifelse(id %in% activity, 'Activity',
-                                                    terr_status)))) %>%
+                                                    as.character(terr_status)))))) %>%
     dplyr::relocate(user_class, .after = terr_status)
 
 

@@ -49,7 +49,8 @@
 #'
 plot_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap=TRUE, basemap_type = "osmgrayscale",  axes_units = TRUE,
                           scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                          wgs=FALSE, guide=FALSE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, terr_colours = NULL){
+                          wgs=FALSE, guide=FALSE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, terr_colours = NULL,
+                          mask_fill='grey50'){
 
   if (buffer > 0){
     terr_capacity <- terr_capacity %>%
@@ -90,7 +91,7 @@ plot_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap=TR
   if (!is.null(catchment)){
     catchment <- check_spatial_feature(catchment, 'catchment')
     catch_mask <- create_mask(catchment)
-    p <- p + ggspatial::annotation_spatial(catch_mask, fill = "grey50", alpha=0.5)
+    p <- p + ggspatial::annotation_spatial(catch_mask, fill = mask_fill, alpha=0.5)
   }
 
 

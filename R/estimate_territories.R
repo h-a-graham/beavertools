@@ -65,14 +65,14 @@ estimate_territories <- function(forage_raster, confirm_signs, low_thresh = 0, u
 
   forage_poly <- poly_list[[1]] %>%
     dplyr::mutate(id = forcats::as_factor(dplyr::row_number())) %>%
-    dplyr::mutate(Upper_Thresh = ifelse(id %in% unlist(st_intersects(poly_list[[2]], poly_list[[1]])),
-                                        'Yes', 'No')) %>%
-    dplyr::mutate(Confirm_signs = ifelse(id %in% unlist(st_intersects(confirm_signs, poly_list[[1]])),
-                                         'Yes', 'No')) %>%
-    dplyr::mutate(terr_status = ifelse(Upper_Thresh=='Yes' & Confirm_signs=='Yes', 'Territory',
+    dplyr::mutate(Upper_Thresh = as.factor(ifelse(id %in% unlist(st_intersects(poly_list[[2]], poly_list[[1]])),
+                                        'Yes', 'No'))) %>%
+    dplyr::mutate(Confirm_signs = as.factor(ifelse(id %in% unlist(st_intersects(confirm_signs, poly_list[[1]])),
+                                         'Yes', 'No'))) %>%
+    dplyr::mutate(terr_status = as.factor(ifelse(Upper_Thresh=='Yes' & Confirm_signs=='Yes', 'Territory',
                                        ifelse(Upper_Thresh=='Yes' & Confirm_signs=='No', 'Possible',
                                               ifelse(Upper_Thresh=='No' & Confirm_signs=='Yes', 'Territory',
-                                                     'Activity')))) %>%
+                                                     'Activity'))))) %>%
     dplyr::mutate(mean_fd = exactextractr::exact_extract(forage_raster, ., 'mean', progress =F))%>%
     dplyr::mutate(sum_fd = exactextractr::exact_extract(forage_raster, ., 'sum', progress =F)) %>%
     dplyr::rename(geometry = x)

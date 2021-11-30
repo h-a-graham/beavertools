@@ -48,7 +48,7 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
                              scalebar=TRUE, scalebar_loc = 'tl',
                              north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
                              wgs=TRUE, guide=TRUE, guide_pos = "bottom", seed=NA, drop_act=FALSE, trans_type=NULL,
-                             catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
+                             catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, mask_fill='grey50'){
 
   if (length(weight_aes)==1){
     weight_aes <- c(weight_aes,weight_aes,weight_aes)
@@ -60,7 +60,7 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
         dplyr::mutate(FeedCat = forcats::fct_relevel(FeedCat, 'High', 'Med', 'Low')) %>%
         plot_territories(., 'feedsigns', fill_col, label, basemap, basemap_type, axes_units,
                          scalebar, scalebar_loc, north_arrow, north_arrow_loc, north_arrow_size,
-                         wgs, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent)
+                         wgs, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent, mask_fill)
 
 }
 
@@ -113,7 +113,7 @@ plot_other_signs <- function(beav_points, size = 2.5, fill_col = c("#e41a1c", "#
                          scalebar=TRUE, scalebar_loc = 'tl',
                          north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
                          wgs=TRUE, guide=TRUE, guide_pos = "bottom", seed=NA, drop_act=FALSE, trans_type=NULL,
-                         catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL){
+                         catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, mask_fill='grey50'){
 
   beav_points %>%
     mutate(SignType = as.character(SignType)) %>%
@@ -123,7 +123,7 @@ plot_other_signs <- function(beav_points, size = 2.5, fill_col = c("#e41a1c", "#
     dplyr::mutate(p_size = size) %>%
     plot_territories(., 'othersigns', fill_col, label, basemap, basemap_type, axes_units,
                      scalebar, scalebar_loc, north_arrow, north_arrow_loc, north_arrow_size,
-                     wgs, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent)
+                     wgs, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent, mask_fill)
 
 }
 

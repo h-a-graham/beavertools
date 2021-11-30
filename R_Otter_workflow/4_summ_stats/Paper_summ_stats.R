@@ -8,13 +8,13 @@ library(here)
 
 # n feeding signs:
 n_signs <- RivOtter_FeedSigns %>%
-  mutate(year = ifelse(SurveySeason=='Pre 2015', 2015,
-                       ifelse(SurveySeason=='2015 - 2016' , 2016,
+  filter(SurveySeason!= "Pre 2015") %>%
+  mutate(year = ifelse(SurveySeason=='2015 - 2016' , 2016,
                               ifelse(SurveySeason== '2016 - 2017', 2017,
                                      ifelse(SurveySeason== '2017 - 2018', 2018,
                                             ifelse(SurveySeason== '2018 - 2019', 2019,
                                                    ifelse(SurveySeason== '2019 - 2020', 2020,
-                                                          2021))))))) %>%
+                                                          2021)))))) %>%
   group_by(year, FeedCat)%>%
   summarise(n =n()) %>%
   mutate(FeedCat = ifelse(FeedCat=='Low', 'Low effort',
@@ -50,12 +50,14 @@ ggsave(filename = file.path(here(), 'R_Otter_workflow/4_summ_stats/plots/feeding
 # territory counts.
 
 terr_list <- readRDS(file=file.path(here::here(),'R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list2.Rds'))
-survey_years <- unique(RivOtter_FeedSigns$SurveySeason)
+survey_years <- RivOtter_FeedSigns %>%
+  filter(SurveySeason!= "Pre 2015") %>%
+  pull(SurveySeason) %>% unique()
 
-date_list <- lubridate::dmy(c("30-12-2014", "30-12-2015", "30-12-2016",
+date_list <- lubridate::dmy(c("30-12-2015", "30-12-2016",
                               "30-12-2017", "30-12-2018", "30-12-2019",
                               "30-12-2020"))
-years_since_release <- c(8:14)
+years_since_release <- c(9:14)
 
 get_terr_counts <- function(terr_map, .season, .year, .ysr){
   terr_map %>%

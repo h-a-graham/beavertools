@@ -1,10 +1,10 @@
 # Function to fit the logistic growth model.
 
 
-logistic_growth <- function(cap_val, .logmodel){
+logistic_growth <- function(cap_val, .logmodel, st.date=2007){
   # get half capacity prediction date...
   HalfCap <- function(cap){
-    yearsVal <- tibble(years_since = seq(0,50, by=0.01)) %>%
+    yearsVal <- tibble(years_since = seq(9,50, by=0.01)) %>%
       broom::augment(.logmodel, newdata=., se_fit=T, type.predict = "response",
                      type.residuals = "deviance") %>%
       mutate(.fitround = floor(.fitted)) %>%
@@ -14,22 +14,22 @@ logistic_growth <- function(cap_val, .logmodel){
   }
 
   #create new df with anchor points.
-  hacked_df_func <- function(cap){
+  hacked_df_func <- function(cap, st.date){
     terr_counts %>%
       sf::st_drop_geometry() %>%
       # bind_rows(tibble(terr_count=round(cap)/2, season= "Half Cap",
       #                  years_since=HalfCap(cap), year_adj=years_since + 2007)) %>%
       bind_rows(tibble(terr_count=round(cap), season="Full Cap",
-                       years_since=HalfCap(cap) * 2 , year_adj=years_since + 2007))
+                       years_since=HalfCap(cap) * 2 , year_adj=years_since + st.date))
 
   }
 
   # function to fit new spline
-  fit_n_predict <- function(df, cap){
+  fit_n_predict <- function(df, cap, st.date){
     .logistic_model <- nls(terr_count ~ SSlogis(years_since, Asym, xmid, scal),df)
 
     # create new data with predictions
-  new_data <- tibble(years_since = seq(0,50, by=0.5))
+  new_data <- tibble(years_since = seq(9,50, by=0.5))
 
   # this method produces identical CIs to below but much slower
   # p <- propagate::predictNLS(.logistic_model, newdata = new_data, interval='confidence')
@@ -48,7 +48,7 @@ logistic_growth <- function(cap_val, .logmodel){
            pred.upr = upr)  %>%
     mutate(pred.lwr = ifelse(pred.lwr<0, 0, pred.lwr),
            years_since = new_data$years_since,
-           year_adj = years_since + 2007,
+           year_adj = years_since + st.date,
            cap_name = cap,
            lwr_diff = pred.lwr/.fitted,
            upr_diff = pred.upr/.fitted,
@@ -81,6 +81,6 @@ logistic_growth <- function(cap_val, .logmodel){
   }
 
 
-  hacked_df_func(cap_val) %>%
-    fit_n_predict(., cap_val)
+  hacked_df_func(cap_val, st.date) %>%
+    fit_n_predict(., cap_val, st.date)
 }

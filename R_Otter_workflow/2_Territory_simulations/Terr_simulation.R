@@ -28,7 +28,9 @@ MMRN_BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg') # MasterMa
 #------- Observed territory Habitat stats ----------
 # need to calculate some stats here and find out what kind of BFI values we're currently seeing on the Otter.
 terr_list <- readRDS(file=file.path(here::here(),'R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list2.Rds'))
-survey_years <- unique(RivOtter_FeedSigns$SurveySeason)
+survey_years <- RivOtter_FeedSigns %>%
+  filter(SurveySeason!= "Pre 2015") %>%
+  pull(SurveySeason) %>% unique()
 source(file.path(here::here(), 'R_Otter_workflow/2_Territory_simulations/terr_BFI_df.R'))
 
 Terr_df <- terr_BFI_df(terr_list, MMRN_BeavNetOtter, survey_years)
@@ -104,13 +106,14 @@ Terr_Cap_df <- terr_cap_lowBFI %>%
               mutate(sim=as.character(upper_BFI)))
 
 # plot showing the territory length distributions for each of these example simulations.
-ggplot(Terr_Cap_df, aes(x=Terr_Leng, fill=sim, after_stat(count))) +
+tl_dens <- ggplot(Terr_Cap_df, aes(x=Terr_Leng, fill=sim, after_stat(count))) +
   geom_density(alpha=0.5) +
   labs(x='territory length (m)', fill='minimum BFI threshold') +
   scale_fill_brewer(palette = "Dark2")+
   theme_bw() +
-  theme(legend.position = "bottom") +
-  ggsave(filename = file.path(plot_dir, 'TerritoryLengthDist.png'), dpi=600, height=180, width=180, units='mm')
+  theme(legend.position = "bottom")
+ggsave(filename = file.path(plot_dir, 'TerritoryLengthDist.png'), plot = tl_dens,
+         dpi=600, height=180, width=180, units='mm')
 
 # summary stats for territory length if needed
 Terr_sum_df <- Terr_Cap_df %>%
@@ -125,7 +128,7 @@ Terr_sum_df <- Terr_Cap_df %>%
 capacity_plot <- function(cap_lowBFI, cap_uppBFI){
   p1 <- plot_capacity(cap_uppBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
-                      scalebar = F, axes_units = F, add_hillshade =F)+
+                      scalebar = F, axes_units = F, add_hillshade =F, mask_fill = 'grey80')+
     annotate("text", x = 304000, y = 81600, size = 2.4,
              label = sprintf('n territories = %s',
                              Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(upper_BFI)]))+
@@ -134,7 +137,7 @@ capacity_plot <- function(cap_lowBFI, cap_uppBFI){
 
   p2 <- plot_capacity(cap_lowBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = MMRN_BeavNetOtter, plot_extent = target_ext,
-                      axes_units = F, add_hillshade =F)+
+                      axes_units = F, add_hillshade =F, mask_fill = 'grey80')+
     annotate("text", x = 304000, y = 81600, size = 2.4,
              label = sprintf('n territories = %s',
                              Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(lower_BFI)]))+
