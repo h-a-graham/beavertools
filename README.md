@@ -1,7 +1,7 @@
+beavertools
+================
 
 [![DOI](https://zenodo.org/badge/278560084.svg)](https://zenodo.org/badge/latestdoi/278560084)
-
-# beavertools
 
 A package that provides some standardised methods to monitor beaver
 populations and predict future population dynamics.
@@ -12,7 +12,8 @@ populations and predict future population dynamics.
     devtools::install_github("h-a-graham/beavertools")
 
 Check out The workflow for the [River Otter
-Catchment](R_Otter_workflow/) To see a workflow example of this package.
+Catchment](https://github.com/h-a-graham/beavertools/tree/master/R_Otter_workflow)
+To see a workflow example of this package.
 
 For now, here is the workflow with some images…
 
