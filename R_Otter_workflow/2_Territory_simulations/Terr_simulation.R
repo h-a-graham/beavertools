@@ -31,6 +31,7 @@ terr_list <- readRDS(file=file.path(here::here(),'R_Otter_workflow/1_Feed_Sign_M
 survey_years <- RivOtter_FeedSigns %>%
   filter(SurveySeason!= "Pre 2015") %>%
   pull(SurveySeason) %>% unique()
+
 source(file.path(here::here(), 'R_Otter_workflow/2_Territory_simulations/terr_BFI_df.R'))
 
 Terr_df <- terr_BFI_df(terr_list, MMRN_BeavNetOtter, survey_years)
