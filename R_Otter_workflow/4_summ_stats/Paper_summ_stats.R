@@ -57,7 +57,7 @@ survey_years <- RivOtter_FeedSigns %>%
 date_list <- lubridate::dmy(c("30-12-2015", "30-12-2016",
                               "30-12-2017", "30-12-2018", "30-12-2019",
                               "30-12-2020"))
-years_since_release <- c(9:14)
+years_since_release <- c(8:13)
 
 get_terr_counts <- function(terr_map, .season, .year, .ysr){
   terr_map %>%

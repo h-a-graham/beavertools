@@ -29,7 +29,7 @@ logistic_growth <- function(cap_val, .logmodel, st.date=2007){
     .logistic_model <- nls(terr_count ~ SSlogis(years_since, Asym, xmid, scal),df)
 
     # create new data with predictions
-  new_data <- tibble(years_since = seq(9,50, by=0.5))
+  new_data <- tibble(years_since = seq(8,50, by=0.5))
 
   # this method produces identical CIs to below but much slower
   # p <- propagate::predictNLS(.logistic_model, newdata = new_data, interval='confidence')

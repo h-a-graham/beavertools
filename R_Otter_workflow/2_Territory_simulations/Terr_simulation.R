@@ -2,7 +2,7 @@
 # devtools::document()
 # devtools::load_all()
 # devtools::uninstall()
-# devtools::install()
+devtools::install()
 library(beavertools)
 library(tidyverse)
 library(sf)
@@ -129,18 +129,20 @@ capacity_plot <- function(cap_lowBFI, cap_uppBFI){
   p1 <- plot_capacity(cap_uppBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = MMRN_BeavNetOtter, plot_extent = target_ext, north_arrow = F,
                       scalebar = F, axes_units = F, add_hillshade =F, mask_fill = 'grey80')+
-    annotate("text", x = 304000, y = 81600, size = 2.4,
+    annotate("text", x = 304500, y = 81000, size = 2.4,
              label = sprintf('n territories = %s',
                              Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(upper_BFI)]))+
+    annotate("text", x = 302000, y = 117000, size = 5, label="A")+
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
 
   p2 <- plot_capacity(cap_lowBFI, buffer=50, basemap = F, catchment = RivOtter_Catch_Area,
                       river_net = MMRN_BeavNetOtter, plot_extent = target_ext,
                       axes_units = F, add_hillshade =F, mask_fill = 'grey80')+
-    annotate("text", x = 304000, y = 81600, size = 2.4,
+    annotate("text", x = 304500, y = 81000, size = 2.4,
              label = sprintf('n territories = %s',
                              Terr_sum_df$n_terrs[Terr_sum_df$sim == as.character(lower_BFI)]))+
+    annotate("text", x = 325000, y = 117000, size = 5, label="B")+
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
 
