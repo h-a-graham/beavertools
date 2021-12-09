@@ -18,7 +18,7 @@ Real_terrs <- readRDS('R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr
 
 # MasterMap River Network not released with the package due to licensing issues.
 # MMRN_BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg') # MasterMap Data - used in publication.
-# contact Hugh Graham, the lead authour of the package/publication
+# contact Hugh Graham, the lead authour of the package/publication or submit an issue here:
 
 # OS Open Rivers Network - included with the package
 MMRN_BeavNetOtter <- RivOtter_BeaverNet
