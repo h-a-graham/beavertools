@@ -26,7 +26,8 @@ plot_other_signs(
   catchment = NULL,
   rivers = FALSE,
   add_hillshade = FALSE,
-  plot_extent = NULL
+  plot_extent = NULL,
+  mask_fill = "grey50"
 )
 }
 \arguments{

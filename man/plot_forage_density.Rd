@@ -23,7 +23,8 @@ plot_forage_density(
   add_hillshade = FALSE,
   plot_extent = NULL,
   attribute = TRUE,
-  guide_width = NULL
+  guide_width = NULL,
+  mask_fill = "grey50"
 )
 }
 \arguments{

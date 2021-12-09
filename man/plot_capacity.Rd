@@ -22,7 +22,8 @@ plot_capacity(
   rivers = FALSE,
   add_hillshade = FALSE,
   plot_extent = NULL,
-  terr_colours = NULL
+  terr_colours = NULL,
+  mask_fill = "grey50"
 )
 }
 \arguments{

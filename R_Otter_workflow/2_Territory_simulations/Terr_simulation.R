@@ -1,8 +1,5 @@
 # ------------ imports --------------------
-# devtools::document()
-# devtools::load_all()
-# devtools::uninstall()
-devtools::install()
+# devtools::install()
 library(beavertools)
 library(tidyverse)
 library(sf)
@@ -20,10 +17,11 @@ target_ext <- inflate_bbox(RivOtter_Catch_Area, 10)
 Real_terrs <- readRDS('R_Otter_workflow/1_Feed_Sign_Mapping/exports/reclass_terr_list.Rds')
 
 # MasterMap River Network not released with the package due to licensing issues.
-MMRN_BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg') # MasterMap Data
+# MMRN_BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg') # MasterMap Data - used in publication.
+# contact Hugh Graham, the lead authour of the package/publication
 
 # OS Open Rivers Network - included with the package
-# ORN_BeavNetOtter <- RivOtter_BeaverNet
+MMRN_BeavNetOtter <- RivOtter_BeaverNet
 
 #------- Observed territory Habitat stats ----------
 # need to calculate some stats here and find out what kind of BFI values we're currently seeing on the Otter.
