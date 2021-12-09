@@ -1,4 +1,6 @@
 
+[![DOI](https://zenodo.org/badge/278560084.svg)](https://zenodo.org/badge/latestdoi/278560084)
+
 # beavertools
 
 A package that provides some standardised methods to monitor beaver

@@ -7,6 +7,7 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
+[![DOI](https://zenodo.org/badge/278560084.svg)](https://zenodo.org/badge/latestdoi/278560084)
 
 # beavertools
 
