@@ -6,3 +6,4 @@ run
 *.gif
 *.Rds
 docs
+gdalwmscache/
