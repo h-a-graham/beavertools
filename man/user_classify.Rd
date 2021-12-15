@@ -46,5 +46,5 @@ otter_poly <- estimate_territories(ROBT_201920, confirm_signs = CS_201920)
 # create the map for checking automated territory classification
 check_auto_terr(otter_poly, basemap=FALSE, label=TRUE)
 
-otter_poly_uc <- user_classify(otter_poly, territory = c(10, 28))
+user_classify(otter_poly, territory = c(10, 28))
 }

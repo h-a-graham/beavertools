@@ -22,8 +22,8 @@ create_mask <- function(sf_obj){
 #' @export
 #' @examples
 #' # this generates an sf object for the river network of the R. Otter catchment.
-#' get_rivers(RivOtter_Catch_Area)
-#'
+#' rivs <- get_rivers(RivOtter_Catch_Area)
+#' plot(sf::st_geometry(rivs))
 get_rivers <- function(catchment){
   catchment <- check_spatial_feature(catchment)
 
@@ -31,7 +31,7 @@ get_rivers <- function(catchment){
     sf::st_transform(crs = 4326)
 
   box <- catch_wgs %>%
-    st_bbox()
+    sf::st_bbox()
 
   rivers <- osmdata::opq(bbox = box, memsize = 1073741824) %>%
     osmdata::add_osm_feature(key='waterway') %>%

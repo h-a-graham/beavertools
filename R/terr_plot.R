@@ -50,10 +50,9 @@
 #' otter_poly <- estimate_territories(ROBT_201920, confirm_signs = CS_201920)
 #'
 #'# various options:
-#'plot_territories(otter_poly_uc, 'user_class', basemap=TRUE)
-#'plot_territories(otter_poly_uc, 'mean_fd', basemap=FALSE)
-#'plot_territories(otter_poly_uc, 'sum_fd', basemap=FALSE, trans_type = 'log10')
-#'plot_territories(otter_poly_uc, 'id', basemap=TRUE, guide = FALSE, label = TRUE,
+#'plot_territories(otter_poly, 'mean_fd', basemap=FALSE)
+#'plot_territories(otter_poly, 'sum_fd', basemap=FALSE, trans_type = 'log10')
+#'plot_territories(otter_poly, 'id', basemap=TRUE, guide = FALSE, label = TRUE,
 #'                 drop_act = TRUE, axes_units = FALSE, rivers = TRUE)
 #'
 plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87223", "#61E265"),
@@ -121,11 +120,11 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
  # dealing with points first
   if (fill_name =='feedsigns'){
     weight_levs <- terr_poly %>%
-      select(!! dplyr::sym(fill_name)) %>%
+      dplyr::select(!! dplyr::sym(fill_name)) %>%
       sf::st_drop_geometry() %>%
       dplyr::arrange(dplyr::desc(!! dplyr::sym(fill_name)))%>%
       unique() %>%
-      pull()
+      dplyr::pull()
 
     if (length(weight_levs)==3){
       p <- p + ggplot2::geom_sf(terr_poly, mapping = ggplot2::aes(colour=FeedCat,
@@ -208,7 +207,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
 
   if (isTRUE(label)){
     p <- p + ggplot2::geom_sf_label(dplyr::filter(terr_poly, terr_status!='Activity'),
-                             mapping = aes(label = id, geometry=geometry),
+                             mapping = ggplot2::aes(label = id, geometry=geometry),
                              angle = 25, inherit.aes = F, fill='grey70', alpha=0.5,  show.legend=F)
   }
 
@@ -240,7 +239,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
     # p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
     #   ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
 
-    p <- p + coord_sf(xlim=c(plot_extent[1], plot_extent[2]), ylim=c(plot_extent[3], plot_extent[4]),
+    p <- p + ggplot2::coord_sf(xlim=c(plot_extent[1], plot_extent[2]), ylim=c(plot_extent[3], plot_extent[4]),
                 crs=sf::st_crs(terr_poly))
   }
 
@@ -270,7 +269,7 @@ plot_territories <- function(terr_poly, fill_name, fill_col = c("#7EAAC7", "#F87
   if (isFALSE(guide)) {
     p <- p + ggplot2::guides(fill=FALSE, colour=FALSE, size=FALSE)
   } else {
-    p <- p + theme(legend.position = guide_pos)
+    p <- p + ggplot2::theme(legend.position = guide_pos)
   }
 
   rm(.Random.seed, envir=globalenv())

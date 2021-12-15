@@ -44,8 +44,8 @@ This function allows users to generate a kernel density raster from a collection
 # Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
 # Then pipe this 'sf' object to forage_density.
 
-ROBT_201920 <- RivOtter_FeedSigns \%>\%
-dplyr::filter(SurveySeason == "2019 - 2020")\%>\%
+RivOtter_FeedSigns \%>\%
+  dplyr::filter(SurveySeason == "2019 - 2020")\%>\%
   forage_density(., 'FeedCat')
 
 }

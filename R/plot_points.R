@@ -41,7 +41,7 @@
 #' RivOtter_FeedSigns %>%
 #' dplyr::filter(SurveySeason == "2019 - 2020") %>%
 #'   plot_feeding(., weight_aes=c(1,3,6), basemap=F,
-#'                catchment = Otter_catch, rivers = T, plot_extent = target_ext)
+#'                catchment = RivOtter_Catch_Area, rivers = T)
 #'
 plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e77", "#7570b3", "#d95f02"),
                              label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
@@ -105,8 +105,8 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
 #'
 #' RivOtter_OtherSigns %>%
 #' dplyr::filter(SurveySeason == "2019 - 2020") %>%
-#'   plot_other_signs(., size = 1.5,basemap=T, catchment = Otter_catch,
-#'                    rivers = T, plot_extent = target_ext)
+#'   plot_other_signs(., size = 1.5,basemap=T, catchment = RivOtter_Catch_Area,
+#'                    rivers = T, plot_extent = inflate_bbox(RivOtter_Catch_Area, 200))
 #'
 plot_other_signs <- function(beav_points, size = 2.5, fill_col = c("#e41a1c", "#4daf4a", "#d11141"),
                          label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
@@ -116,7 +116,7 @@ plot_other_signs <- function(beav_points, size = 2.5, fill_col = c("#e41a1c", "#
                          catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, mask_fill='grey50'){
 
   beav_points %>%
-    mutate(SignType = as.character(SignType)) %>%
+    dplyr::mutate(SignType = as.character(SignType)) %>%
     dplyr::mutate(othersigns = ifelse(SignType=='Dwelling',  SignType,
                                       ifelse(SignType=='Dam', SignType, 'Other'))) %>%
     dplyr::mutate(othersigns = forcats::fct_relevel(othersigns, 'Dam','Dwelling')) %>%

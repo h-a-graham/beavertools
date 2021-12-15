@@ -50,6 +50,6 @@ CS_201920 <- RivOtter_OtherSigns \%>\%
 dplyr::filter(SurveySeason == "2019 - 2020")
 
 # run territory classification
-otter_poly <- estimate_territories(ROBT_201920, confirm_signs = CS_201920)
+estimate_territories(ROBT_201920, confirm_signs = CS_201920)
 
 }

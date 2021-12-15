@@ -18,6 +18,6 @@ in the \code{beavertools::terr_plot()} and \code{beavertools::plot_forage_densit
 }
 \examples{
 # this generates an sf object for the river network of the R. Otter catchment.
-get_rivers(RivOtter_Catch_Area)
-
+rivs <- get_rivers(RivOtter_Catch_Area)
+plot(sf::st_geometry(rivs))
 }

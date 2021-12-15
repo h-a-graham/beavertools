@@ -42,13 +42,13 @@ the {magick} package.
 fsd_ggplot <- function(.data, p.names, p.ext, add_map_stuff= FALSE){
 
  if (isTRUE(add_map_stuff)){
-   fsd <- plot_forage_density(.data, guide = FALSE, catchment = Otter_catch,
+   fsd <- plot_forage_density(.data, guide = FALSE, catchment = RivOtter_Catch_Area,
                               rivers = TRUE, plot_extent = p.ext, axes_units = FALSE) +
-     labs(subtitle = sprintf('Beaver Foraging Density: \%s', p.names))
+     ggplot2::labs(subtitle = sprintf('Beaver Foraging Density: \%s', p.names))
  } else {
    fsd <- plot_forage_density(.data, axes_units = FALSE, north_arrow = FALSE, scalebar = FALSE, guide = FALSE,
-                              catchment = Otter_catch, rivers = TRUE, plot_extent = p.ext) +
-     labs(subtitle = p.names)
+                              catchment = RivOtter_Catch_Area, rivers = TRUE, plot_extent = p.ext) +
+     ggplot2::labs(subtitle = p.names)
  }
 
  return(fsd)
@@ -61,12 +61,12 @@ ras_ext <- inflate_bbox(RivOtter_FeedSigns, 250)
 
 # generate KDE rasters for all survey periods
 kde_ras_list <- RivOtter_FeedSigns \%>\%
-  group_by(SurveySeason) \%>\%
-  group_split()\%>\%
-  purrr::map(., ~forage_density(., 'FeedCat', kd_extent = ras_ext))
+  dplyr::group_by(SurveySeason) \%>\%
+  dplyr::group_map(., ~forage_density(., 'FeedCat', kd_extent = ras_ext))
 
 # animate kernel density rasters
 kde_animation <- kde_ras_list \%>\%
-purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y, target_ext, add_map_stuff = TRUE)) \%>\%
-  animate_maps(., filename = 'run/maps/Otter_kde_test1.gif')
+purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y, inflate_bbox(RivOtter_Catch_Area, 200),
+  add_map_stuff = TRUE)) \%>\%
+  animate_maps(.)
 }

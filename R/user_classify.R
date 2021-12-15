@@ -28,7 +28,7 @@
 #'# create the map for checking automated territory classification
 #' check_auto_terr(otter_poly, basemap=FALSE, label=TRUE)
 #'
-#' otter_poly_uc <- user_classify(otter_poly, territory = c(10, 28))
+#' user_classify(otter_poly, territory = c(10, 28))
 user_classify <- function(territory_poly, territory=NULL, possible=NULL, activity=NULL){
 
   class_overlap <- territory %in% possible

@@ -17,8 +17,8 @@
 #' # Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
 #' # Then pipe this 'sf' object to forage_density.
 #'
-#' ROBT_201920 <- RivOtter_FeedSigns %>%
-#' dplyr::filter(SurveySeason == "2019 - 2020")%>%
+#' RivOtter_FeedSigns %>%
+#'   dplyr::filter(SurveySeason == "2019 - 2020")%>%
 #'   forage_density(., 'FeedCat')
 #'
 forage_density <- function(forage_points, impact_cat, grid_size = 20, kern_bw = 250, kd_extent,

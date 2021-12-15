@@ -14,16 +14,17 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Depends: 
-    R (>= 2.10)
+    R (>= 2.10),
+    sf
 Imports: 
     dplyr,
+    forcats,
     purrr,
     ggspatial,
     ggplot2,
     parallel,
     foreach,
     magrittr,
-    sf,
     progress,
     raster,
     spatialEco,

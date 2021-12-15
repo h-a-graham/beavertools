@@ -31,12 +31,9 @@
 #' @return A ggplot object which displays a map of the territory capacity.
 #' @export
 #' @examples
-#' # here we read in the BeaverNetwork data
-#' # NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
-#' BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
-#'
-#' # ---------- Subset dataset for example to reduce computation time -----------
-#' BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+#' s
+#' # --- Subset dataset for example to reduce computation time ---
+#' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'
 #' # ---------- run terriroty generation --------
 #' test_out <-  gen_territories(BeavNetOtter)
@@ -45,7 +42,7 @@
 #' test_TC_par <-territory_cap(test_out, multicore = TRUE)
 #'
 #' # Now plot...
-#' plot_capacity(test_TC_par)
+#' plot_capacity(test_TC_par, basemap=FALSE)
 #'
 plot_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap=TRUE, basemap_type = "osmgrayscale",  axes_units = TRUE,
                           scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
@@ -139,20 +136,7 @@ plot_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap=TR
                                                                                     fill = c("black", "black")))
   }
 
-  # if (isTRUE(set_lims)){
-  #   p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
-  #     ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
-  #
-  # }
-  #
-  #
-  # if (isFALSE(wgs)) {
-  #   p <- p + ggplot2::coord_sf(crs = sf::st_crs(terr_capacity), datum =  sf::st_crs(terr_capacity))
-  # }
-
   if (isTRUE(set_lims) && isTRUE(wgs)){
-    # p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
-    #   ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
 
     p <- p + coord_sf(xlim=c(plot_extent[1], plot_extent[2]), ylim=c(plot_extent[3], plot_extent[4]),
                       crs=sf::st_crs(terr_capacity))

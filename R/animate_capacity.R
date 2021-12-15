@@ -20,7 +20,7 @@
 #' @param north_arrow Boolean to include a north arrow
 #' @param north_arrow_loc character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.
 #' @param north_arrow_size numeric vector for the arrow
-#' @param wsg Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
+#' @param wgs Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)
 #' @param guide Boolean to include a legend
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
@@ -40,12 +40,10 @@
 #' @return An animated map of territory expansion up to capacity.
 #' @export
 #' @examples
-#'#' # here we read in the BeaverNetwork data
-#' # NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
-#' BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
+#'
 #'
 #' # ---------- Subset dataset for example to reduce computation time -----------
-#' BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+#' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'
 #' # ---------- run terriroty generation --------
 #' test_out <-  gen_territories(BeavNetOtter)
@@ -54,11 +52,11 @@
 #' test_TC_par <-territory_cap(test_out, multicore = TRUE)
 #'
 #' # now animate the spead of territories through catchment
-#' t_anim <- animate_capacity(test_TC_par, buffer = 75, river_net = BeavNetOtter, filename = './out_animation.gif',
+#' animate_capacity(test_TC_par, buffer = 75, river_net = BeavNetOtter,
 #'                            x_pix=600, y_pix=675)
 animate_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap=TRUE, basemap_type = "osmgrayscale",  axes_units = TRUE,
                              scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                             wsg=FALSE, guide=FALSE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL,
+                             wgs=FALSE, guide=FALSE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL,
                              filename=NULL, x_pix=1200, y_pix=675, pix_res=96, n_frames=3, fps = 5){
 
   single_terr <- function(.n, .colour, .terr){
@@ -70,7 +68,7 @@ animate_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap
                   basemap=basemap, basemap_type = basemap_type,  axes_units = axes_units,
                   scalebar=scalebar, scalebar_loc = scalebar_loc, north_arrow = north_arrow, north_arrow_loc = north_arrow_loc,
                   north_arrow_size = north_arrow_size,
-                  wsg=wsg, guide=guide, catchment=catchment, rivers=rivers, add_hillshade = add_hillshade, plot_extent=plot_extent,
+                  wgs=wgs, guide=guide, catchment=catchment, rivers=rivers, add_hillshade = add_hillshade, plot_extent=plot_extent,
                   terr_colours = .colour)
   }
 

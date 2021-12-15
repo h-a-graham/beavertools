@@ -31,14 +31,11 @@ where the mean is 1630 with a standard deviation of 293m. This range is based on
 \href{https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.2988}{Mayer, et al. (2017)}.
 }
 \examples{
-# here we read in the BeaverNetwork data
-# NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
-BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
 
-# ---------- Subset dataset for example to reduce computation time -----------
-BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+# --- Subset dataset for example to reduce computation time  for example ---
+BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 
 # ---------- run terriroty generation --------
-test_out <-  gen_territories(BeavNetOtter)
+gen_territories(BeavNetOtter)
 
 }

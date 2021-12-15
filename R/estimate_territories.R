@@ -33,7 +33,7 @@
 #' dplyr::filter(SurveySeason == "2019 - 2020")
 #'
 #'# run territory classification
-#' otter_poly <- estimate_territories(ROBT_201920, confirm_signs = CS_201920)
+#' estimate_territories(ROBT_201920, confirm_signs = CS_201920)
 #'
 estimate_territories <- function(forage_raster, confirm_signs, low_thresh = 0, upper_thresh = 0.95){
 
@@ -65,9 +65,9 @@ estimate_territories <- function(forage_raster, confirm_signs, low_thresh = 0, u
 
   forage_poly <- poly_list[[1]] %>%
     dplyr::mutate(id = forcats::as_factor(dplyr::row_number())) %>%
-    dplyr::mutate(Upper_Thresh = as.factor(ifelse(id %in% unlist(st_intersects(poly_list[[2]], poly_list[[1]])),
+    dplyr::mutate(Upper_Thresh = as.factor(ifelse(id %in% unlist(sf::st_intersects(poly_list[[2]], poly_list[[1]])),
                                         'Yes', 'No'))) %>%
-    dplyr::mutate(Confirm_signs = as.factor(ifelse(id %in% unlist(st_intersects(confirm_signs, poly_list[[1]])),
+    dplyr::mutate(Confirm_signs = as.factor(ifelse(id %in% unlist(sf::st_intersects(confirm_signs, poly_list[[1]])),
                                          'Yes', 'No'))) %>%
     dplyr::mutate(terr_status = as.factor(ifelse(Upper_Thresh=='Yes' & Confirm_signs=='Yes', 'Territory',
                                        ifelse(Upper_Thresh=='Yes' & Confirm_signs=='No', 'Possible',

@@ -94,7 +94,7 @@ function to create a ggplot for the feeding points or confirmatory signs. This i
 
 RivOtter_OtherSigns \%>\%
 dplyr::filter(SurveySeason == "2019 - 2020") \%>\%
-  plot_other_signs(., size = 1.5,basemap=T, catchment = Otter_catch,
-                   rivers = T, plot_extent = target_ext)
+  plot_other_signs(., size = 1.5,basemap=T, catchment = RivOtter_Catch_Area,
+                   rivers = T, plot_extent = inflate_bbox(RivOtter_Catch_Area, 200))
 
 }

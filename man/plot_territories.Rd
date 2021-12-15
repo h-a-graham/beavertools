@@ -105,10 +105,9 @@ dplyr::filter(SurveySeason == "2019 - 2020")
 otter_poly <- estimate_territories(ROBT_201920, confirm_signs = CS_201920)
 
 # various options:
-plot_territories(otter_poly_uc, 'user_class', basemap=TRUE)
-plot_territories(otter_poly_uc, 'mean_fd', basemap=FALSE)
-plot_territories(otter_poly_uc, 'sum_fd', basemap=FALSE, trans_type = 'log10')
-plot_territories(otter_poly_uc, 'id', basemap=TRUE, guide = FALSE, label = TRUE,
+plot_territories(otter_poly, 'mean_fd', basemap=FALSE)
+plot_territories(otter_poly, 'sum_fd', basemap=FALSE, trans_type = 'log10')
+plot_territories(otter_poly, 'id', basemap=TRUE, guide = FALSE, label = TRUE,
                 drop_act = TRUE, axes_units = FALSE, rivers = TRUE)
 
 }

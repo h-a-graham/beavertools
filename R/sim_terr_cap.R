@@ -15,15 +15,12 @@
 #' Additional information for each simulation includes the number of territories, the minimum vegetation value used and the simulation number.
 #' @export
 #' @examples
-#' # here we read in the BeaverNetwork data
-#' # NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
-#' BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
 #'
-#' # ---------- Subset dataset for example to reduce computation time -----------
-#' BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+#' # --- Subset dataset for example to reduce computation time  ---
+#' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'
 #' # --- run simple simulation...
-#' sim_terr <- sim_terr_cap(BeavNetOtter, n_p_terr_sim=2, n_hab_sim=2, min_veg = c(1.3, 1.8))
+#'  sim_terr_cap(BeavNetOtter, n_p_terr_sim=2, n_hab_sim=2, min_veg = c(1.3, 1.8))
 #'
 sim_terr_cap <- function(BeaverNetwork, n_p_terr_sim=1, n_hab_sim=5, min_veg = c(1.5, 4), progbar=TRUE){
 

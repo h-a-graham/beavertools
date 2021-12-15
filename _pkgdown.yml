@@ -1,4 +1,19 @@
-url: https://h-a-graham.github.io/beavertools
+repo:
+  url:
+    home: https://github.com/h-a-graham/beavertools
+
+url: h-a-graham.github.io/beavertools
 template:
   bootstrap: 5
+  bootswatch: superhero
+  theme: haddock
+  left:
+  - intro
+  - reference
+  - articles
+  - tutorials
+  - news
+  right:
+  - search
+  - github
 

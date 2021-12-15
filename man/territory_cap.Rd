@@ -36,18 +36,15 @@ to select the most suitable habitats that do not intersect. Stream size and habi
 in larger rivers with better habitat are considered more suitable.
 }
 \examples{
-# here we read in the BeaverNetwork data
-# NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
-BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
 
-# ---------- Subset dataset for example to reduce computation time -----------
-BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+# --- Subset dataset for example to reduce computation time ---
+BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 
 # ---------- run terriroty generation --------
-test_out <-  gen_territories(BeavNetOtter)
+poss_terrs <-  gen_territories(BeavNetOtter)
 
 # ------------- Run territory cap -------------
-test_TC_par <-territory_cap(test_out, multicore = TRUE)
+territory_cap(poss_terrs, multicore = TRUE)
 
 
 }

@@ -21,13 +21,13 @@
 #'fsd_ggplot <- function(.data, p.names, p.ext, add_map_stuff= FALSE){
 #'
 #'  if (isTRUE(add_map_stuff)){
-#'    fsd <- plot_forage_density(.data, basemap = FALSE, guide = FALSE, catchment = Otter_catch,
+#'    fsd <- plot_forage_density(.data, basemap = FALSE, guide = FALSE, catchment = RivOtter_Catch_Area,
 #'                               rivers = FALSE, plot_extent = p.ext, axes_units = FALSE) +
-#'      labs(subtitle = sprintf('Beaver Foraging Density: %s', p.names))
+#'      ggplot2::labs(subtitle = sprintf('Beaver Foraging Density: %s', p.names))
 #'  } else {
 #'    fsd <- plot_forage_density(.data, basemap = FALSE, axes_units = FALSE, north_arrow = FALSE, scalebar = FALSE, guide = FALSE,
-#'                               catchment = Otter_catch, rivers = FALSE, plot_extent = p.ext) +
-#'      labs(subtitle = p.names)
+#'                               catchment = RivOtter_Catch_Area, rivers = FALSE, plot_extent = p.ext) +
+#'      ggplot2::labs(subtitle = p.names)
 #'  }
 #'
 #'  return(fsd)
@@ -41,17 +41,15 @@
 #'
 #'# generate KDE rasters for all survey periods
 #' kde_ras_list <- RivOtter_FeedSigns %>%
-#'   group_by(SurveySeason) %>%
-#'   group_split()%>%
-#'   purrr::map(., ~forage_density(., 'FeedCat', kd_extent = ras_ext))
+#'   dplyr::group_by(SurveySeason) %>%
+#'   dplyr::group_map(., ~forage_density(., 'FeedCat', kd_extent = ras_ext))
 #'
 #'# generate panel plot showing sequence of feeding density maps
 #' kde_panel <- kde_ras_list %>%
-#'     purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y, target_ext)) %>%
+#'     purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y,
+#'                 inflate_bbox(RivOtter_Catch_Area, 200))) %>%
 #'     panel_plot(.)
 #'
-#'# save to disk if you like...
-#'# ggsave('panel_plot_map.png',plot = kde_panel)
 #'
 panel_plot <- function(terr_plot_list, scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE,
                        north_arrow_loc = 'br', north_arrow_size = 0.5, guide = FALSE, guide_fig_height = c(30,1),

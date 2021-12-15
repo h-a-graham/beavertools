@@ -115,15 +115,12 @@ create_territories <- function(reach, river, t_length=NULL,  new_buff= NULL, old
 #' @import foreach doParallel parallel tcltk
 #' @export
 #' @examples
-#' # here we read in the BeaverNetwork data
-#' # NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!
-#' BeavNetOtter <- sf::read_sf('run/data/BeaverNetwork_Otter.gpkg')
 #'
-#' # ---------- Subset dataset for example to reduce computation time -----------
-#' BeavNetOtter <- BeavNetOtter[BeavNetOtter$Str_order > 3,]
+#' # --- Subset dataset for example to reduce computation time  for example ---
+#' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'
 #' # ---------- run terriroty generation --------
-#' test_out <-  gen_territories(BeavNetOtter)
+#' gen_territories(BeavNetOtter)
 #'
 gen_territories <- function(BeaverNetwork, progbar=TRUE, multicore=TRUE, ncores){
   # silence warnings...

@@ -85,7 +85,7 @@ dplyr::filter(SurveySeason == "2019 - 2020")\%>\%
   forage_density(., 'FeedCat')
 
 # Now we plot the raster with plot_forage_density
-beaver_forage <- plot_forage_density(ROBT_201920, catchment = Otter_catch, rivers = TRUE,
-                                     plot_extent = target_ext, trans_fill=TRUE)
+plot_forage_density(ROBT_201920, catchment = RivOtter_Catch_Area, rivers = TRUE,
+                                     trans_fill=TRUE)
 
 }

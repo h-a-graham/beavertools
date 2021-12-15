@@ -37,8 +37,8 @@
 #'   forage_density(., 'FeedCat')
 #'
 #' # Now we plot the raster with plot_forage_density
-#' beaver_forage <- plot_forage_density(ROBT_201920, catchment = Otter_catch, rivers = TRUE,
-#'                                      plot_extent = target_ext, trans_fill=TRUE)
+#' plot_forage_density(ROBT_201920, catchment = RivOtter_Catch_Area, rivers = TRUE,
+#'                                      trans_fill=TRUE)
 #'
 plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgrayscale", trans_fill = TRUE, trans_type = 'log10',
                      axes_units = TRUE, scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
@@ -125,7 +125,7 @@ plot_forage_density <- function(kd_raster, basemap=TRUE, basemap_type = "osmgray
     # p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
     #   ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
 
-    p <- p + coord_sf(xlim=c(plot_extent[1], plot_extent[2]), ylim=c(plot_extent[3], plot_extent[4]),
+    p <- p + ggplot2::coord_sf(xlim=c(plot_extent[1], plot_extent[2]), ylim=c(plot_extent[3], plot_extent[4]),
                       crs=sf::st_crs(kd_raster))
   }
 
