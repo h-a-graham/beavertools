@@ -78,7 +78,8 @@ Once territory capacity is generated using \code{beavertools::territory_cap()}, 
 in a standardised way.
 }
 \examples{
-\dontrun {
+
+\dontrun{
 # --- Subset dataset for example to reduce computation time ---
 BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 

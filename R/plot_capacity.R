@@ -31,7 +31,8 @@
 #' @return A ggplot object which displays a map of the territory capacity.
 #' @export
 #' @examples
-#' \dontrun {
+#'
+#' \dontrun{
 #' # --- Subset dataset for example to reduce computation time ---
 #' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'

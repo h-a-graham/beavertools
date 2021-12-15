@@ -32,11 +32,12 @@ where the mean is 1630 with a standard deviation of 293m. This range is based on
 }
 \examples{
 
+\dontrun{
 # --- Subset dataset for example to reduce computation time  for example ---
 BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 
 # ---------- run terriroty generation --------
-\dontrun{
+
 gen_territories(BeavNetOtter)
 }
 

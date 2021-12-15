@@ -1,6 +1,6 @@
 Package: beavertools
 Title: Tools to monitor the expansion of beaver populations and predict future territory capacity.
-Version: 0.0.1.0
+Version: 0.0.1.1
 Authors@R: 
     person(given = "Hugh",
            family = "Graham",
