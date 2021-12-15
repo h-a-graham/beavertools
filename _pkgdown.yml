@@ -8,11 +8,7 @@ template:
   bootswatch: superhero
   theme: haddock
   left:
-  - intro
   - reference
-  - articles
-  - tutorials
-  - news
   right:
   - search
   - github
