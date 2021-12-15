@@ -7,3 +7,4 @@ run
 *.Rds
 docs
 gdalwmscache/
+pkdown_comms/
