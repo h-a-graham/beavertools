@@ -6,7 +6,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">beavertools</a>
 
@@ -24,7 +24,13 @@
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/h-a-graham/beavertools" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -90,13 +96,13 @@ automatically with <code>ceiling(sqrt(length(terr_plot_list)))</code>.</p></dd>
 <span class="r-in"><span class="va">fsd_ggplot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.data</span>, <span class="va">p.names</span>, <span class="va">p.ext</span>, <span class="va">add_map_stuff</span><span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">{</span></span>
 <span class="r-in"></span>
 <span class="r-in"> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">add_map_stuff</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span class="r-in">   <span class="va">fsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="plot_forage_density.html">plot_forage_density</a></span><span class="op">(</span><span class="va">.data</span>, basemap <span class="op">=</span> <span class="cn">FALSE</span>, guide <span class="op">=</span> <span class="cn">FALSE</span>, catchment <span class="op">=</span> <span class="va">Otter_catch</span>,</span>
+<span class="r-in">   <span class="va">fsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="plot_forage_density.html">plot_forage_density</a></span><span class="op">(</span><span class="va">.data</span>, basemap <span class="op">=</span> <span class="cn">FALSE</span>, guide <span class="op">=</span> <span class="cn">FALSE</span>, catchment <span class="op">=</span> <span class="va">RivOtter_Catch_Area</span>,</span>
 <span class="r-in">                              rivers <span class="op">=</span> <span class="cn">FALSE</span>, plot_extent <span class="op">=</span> <span class="va">p.ext</span>, axes_units <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">     <span class="fu">labs</span><span class="op">(</span>subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'Beaver Foraging Density: %s'</span>, <span class="va">p.names</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in">     <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'Beaver Foraging Density: %s'</span>, <span class="va">p.names</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span class="r-in">   <span class="va">fsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="plot_forage_density.html">plot_forage_density</a></span><span class="op">(</span><span class="va">.data</span>, basemap <span class="op">=</span> <span class="cn">FALSE</span>, axes_units <span class="op">=</span> <span class="cn">FALSE</span>, north_arrow <span class="op">=</span> <span class="cn">FALSE</span>, scalebar <span class="op">=</span> <span class="cn">FALSE</span>, guide <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span class="r-in">                              catchment <span class="op">=</span> <span class="va">Otter_catch</span>, rivers <span class="op">=</span> <span class="cn">FALSE</span>, plot_extent <span class="op">=</span> <span class="va">p.ext</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">     <span class="fu">labs</span><span class="op">(</span>subtitle <span class="op">=</span> <span class="va">p.names</span><span class="op">)</span></span>
+<span class="r-in">                              catchment <span class="op">=</span> <span class="va">RivOtter_Catch_Area</span>, rivers <span class="op">=</span> <span class="cn">FALSE</span>, plot_extent <span class="op">=</span> <span class="va">p.ext</span><span class="op">)</span> <span class="op">+</span></span>
+<span class="r-in">     <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="va">p.names</span><span class="op">)</span></span>
 <span class="r-in"> <span class="op">}</span></span>
 <span class="r-in"></span>
 <span class="r-in"> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">fsd</span><span class="op">)</span></span>
@@ -109,19 +115,30 @@ automatically with <code>ceiling(sqrt(length(terr_plot_list)))</code>.</p></dd>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># generate KDE rasters for all survey periods</span></span>
 <span class="r-in"><span class="va">kde_ras_list</span> <span class="op">&lt;-</span> <span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">group_by</span><span class="op">(</span><span class="va">SurveySeason</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">group_split</span><span class="op">(</span><span class="op">)</span><span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">.</span>, <span class="op">~</span><span class="fu"><a href="forage_density.html">forage_density</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span>, kd_extent <span class="op">=</span> <span class="va">ras_ext</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in group_split(.):</span> could not find function "group_split"</span>
+<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">SurveySeason</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
+<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_map.html" class="external-link">group_map</a></span><span class="op">(</span><span class="va">.</span>, <span class="op">~</span><span class="fu"><a href="forage_density.html">forage_density</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span>, kd_extent <span class="op">=</span> <span class="va">ras_ext</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># generate panel plot showing sequence of feeding density maps</span></span>
 <span class="r-in"><span class="va">kde_panel</span> <span class="op">&lt;-</span> <span class="va">kde_ras_list</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2</a></span><span class="op">(</span>.x<span class="op">=</span><span class="va">.</span>, .y<span class="op">=</span><span class="va">plot_names</span>, <span class="op">~</span><span class="fu">fsd_ggplot</span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span>, <span class="va">target_ext</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
+<span class="r-in">    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2</a></span><span class="op">(</span>.x<span class="op">=</span><span class="va">.</span>, .y<span class="op">=</span><span class="va">plot_names</span>, <span class="op">~</span><span class="fu">fsd_ggplot</span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span>,</span>
+<span class="r-in">                <span class="fu"><a href="inflate_bbox.html">inflate_bbox</a></span><span class="op">(</span><span class="va">RivOtter_Catch_Area</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
 <span class="r-in">    <span class="fu">panel_plot</span><span class="op">(</span><span class="va">.</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in purrr::map2(.x = ., .y = plot_names, ~fsd_ggplot(.x, .y, target_ext)):</span> object 'kde_ras_list' not found</span>
+<span class="r-plt img"><img src="panel_plot-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># save to disk if you like...</span></span>
-<span class="r-in"><span class="co"># ggsave('panel_plot_map.png',plot = kde_panel)</span></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

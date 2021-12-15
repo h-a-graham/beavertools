@@ -6,7 +6,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">beavertools</a>
 
@@ -24,7 +24,13 @@
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/h-a-graham/beavertools" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -85,12 +91,21 @@ impact category (i.e. Low, Medium, or High). If not provided kernel density is n
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`</span></span>
 <span class="r-in"><span class="co"># Then pipe this 'sf' object to forage_density.</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">ROBT_201920</span> <span class="op">&lt;-</span> <span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span><span class="op"><a href="pipe.html">%&gt;%</a></span></span>
+<span class="r-in"><span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
+<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span><span class="op"><a href="pipe.html">%&gt;%</a></span></span>
 <span class="r-in">  <span class="fu">forage_density</span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No value supplied for "kd_extent" argument: default extent will be used</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class      : RasterLayer </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dimensions : 1583, 920, 1456360  (nrow, ncol, ncell)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> resolution : 20, 20  (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> extent     : 304880, 323280, 82840, 114500  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> crs        : +proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=m +no_defs </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> source     : memory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> names      : kde </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> values     : 1.000071e-12, 3.214948e-06  (min, max)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

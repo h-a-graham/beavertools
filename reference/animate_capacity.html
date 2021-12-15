@@ -10,7 +10,7 @@ We intend to develop this function to allow for alternative expansion hypotheses
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">beavertools</a>
 
@@ -28,7 +28,13 @@ We intend to develop this function to allow for alternative expansion hypotheses
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/h-a-graham/beavertools" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -60,7 +66,7 @@ We intend to develop this function to allow for alternative expansion hypotheses
   north_arrow <span class="op">=</span> <span class="cn">TRUE</span>,
   north_arrow_loc <span class="op">=</span> <span class="st">"br"</span>,
   north_arrow_size <span class="op">=</span> <span class="fl">0.75</span>,
-  wsg <span class="op">=</span> <span class="cn">FALSE</span>,
+  wgs <span class="op">=</span> <span class="cn">FALSE</span>,
   guide <span class="op">=</span> <span class="cn">FALSE</span>,
   catchment <span class="op">=</span> <span class="cn">NULL</span>,
   rivers <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -102,7 +108,7 @@ to display the river network.</p></dd>
 <dd><p>character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.</p></dd>
 <dt>north_arrow_size</dt>
 <dd><p>numeric vector for the arrow</p></dd>
-<dt>wsg</dt>
+<dt>wgs</dt>
 <dd><p>Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)</p></dd>
 <dt>guide</dt>
 <dd><p>Boolean to include a legend</p></dd>
@@ -140,14 +146,10 @@ create a textured basemap.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#' # here we read in the BeaverNetwork data</span></span>
-<span class="r-in"><span class="co"># NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!</span></span>
-<span class="r-in"><span class="va">BeavNetOtter</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="st">'run/data/BeaverNetwork_Otter.gpkg'</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Cannot open "run/data/BeaverNetwork_Otter.gpkg"; The file doesn't seem to exist.</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># ---------- Subset dataset for example to reduce computation time -----------</span></span>
-<span class="r-in"><span class="va">BeavNetOtter</span> <span class="op">&lt;-</span> <span class="va">BeavNetOtter</span><span class="op">[</span><span class="va">BeavNetOtter</span><span class="op">$</span><span class="va">Str_order</span> <span class="op">&gt;</span> <span class="fl">3</span>,<span class="op">]</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'BeavNetOtter' not found</span>
+<span class="r-in"><span class="va">BeavNetOtter</span> <span class="op">&lt;-</span> <span class="va">RivOtter_BeaverNet</span><span class="op">[</span><span class="va">RivOtter_BeaverNet</span><span class="op">$</span><span class="va">Str_order</span> <span class="op">&gt;</span> <span class="fl">3</span>,<span class="op">]</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># ---------- run terriroty generation --------</span></span>
 <span class="r-in"><span class="va">test_out</span> <span class="op">&lt;-</span>  <span class="fu"><a href="gen_territories.html">gen_territories</a></span><span class="op">(</span><span class="va">BeavNetOtter</span><span class="op">)</span></span>
@@ -158,7 +160,7 @@ create a textured basemap.</p></dd>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::filter(., mean_BFI_40m &gt;= min_veg):</span> object 'test_out' not found</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># now animate the spead of territories through catchment</span></span>
-<span class="r-in"><span class="va">t_anim</span> <span class="op">&lt;-</span> <span class="fu">animate_capacity</span><span class="op">(</span><span class="va">test_TC_par</span>, buffer <span class="op">=</span> <span class="fl">75</span>, river_net <span class="op">=</span> <span class="va">BeavNetOtter</span>, filename <span class="op">=</span> <span class="st">'./out_animation.gif'</span>,</span>
+<span class="r-in"><span class="fu">animate_capacity</span><span class="op">(</span><span class="va">test_TC_par</span>, buffer <span class="op">=</span> <span class="fl">75</span>, river_net <span class="op">=</span> <span class="va">BeavNetOtter</span>,</span>
 <span class="r-in">                           x_pix<span class="op">=</span><span class="fl">600</span>, y_pix<span class="op">=</span><span class="fl">675</span><span class="op">)</span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in nrow(terr_capacity):</span> object 'test_TC_par' not found</span>
 </code></pre></div>

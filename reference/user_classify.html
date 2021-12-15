@@ -8,7 +8,7 @@ the automated assessment of territory areas."><!-- mathjax --><script src="https
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">beavertools</a>
 
@@ -26,7 +26,13 @@ the automated assessment of territory areas."><!-- mathjax --><script src="https
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/h-a-graham/beavertools" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -88,16 +94,40 @@ the automated assessment of territory areas.</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># run territory classification</span></span>
 <span class="r-in"><span class="va">otter_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate_territories.html">estimate_territories</a></span><span class="op">(</span><span class="va">ROBT_201920</span>, confirm_signs <span class="op">=</span> <span class="va">CS_201920</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Problem with `mutate()` column `id`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> `id = forcats::as_factor(dplyr::row_number())`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> there is no package called ‘forcats’</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># create the map for checking automated territory classification</span></span>
 <span class="r-in"><span class="fu"><a href="check_auto_terr.html">check_auto_terr</a></span><span class="op">(</span><span class="va">otter_poly</span>, basemap<span class="op">=</span><span class="cn">FALSE</span>, label<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sf::st_crs(terr_poly):</span> object 'otter_poly' not found</span>
+<span class="r-plt img"><img src="user_classify-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">otter_poly_uc</span> <span class="op">&lt;-</span> <span class="fu">user_classify</span><span class="op">(</span><span class="va">otter_poly</span>, territory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">28</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::mutate(., user_class = as.factor(ifelse(id %in% territory,     "Territory", ifelse(id %in% possible, "Possible", ifelse(id %in%         activity, "Activity", as.character(terr_status)))))):</span> object 'otter_poly' not found</span>
+<span class="r-in"><span class="fu">user_classify</span><span class="op">(</span><span class="va">otter_poly</span>, territory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">28</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 46 features and 9 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 305220 ymin: 83180 xmax: 323000 ymax: 114360</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: OSGB 1936 / British National Grid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     quant quantf id Upper_Thresh Confirm_signs terr_status user_class</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0      0  1           No            No    Activity   Activity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.1     0      0  2           No            No    Activity   Activity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.2     0      0  3           No            No    Activity   Activity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.3     0      0  4           No            No    Activity   Activity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.4     0      0  5          Yes           Yes   Territory  Territory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.5     0      0  6          Yes           Yes   Territory  Territory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.6     0      0  7           No            No    Activity   Activity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.7     0      0  8           No            No    Activity   Activity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.8     0      0  9           No            No    Activity   Activity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.9     0      0 10          Yes            No    Possible  Territory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          mean_fd       sum_fd                       geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1.380067e-12 7.590369e-11 POLYGON ((307500 83200, 307...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.1 1.340421e-12 7.372312e-11 POLYGON ((307500 83560, 307...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.2 1.034756e-12 9.312801e-12 POLYGON ((307540 83800, 307...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.3 1.019890e-12 9.179009e-12 POLYGON ((307600 83940, 307...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.4 2.339032e-07 1.022859e-03 POLYGON ((307920 84060, 307...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.5 1.191316e-07 1.934697e-04 POLYGON ((306020 84800, 306...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.6 1.427402e-12 7.422492e-11 POLYGON ((308720 86460, 308...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.7 1.004674e-12 3.014022e-12 POLYGON ((308640 88020, 308...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.8 1.018443e-12 3.055329e-12 POLYGON ((308520 88180, 308...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.9 4.275207e-08 1.285127e-04 POLYGON ((308840 88660, 308...</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -10,7 +10,7 @@ in larger rivers with better habitat are considered more suitable."><!-- mathjax
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">beavertools</a>
 
@@ -28,7 +28,13 @@ in larger rivers with better habitat are considered more suitable."><!-- mathjax
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/h-a-graham/beavertools" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -81,22 +87,17 @@ in larger rivers with better habitat are considered more suitable.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># here we read in the BeaverNetwork data</span></span>
-<span class="r-in"><span class="co"># NOTE - MUST ADD OPEN SOURCE VERSION AS BUILT IN DATA ASAP!</span></span>
-<span class="r-in"><span class="va">BeavNetOtter</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="st">'run/data/BeaverNetwork_Otter.gpkg'</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Cannot open "run/data/BeaverNetwork_Otter.gpkg"; The file doesn't seem to exist.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># ---------- Subset dataset for example to reduce computation time -----------</span></span>
-<span class="r-in"><span class="va">BeavNetOtter</span> <span class="op">&lt;-</span> <span class="va">BeavNetOtter</span><span class="op">[</span><span class="va">BeavNetOtter</span><span class="op">$</span><span class="va">Str_order</span> <span class="op">&gt;</span> <span class="fl">3</span>,<span class="op">]</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'BeavNetOtter' not found</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+<span class="r-in"><span class="co"># --- Subset dataset for example to reduce computation time ---</span></span>
+<span class="r-in"><span class="va">BeavNetOtter</span> <span class="op">&lt;-</span> <span class="va">RivOtter_BeaverNet</span><span class="op">[</span><span class="va">RivOtter_BeaverNet</span><span class="op">$</span><span class="va">Str_order</span> <span class="op">&gt;</span> <span class="fl">3</span>,<span class="op">]</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># ---------- run terriroty generation --------</span></span>
-<span class="r-in"><span class="va">test_out</span> <span class="op">&lt;-</span>  <span class="fu"><a href="gen_territories.html">gen_territories</a></span><span class="op">(</span><span class="va">BeavNetOtter</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">poss_terrs</span> <span class="op">&lt;-</span>  <span class="fu"><a href="gen_territories.html">gen_territories</a></span><span class="op">(</span><span class="va">BeavNetOtter</span><span class="op">)</span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in makePSOCKcluster(names = spec, ...):</span> numeric 'names' must be &gt;= 1</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># ------------- Run territory cap -------------</span></span>
-<span class="r-in"><span class="va">test_TC_par</span> <span class="op">&lt;-</span><span class="fu">territory_cap</span><span class="op">(</span><span class="va">test_out</span>, multicore <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::filter(., mean_BFI_40m &gt;= min_veg):</span> object 'test_out' not found</span>
+<span class="r-in"><span class="fu">territory_cap</span><span class="op">(</span><span class="va">poss_terrs</span>, multicore <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::filter(., mean_BFI_40m &gt;= min_veg):</span> object 'poss_terrs' not found</span>
 <span class="r-in"></span>
 <span class="r-in"></span>
 </code></pre></div>
