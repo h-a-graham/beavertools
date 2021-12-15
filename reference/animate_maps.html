@@ -87,6 +87,7 @@ the magick package.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in"><span class="co"># kde plots for panel/animation</span></span>
 <span class="r-in"><span class="va">fsd_ggplot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.data</span>, <span class="va">p.names</span>, <span class="va">p.ext</span>, <span class="va">add_map_stuff</span><span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">{</span></span>
 <span class="r-in"></span>
@@ -112,27 +113,13 @@ the magick package.</p>
 <span class="r-in"><span class="va">kde_ras_list</span> <span class="op">&lt;-</span> <span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
 <span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">SurveySeason</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
 <span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_map.html" class="external-link">group_map</a></span><span class="op">(</span><span class="va">.</span>, <span class="op">~</span><span class="fu"><a href="forage_density.html">forage_density</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span>, kd_extent <span class="op">=</span> <span class="va">ras_ext</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># animate kernel density rasters</span></span>
 <span class="r-in"><span class="va">kde_animation</span> <span class="op">&lt;-</span> <span class="va">kde_ras_list</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
 <span class="r-in"><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2</a></span><span class="op">(</span>.x<span class="op">=</span><span class="va">.</span>, .y<span class="op">=</span><span class="va">plot_names</span>, <span class="op">~</span><span class="fu">fsd_ggplot</span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span>, <span class="fu"><a href="inflate_bbox.html">inflate_bbox</a></span><span class="op">(</span><span class="va">RivOtter_Catch_Area</span>, <span class="fl">200</span><span class="op">)</span>,</span>
 <span class="r-in">  add_map_stuff <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
 <span class="r-in">  <span class="fu">animate_maps</span><span class="op">(</span><span class="va">.</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in geos_op2_geom("intersection", x, y, ...):</span> st_crs(x) == st_crs(y) is not TRUE</span>
+<span class="r-in"><span class="op">}</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

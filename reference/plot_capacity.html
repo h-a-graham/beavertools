@@ -127,24 +127,7 @@ create a textured basemap.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">s</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 's' not found</span>
-<span class="r-in"><span class="co"># --- Subset dataset for example to reduce computation time ---</span></span>
-<span class="r-in"><span class="va">BeavNetOtter</span> <span class="op">&lt;-</span> <span class="va">RivOtter_BeaverNet</span><span class="op">[</span><span class="va">RivOtter_BeaverNet</span><span class="op">$</span><span class="va">Str_order</span> <span class="op">&gt;</span> <span class="fl">3</span>,<span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># ---------- run terriroty generation --------</span></span>
-<span class="r-in"><span class="va">test_out</span> <span class="op">&lt;-</span>  <span class="fu"><a href="gen_territories.html">gen_territories</a></span><span class="op">(</span><span class="va">BeavNetOtter</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in makePSOCKcluster(names = spec, ...):</span> numeric 'names' must be &gt;= 1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># ------------- Run territory cap -------------</span></span>
-<span class="r-in"><span class="va">test_TC_par</span> <span class="op">&lt;-</span><span class="fu"><a href="territory_cap.html">territory_cap</a></span><span class="op">(</span><span class="va">test_out</span>, multicore <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::filter(., mean_BFI_40m &gt;= min_veg):</span> object 'test_out' not found</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Now plot...</span></span>
-<span class="r-in"><span class="fu">plot_capacity</span><span class="op">(</span><span class="va">test_TC_par</span>, basemap<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in sf::st_buffer(., buffer, endCapStyle = "FLAT"):</span> object 'test_TC_par' not found</span>
-<span class="r-in"></span>
-</code></pre></div>
+    
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
