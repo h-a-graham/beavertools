@@ -23,7 +23,8 @@ Check out The workflow for the [River Otter Catchment](https://github.com/h-a-gr
 a workflow example of this package.
 
 Here is an example of the outputs from the package. Results are from our in review publication: 
-Graham, Puttock, Chant, Elliott, Campbell-Palmer, Anderson, Brazier, (In Review); Monitoring, modelling and managing beaver populations at the catchment scale.
+
+Graham, Puttock, Chant, Elliott, Campbell-Palmer, Anderson, Brazier, (In Review); Monitoring, modelling and managing beaver populations at the catchment scale. https://doi.org/10.5281/zenodo.5771115
 
 
 This example shows the kernel density estimate for feeding signs and the derived (automated) territory locations and their classification. This enables us to make estimates of the number of territories present in the catchment over time.

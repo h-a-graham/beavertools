@@ -15,7 +15,12 @@ Check out The workflow for the [River Otter
 Catchment](https://github.com/h-a-graham/beavertools/tree/master/R_Otter_workflow)
 To see a workflow example of this package.
 
-For now, here is the workflow with some images…
+Here is an example of the outputs from the package. Results are from our
+in review publication:
+
+Graham, Puttock, Chant, Elliott, Campbell-Palmer, Anderson, Brazier, (In
+Review); Monitoring, modelling and managing beaver populations at the
+catchment scale. <https://doi.org/10.5281/zenodo.5771115>
 
 This example shows the kernel density estimate for feeding signs and the
 derived (automated) territory locations and their classification. This
@@ -35,7 +40,8 @@ possible range of territory capacity within the catchment.
 Scenarios](man/figures/Lower_Upper_Capacity_maps.png)
 
 Now that we know the territory capacity we can begin to model the
-population dynamics of the catchment.
+population dynamics of the catchment. For the full code workflow check
+out [beavertools/R_Otter_workflow](R_Otter_workflow).
 
 By combining the known territory numbers over time we estimate the
 exponential growth of the population and then derive the logistic curve
