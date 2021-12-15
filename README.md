@@ -35,8 +35,7 @@ possible range of territory capacity within the catchment.
 Scenarios](man/figures/Lower_Upper_Capacity_maps.png)
 
 Now that we know the territory capacity we can begin to model the
-population dynamics of the catchment. For the full code workflow check
-out [beavertools/R_Otter_workflow](R_Otter_workflow).
+population dynamics of the catchment.
 
 By combining the known territory numbers over time we estimate the
 exponential growth of the population and then derive the logistic curve
