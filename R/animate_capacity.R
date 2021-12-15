@@ -41,8 +41,9 @@
 #' @export
 #' @examples
 #'
-#'
+#' \dontrun{
 #' # ---------- Subset dataset for example to reduce computation time -----------
+#'
 #' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'
 #' # ---------- run terriroty generation --------
@@ -54,6 +55,7 @@
 #' # now animate the spead of territories through catchment
 #' animate_capacity(test_TC_par, buffer = 75, river_net = BeavNetOtter,
 #'                            x_pix=600, y_pix=675)
+#' }
 animate_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap=TRUE, basemap_type = "osmgrayscale",  axes_units = TRUE,
                              scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
                              wgs=FALSE, guide=FALSE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL,

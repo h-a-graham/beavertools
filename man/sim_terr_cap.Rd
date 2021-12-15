@@ -35,11 +35,11 @@ is carried out to test the effect of different minimum habitat requirements. Thi
 uncertainty that is involved with the generated territory capacity estimates.
 }
 \examples{
-
+\dontrun{
 # --- Subset dataset for example to reduce computation time  ---
 BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 
 # --- run simple simulation...
  sim_terr_cap(BeavNetOtter, n_p_terr_sim=2, n_hab_sim=2, min_veg = c(1.3, 1.8))
-
+}
 }

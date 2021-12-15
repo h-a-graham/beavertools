@@ -96,8 +96,9 @@ We intend to develop this function to allow for alternative expansion hypotheses
 }
 \examples{
 
-
+\dontrun{
 # ---------- Subset dataset for example to reduce computation time -----------
+
 BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 
 # ---------- run terriroty generation --------
@@ -109,4 +110,5 @@ test_TC_par <-territory_cap(test_out, multicore = TRUE)
 # now animate the spead of territories through catchment
 animate_capacity(test_TC_par, buffer = 75, river_net = BeavNetOtter,
                            x_pix=600, y_pix=675)
+}
 }

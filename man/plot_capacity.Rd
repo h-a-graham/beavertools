@@ -78,7 +78,7 @@ Once territory capacity is generated using \code{beavertools::territory_cap()}, 
 in a standardised way.
 }
 \examples{
-s
+\dontrun {
 # --- Subset dataset for example to reduce computation time ---
 BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 
@@ -90,5 +90,5 @@ test_TC_par <-territory_cap(test_out, multicore = TRUE)
 
 # Now plot...
 plot_capacity(test_TC_par, basemap=FALSE)
-
+}
 }

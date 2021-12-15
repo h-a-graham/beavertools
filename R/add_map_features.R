@@ -21,9 +21,11 @@ create_mask <- function(sf_obj){
 #' See sf::st_drivers() for available drivers.
 #' @export
 #' @examples
+#' \dontrun{
 #' # this generates an sf object for the river network of the R. Otter catchment.
 #' rivs <- get_rivers(RivOtter_Catch_Area)
 #' plot(sf::st_geometry(rivs))
+#' }
 get_rivers <- function(catchment){
   catchment <- check_spatial_feature(catchment)
 

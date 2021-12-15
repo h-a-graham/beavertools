@@ -17,7 +17,9 @@ same area and saves frequent calls to the OSM server for each plot when using ri
 in the \code{beavertools::terr_plot()} and \code{beavertools::plot_forage_density()} functions.
 }
 \examples{
+\dontrun{
 # this generates an sf object for the river network of the R. Otter catchment.
 rivs <- get_rivers(RivOtter_Catch_Area)
 plot(sf::st_geometry(rivs))
+}
 }

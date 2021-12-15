@@ -120,7 +120,9 @@ create_territories <- function(reach, river, t_length=NULL,  new_buff= NULL, old
 #' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'
 #' # ---------- run terriroty generation --------
+#' \dontrun{
 #' gen_territories(BeavNetOtter)
+#' }
 #'
 gen_territories <- function(BeaverNetwork, progbar=TRUE, multicore=TRUE, ncores){
   # silence warnings...

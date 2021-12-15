@@ -15,6 +15,7 @@
 #' @export
 #' @examples
 #'
+#'\dontrun{
 #'# kde plots for panel/animation
 #'fsd_ggplot <- function(.data, p.names, p.ext, add_map_stuff= FALSE){
 #'
@@ -47,6 +48,7 @@
 #' purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y, inflate_bbox(RivOtter_Catch_Area, 200),
 #'   add_map_stuff = TRUE)) %>%
 #'   animate_maps(.)
+#' }
 animate_maps <- function(map_list, filename=NULL, x_pix=1200, y_pix=675, pix_res=96, n_frames=10, fps = 5){
 
   img <- magick::image_graph(x_pix, y_pix, res = pix_res)

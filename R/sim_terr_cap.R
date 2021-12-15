@@ -15,13 +15,13 @@
 #' Additional information for each simulation includes the number of territories, the minimum vegetation value used and the simulation number.
 #' @export
 #' @examples
-#'
+#' \dontrun{
 #' # --- Subset dataset for example to reduce computation time  ---
 #' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'
 #' # --- run simple simulation...
 #'  sim_terr_cap(BeavNetOtter, n_p_terr_sim=2, n_hab_sim=2, min_veg = c(1.3, 1.8))
-#'
+#' }
 sim_terr_cap <- function(BeaverNetwork, n_p_terr_sim=1, n_hab_sim=5, min_veg = c(1.5, 4), progbar=TRUE){
 
   n_terr_sims <- c(1:n_p_terr_sim)

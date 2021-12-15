@@ -92,7 +92,7 @@ best_territories_ <- function(territories, terr_original=NULL, keep_terr=NULL, p
 #' @import foreach doParallel parallel tcltk
 #' @export
 #' @examples
-#'
+#' \dontrun{
 #' # --- Subset dataset for example to reduce computation time ---
 #' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'
@@ -101,7 +101,7 @@ best_territories_ <- function(territories, terr_original=NULL, keep_terr=NULL, p
 #'
 #' # ------------- Run territory cap -------------
 #' territory_cap(poss_terrs, multicore = TRUE)
-#'
+#' }
 #'
 territory_cap <- function(territories, min_veg = 2.5, min_bdc = 1, progbars = TRUE, multicore=FALSE, ncores){
 

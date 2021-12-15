@@ -36,7 +36,7 @@ to select the most suitable habitats that do not intersect. Stream size and habi
 in larger rivers with better habitat are considered more suitable.
 }
 \examples{
-
+\dontrun{
 # --- Subset dataset for example to reduce computation time ---
 BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 
@@ -45,6 +45,6 @@ poss_terrs <-  gen_territories(BeavNetOtter)
 
 # ------------- Run territory cap -------------
 territory_cap(poss_terrs, multicore = TRUE)
-
+}
 
 }

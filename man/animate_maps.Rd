@@ -38,6 +38,7 @@ the {magick} package.
 }
 \examples{
 
+\dontrun{
 # kde plots for panel/animation
 fsd_ggplot <- function(.data, p.names, p.ext, add_map_stuff= FALSE){
 
@@ -69,4 +70,5 @@ kde_animation <- kde_ras_list \%>\%
 purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y, inflate_bbox(RivOtter_Catch_Area, 200),
   add_map_stuff = TRUE)) \%>\%
   animate_maps(.)
+}
 }

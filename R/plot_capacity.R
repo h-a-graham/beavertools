@@ -31,7 +31,7 @@
 #' @return A ggplot object which displays a map of the territory capacity.
 #' @export
 #' @examples
-#' s
+#' \dontrun {
 #' # --- Subset dataset for example to reduce computation time ---
 #' BeavNetOtter <- RivOtter_BeaverNet[RivOtter_BeaverNet$Str_order > 3,]
 #'
@@ -43,7 +43,7 @@
 #'
 #' # Now plot...
 #' plot_capacity(test_TC_par, basemap=FALSE)
-#'
+#' }
 plot_capacity <- function(terr_capacity, buffer = 50, river_net=NULL, basemap=TRUE, basemap_type = "osmgrayscale",  axes_units = TRUE,
                           scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
                           wgs=FALSE, guide=FALSE, catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, terr_colours = NULL,
