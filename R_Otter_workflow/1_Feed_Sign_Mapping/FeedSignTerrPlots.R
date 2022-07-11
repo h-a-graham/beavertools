@@ -130,11 +130,16 @@ terr_ggplot <- function(.data, pNames, fill.name, .lab, buffer=NULL){
   if (!is.null(buffer)){
     .data<-sf::st_buffer(.data, 50)
   }
+  n.terr <- filter(.data, user_class =='Territory') %>%
+    nrow()
 
       terr <- plot_territories(.data, fill.name, basemap = F, axes_units = FALSE, north_arrow = FALSE, scalebar = FALSE,
                                catchment = RivOtter_Catch_Area, rivers = OSM_rivers, plot_extent = target_ext,
                                guide_pos='bottom', label = .lab, mask_fill = 'grey80') +
         labs(subtitle =  pNames) +
+        annotate("text", -Inf, Inf,
+                 label =sprintf("n territories = %s", n.terr),
+                  hjust = 0.1, vjust = 0.7) +
         theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank())+
         guides(fill = guide_legend(title='Home range class'))
@@ -194,6 +199,13 @@ User_terr_panel <- function(buff, filname){
 
 User_terr_panel(NULL, 'R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterTerrsUserSI.png')
 User_terr_panel(100, 'R_Otter_workflow/1_Feed_Sign_Mapping/maps/OtterTerrsUser.png')
+
+# reclass_terr_list %>%
+#   lapply(st_drop_geometry) %>%
+#   bind_rows(.id="year.id") %>%
+#   group_by(year.id) %>%
+#   filter(user_class =='Territory') %>%
+#   summarise(n = n())
 
 # Animation...
 # ---- side by side animation ------------

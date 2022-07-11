@@ -52,7 +52,8 @@ terr_counts <-  purrr::pmap(count_obj_list, ~get_terr_counts(..1, ..2, ..3, ..4)
   mutate(year_adj = years_since + 2007) %>% #2007
   mutate(terr_count = ifelse(season %in% c('2018 - 2019', '2019 - 2020'), terr_count+1,
                              ifelse(season %in% c('2020 - 2021'),terr_count + 2, terr_count))) %>% # required because some territories not correctly identified due to semi-automate process.
-  mutate(name = 'Observed Data')
+  mutate(name = 'Observed Data',
+         AGR = terr_count-lag(terr_count))
 
 # reclass_terr_list[[1]] %>% # for double checking only.
 #   filter(user_class == "Territory") %>%
@@ -94,21 +95,23 @@ ribbon_df <- function() tibble(year_adj = seq(2000,2070, by=70),.fitted = seq(0,
 
 mid_cap <- function() lower_capacity + ((upper_capacity-lower_capacity)*0.5)
 
-
+hacked_df
 # create plot.
-hacked_df %>%
-  # filter(cap_name==115)%>%
-  ggplot(., aes(x=year_adj, y=.fitted))+
 
-  ### This bit adds the ribbon to show estimated maximum  terr. capacity.
-  # geom_ribbon(data=ribbon_df(), aes(ymin=lower_capacity, ymax=upper_capacity, xmin=2000),
-  #             fill='grey90', size=0.1, alpha=0.2, linetype=2, color="grey10") +
-  # annotate("text", x=2020, y = mid_cap(),
-  #          label = "predicted territory capacity range", size=3) +
-  # geom_segment(aes(x = 2020, y = mid_cap() + 5, xend = 2020, yend = upper_capacity -1),
-  #              arrow = arrow(length = unit(0.01, "npc")),lwd=0.5, color="grey20") +
-  # geom_segment(aes(x = 2020, y = mid_cap() - 5, xend = 2020, yend = lower_capacity +1),
-  # arrow = arrow(length = unit(0.01, "npc")), lwd=0.5, color="grey20") +
+p_func <- function(.x, .l, .u, terr.count=TRUE, y.tit="Number of Territories"){
+  p <- hacked_df %>%
+    # filter(cap_name==115)%>%
+     ggplot(., aes(x=year_adj, y={{.x}}))+
+
+    ### This bit adds the ribbon to show estimated maximum  terr. capacity.
+    # geom_ribbon(data=ribbon_df(), aes(ymin=lower_capacity, ymax=upper_capacity, xmin=2000),
+    #             fill='grey90', size=0.1, alpha=0.2, linetype=2, color="grey10") +
+    # annotate("text", x=2020, y = mid_cap(),
+    #          label = "predicted territory capacity range", size=3) +
+    # geom_segment(aes(x = 2020, y = mid_cap() + 5, xend = 2020, yend = upper_capacity -1),
+    #              arrow = arrow(length = unit(0.01, "npc")),lwd=0.5, color="grey20") +
+    # geom_segment(aes(x = 2020, y = mid_cap() - 5, xend = 2020, yend = lower_capacity +1),
+    # arrow = arrow(length = unit(0.01, "npc")), lwd=0.5, color="grey20") +
 
   ### This gives just the lines
   # geom_line(aes(group=reorder(cap_name, rev(cap_name)), color=cap_name), lwd=0.5, alpha=0.9)+
@@ -120,28 +123,44 @@ hacked_df %>%
   # guides(colour = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity", title.vjust=1)) +
 
   ## this generates the Confidence interval version (CIs are very debatable - safer to levave?)
-geom_ribbon(aes(ymin=pred.lwr, ymax = pred.upr,
-                group=reorder(cap_name, rev(cap_name))),
-            fill='#18BFC2', alpha=0.04) +
-  # geom_ribbon(aes(ymin=pred.lwr, ymax = pred.upr, group=reorder(cap_name, rev(cap_name)), fill=cap_name), colour=NA) +
-  stat_summary(aes(y=pred.lwr), fun = min, geom = 'line', size=0.3, alpha=0.9, linetype=2, color="grey10") +
-  stat_summary(aes(y=pred.upr),fun = max, geom = 'line', size=0.3, alpha=0.9, linetype=2, color="grey10") +
-  # scale_fill_continuous_sequential("TealGrn", rev=F) +
-  # guides(fill = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
+  geom_ribbon(aes(ymin={{.l}}, ymax = {{.u}},
+                  group=reorder(cap_name, rev(cap_name))),
+              fill='#18BFC2', alpha=0.04) +
+    # geom_ribbon(aes(ymin=pred.lwr, ymax = pred.upr, group=reorder(cap_name, rev(cap_name)), fill=cap_name), colour=NA) +
+    stat_summary(aes(y={{.l}}), fun = min, geom = 'line', size=0.3, alpha=0.9, linetype=2, color="grey10") +
+    stat_summary(aes(y={{.u}}),fun = max, geom = 'line', size=0.3, alpha=0.9, linetype=2, color="grey10") +
+    # scale_fill_continuous_sequential("TealGrn", rev=F) +
+    # guides(fill = guide_colourbar(barwidth = 8, barheight = 0.5, title="Territory Capacity")) +
 
-  #adds mean model to plot
-  stat_summary(fun = mean, geom = 'line', size=0.6, alpha=0.9, linetype=1, color="grey10") +
-  # adds original data
-  geom_point(data=terr_counts, aes(x=year_adj, y=terr_count), shape=21, size=1.5,
-             stroke = 1.2)+
-  # define plot style n stuff
-  coord_cartesian(ylim=c(0,upper_capacity +5), xlim = c(2015, 2045))+
-  labs(x = 'Year', y="Number of Territories")+
-  theme_bw() +
-  theme(legend.position = "bottom",
-        axis.title.y = element_text(margin = margin(t = 0, r = 3, b = 0, l = 0)),
-        axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0))) #+
-  ggsave(file.path(plot_dir, 'TerritoryPredictiond2.png'),
+    #adds mean model to plot
+    stat_summary(fun = mean, geom = 'line', size=0.6, alpha=0.9, linetype=1, color="grey10")
+    # adds original data
+    if (isTRUE(terr.count)){
+      p <- p +
+        geom_point(data=terr_counts, aes(x=year_adj, y=terr_count), shape=21, size=1.5,
+                   stroke = 1.2) +
+        coord_cartesian(ylim=c(0,upper_capacity +5), xlim = c(2015, 2045))
+    } else {
+      p <- p +
+        geom_point(data=terr_counts, aes(x=year_adj, y=AGR), shape=21, size=1.5,
+                 stroke = 1.2)
+    }
+    p +
+    # define plot style n stuff
+    # +
+    labs(x = 'Year', y=y.tit)+
+    theme_bw() +
+    theme(legend.position = "bottom",
+          axis.title.y = element_text(margin = margin(t = 0, r = 3, b = 0, l = 0)),
+          axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0)))
+}
+pm1 <- p_func(.fitted, pred.lwr, pred.upr, terr.count=TRUE)
+pm2 <- p_func(growth_rate, growth_rate.lwr, growth_rate.upr, terr.count=FALSE,
+       y.tit = 'Absolute Growth Rate (territories per Year)')
+
+pm1 /pm2
+#+
+  ggsave(file.path(plot_dir, 'TerritoryPredictiond3.png'),
          dpi=600, height=180, width=180, units='mm')
 
 
@@ -173,17 +192,16 @@ make_long <- function(df, col_list, nms_to, vals_to){
 
 long_df <- bind_cols(
   hacked_df %>%
-    make_long(col_list=c(growth_rate, n_terr_growth, hartman_rate),
+    make_long(col_list=c(growth_rate, hartman_rate),
               nms_to='mid', vals_to='mid.long') %>%
-    mutate(mid = ifelse(mid=='growth_rate', "Expansion Rate",
-                        ifelse(mid=="n_terr_growth","New Territories per Year",
-                               "Expansion Rate / time"))),
+    mutate(mid = ifelse(mid=='growth_rate', "Absolute Growth Rate (r)",
+                        "Relative Growth rate (r/M)")),
   hacked_df %>%
-    make_long(col_list=c(growth_rate.lwr, n_terr_growth.lwr, hartman_rate.lwr),
+    make_long(col_list=c(growth_rate.lwr, hartman_rate.lwr),
               nms_to='lwr', vals_to='lwr.long') %>%
     select(lwr.long),
   hacked_df %>%
-    make_long(col_list=c(growth_rate.upr, n_terr_growth.upr, hartman_rate.upr),
+    make_long(col_list=c(growth_rate.upr, hartman_rate.upr),
               nms_to='upr', vals_to='upr.long') %>%
     select(upr.long)
 ) %>%
@@ -231,7 +249,7 @@ pop_dyn_plot2 <-long_df %>%
   theme(strip.background = element_blank(), strip.text = element_blank())
 
 pop_dyn_plot3 <- pop_dyn_plot1/pop_dyn_plot2
-ggsave(file.path(plot_dir, 'TerritoryDynamics.png'),pop_dyn_plot3,
+ggsave(file.path(plot_dir, 'TerritoryDynamicsV2.png'),pop_dyn_plot3,
          dpi=600, height=180, width=180, units='mm')
 
 # stats for paper:
@@ -293,7 +311,16 @@ mgmt_df <- hacked_df %>%
   group_by(cap_name) %>%
   group_split() %>%
   purrr::map(., ~ mgmt_scenario(., c(2022, 2026, 2030), c(2, 3, 5, 8))) %>%
-  bind_rows()
+  bind_rows() %>%
+  mutate(
+    mgmt.lwr.diff = mgmt_growth.lwr / mgmt_growth,
+    mgmt.upr.diff = mgmt_growth.upr / mgmt_growth,
+    mgmt.agr = (lead(mgmt_growth) - mgmt_growth) / (lead(years_since) - years_since),
+    mgmt.agr.lwr = (lead(mgmt_growth.lwr) - mgmt_growth.lwr) / (lead(years_since) - years_since),
+    mgmt.agr.upr = (lead(mgmt_growth.upr) - mgmt_growth.upr) / (lead(years_since) - years_since),
+    # mgmt.agr.lwr = mgmt.agr * mgmt.lwr.diff,
+    # mgmt.agr.upr = mgmt.agr * mgmt.upr.diff
+  )
 
 # sum stats for paper:
 mgmt_df %>%
@@ -307,23 +334,22 @@ mgmt_df %>%
 # (120-106)/120*100###???
 
 # create plot.
-mgmt_plot <- function(df){
-  df %>%
+mgmt_plot <- function(df, .y1, .lwr1, .lwr2, .upr1, .upr2, terr.count=TRUE,
+                      y.tit="Number of Territories"){
+  p <- df %>%
     # filter(cap_name==115)%>%
-    ggplot(., aes(x=year_adj, y=.fitted))+
+    ggplot(., aes(x=year_adj, y={{.y1}}))+
 
     # shows range of unmanaged scenario
     # stat_summary(fun = min, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
     # stat_summary(fun = max, geom = 'line', size=0.4, alpha=0.6, linetype=2, color="grey20") +
 
-    geom_ribbon(aes(ymin=mgmt_growth.lwr, ymax = mgmt_growth.upr,
+    geom_ribbon(aes(ymin={{.lwr1}}, ymax = {{.upr1}},
                     group=reorder(cap_name, rev(cap_name))),
                 fill='#18BFC2', alpha=0.04) +
-    stat_summary(aes(y=mgmt_growth.lwr), fun = min, geom = 'line', size=0.3, alpha=0.9, linetype=1, color="grey10") +
-    stat_summary(aes(y=mgmt_growth.upr),fun = max, geom = 'line', size=0.3, alpha=0.9, linetype=1, color="grey10") +
     # geom_ribbon(aes(ymin=pred.lwr, ymax = pred.upr, group=reorder(cap_name, rev(cap_name)), fill=cap_name), colour=NA) +
-    stat_summary(aes(y=pred.lwr), fun = min, geom = 'line', size=0.3, alpha=0.9, linetype=2, color="grey10") +
-    stat_summary(aes(y=pred.upr),fun = max, geom = 'line', size=0.3, alpha=0.9, linetype=2, color="grey10") +
+    stat_summary(aes(y={{.lwr2}}), fun = min, geom = 'line', size=0.3, alpha=0.9, linetype=2, color="grey10") +
+    stat_summary(aes(y={{.upr2}}),fun = max, geom = 'line', size=0.3, alpha=0.9, linetype=2, color="grey10") +
 
 
     ### This gives just the lines
@@ -335,18 +361,38 @@ mgmt_plot <- function(df){
     facet_grid(mgmt_removed ~ mgmt_year ) +
 
     # define plot style n stuff
-    coord_cartesian(ylim=c(8,upper_capacity +5), xlim = c(2015, 2060))+
-    labs(x = 'Year', y="Number of Territories")+
+
+    labs(x = 'Year', y=y.tit)+
     theme_bw() +
     theme(legend.position = "bottom",
           axis.title.y = element_text(margin = margin(t = 0, r = 3, b = 0, l = 0)),
           axis.title.x = element_text(margin = margin(t = 3, r = 0, b = 0, l = 0)))
+
+  if (isTRUE(terr.count)){
+    p <- p + coord_cartesian(ylim=c(8,upper_capacity +5), xlim = c(2015, 2060)) +
+      stat_summary(aes(y={{.lwr1}}), fun = min, geom = 'line', size=0.3, alpha=0.9, linetype=1, color="grey10") +
+      stat_summary(aes(y={{.upr1}}),fun = max, geom = 'line', size=0.3, alpha=0.9, linetype=1, color="grey10")
+  } else {
+    p <- p + xlim(c(2015, 2056))
+  }
+  p
 }
 
-mgmt_p <- mgmt_plot(mgmt_df)
+mgmt_p <- mgmt_plot(mgmt_df,
+                    .y1=.fitted, .lwr1=mgmt_growth.lwr, .upr1=mgmt_growth.upr,
+                    .lwr2=pred.lwr, .upr2=pred.upr)
 
 add_general_facet_labs(mgmt_p, 'n territories removed each year', ' Year managment starts') %>%
   ggsave(file.path(plot_dir, 'MgmtDynamics.png'), .,
+         dpi=600, height=180, width=180, units='mm')
+
+mgmt_p2 <- mgmt_plot(mgmt_df,
+                    .y1=mgmt_growth  , .lwr1=mgmt.agr.lwr , .upr1=mgmt.agr.upr ,
+                    .lwr2=growth_rate.lwr, .upr2=growth_rate.upr,
+                    terr.count=FALSE, y.tit="Absolute Growth Rate (territories per year)")
+
+add_general_facet_labs(mgmt_p2, 'n territories removed each year', ' Year managment starts') %>%
+  ggsave(file.path(plot_dir, 'MgmtDynamicsAGR.png'), .,
          dpi=600, height=180, width=180, units='mm')
 
 
@@ -357,7 +403,15 @@ mgmt_df_big <- hacked_df %>%
                                 seq(2, 14, by=2))) %>%
   bind_rows()
 
-mgmt_p_matrix <- mgmt_plot(mgmt_df_big) +
+mgmt_p_matrix <-
+  mgmt_plot(
+    mgmt_df_big,
+    .y1 = .fitted,
+    .lwr1 = mgmt_growth.lwr,
+    .upr1 = mgmt_growth.upr,
+    .lwr2 = pred.lwr,
+    .upr2 = pred.upr
+  ) +
   scale_x_continuous(breaks = scales::pretty_breaks(n = 3)) +
   scale_y_continuous(breaks = scales::pretty_breaks(n = 3))
 
