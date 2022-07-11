@@ -138,8 +138,8 @@ terr_ggplot <- function(.data, pNames, fill.name, .lab, buffer=NULL){
                                guide_pos='bottom', label = .lab, mask_fill = 'grey80') +
         labs(subtitle =  pNames) +
         annotate("text", -Inf, Inf,
-                 label =sprintf("n territories = %s", n.terr),
-                  hjust = 0.1, vjust = 0.7) +
+                 label =sprintf("n = %s", n.terr),
+                  hjust = -0.8, vjust = 9, size=3.) +
         theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank())+
         guides(fill = guide_legend(title='Home range class'))

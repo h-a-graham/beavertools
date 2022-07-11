@@ -5,6 +5,7 @@ QGIS
 run
 *.gif
 *.Rds
+*.xcf
 docs
 gdalwmscache/
 pkdown_comms/
