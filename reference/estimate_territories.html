@@ -21,7 +21,7 @@ territories, confirmatory signs are required including dam and dwelling location
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
@@ -54,61 +54,68 @@ territories, confirmatory signs are required including dam and dwelling location
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">estimate_territories</span><span class="op">(</span>
-  <span class="va">forage_raster</span>,
-  <span class="va">confirm_signs</span>,
-  low_thresh <span class="op">=</span> <span class="fl">0</span>,
-  upper_thresh <span class="op">=</span> <span class="fl">0.95</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">estimate_territories</span><span class="op">(</span></span>
+<span>  <span class="va">forage_raster</span>,</span>
+<span>  <span class="va">confirm_signs</span>,</span>
+<span>  low_thresh <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  upper_thresh <span class="op">=</span> <span class="fl">0.95</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>forage_raster</dt>
 <dd><p>the foraging density raster generated from <code><a href="forage_density.html">beavertools::forage_density()</a></code></p></dd>
+
+
 <dt>confirm_signs</dt>
 <dd><p>An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 containing 'confirmatory' field signs for beaver such as dams and lodges. This is required to assign a
 confidence classification for areas of activity either: 'Activity'. 'Possible' or 'Territory'.</p></dd>
+
+
 <dt>low_thresh</dt>
 <dd><p>numeric between 0 and 1. Used to set minimum value for activity. Lower values
 return more information i.e. area with cover but can result in the merging of territories as density
 increases. use lowest possible value.</p></dd>
+
+
 <dt>upper_thresh</dt>
 <dd><p>numeric between 0 and 1. Used to set the minimum value for core areas of activity. AS
 central place forages, beavers feed more near their lodge, this value idenitfies areas of activity which may
 indicate the centre of a territory. default is 0.95, may need adjusting depending on territory density.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An 'sf' polygon object defining areas of beaver activity, with kernel denisty summary stats and
+    
+
+<p>An 'sf' polygon object defining areas of beaver activity, with kernel denisty summary stats and
 the territory status.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`</span></span>
-<span class="r-in"><span class="co"># Then pipe this 'sf' object to forage_density.</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">ROBT_201920</span> <span class="op">&lt;-</span> <span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span><span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu"><a href="forage_density.html">forage_density</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`</span></span></span>
+<span class="r-in"><span><span class="co"># Then pipe this 'sf' object to forage_density.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">ROBT_201920</span> <span class="op">&lt;-</span> <span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span><span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="forage_density.html">forage_density</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No value supplied for "kd_extent" argument: default extent will be used</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>CRS object has comment, which is lost in output; in tests, see</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> https://cran.r-project.org/web/packages/sp/vignettes/CRS_warnings.html</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>CRS object has comment, which is lost in output; in tests, see</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> https://cran.r-project.org/web/packages/sp/vignettes/CRS_warnings.html</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Now we load the ROBT `RivOtter_OtherSigns` dataset and filter to the same</span></span>
-<span class="r-in"><span class="co"># year as the forage density raster.</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">CS_201920</span> <span class="op">&lt;-</span> <span class="va">RivOtter_OtherSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># run territory classification</span></span>
-<span class="r-in"><span class="fu">estimate_territories</span><span class="op">(</span><span class="va">ROBT_201920</span>, confirm_signs <span class="op">=</span> <span class="va">CS_201920</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Now we load the ROBT `RivOtter_OtherSigns` dataset and filter to the same</span></span></span>
+<span class="r-in"><span><span class="co"># year as the forage density raster.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">CS_201920</span> <span class="op">&lt;-</span> <span class="va">RivOtter_OtherSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># run territory classification</span></span></span>
+<span class="r-in"><span><span class="fu">estimate_territories</span><span class="op">(</span><span class="va">ROBT_201920</span>, confirm_signs <span class="op">=</span> <span class="va">CS_201920</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 46 features and 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
@@ -137,7 +144,7 @@ the territory status.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1.7 3.014022e-12 POLYGON ((308640 88020, 308...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1.8 3.055329e-12 POLYGON ((308520 88180, 308...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1.9 1.285127e-04 POLYGON ((308840 88660, 308...</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -149,7 +156,7 @@ the territory status.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

@@ -19,7 +19,7 @@ beavertools::plot_territories but tidies things up a bit. It is not exaustive an
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
@@ -51,31 +51,31 @@ beavertools::plot_territories but tidies things up a bit. It is not exaustive an
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plot_other_signs</span><span class="op">(</span>
-  <span class="va">beav_points</span>,
-  size <span class="op">=</span> <span class="fl">2.5</span>,
-  fill_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#e41a1c"</span>, <span class="st">"#4daf4a"</span>, <span class="st">"#d11141"</span><span class="op">)</span>,
-  label <span class="op">=</span> <span class="cn">FALSE</span>,
-  basemap <span class="op">=</span> <span class="cn">TRUE</span>,
-  basemap_type <span class="op">=</span> <span class="st">"osmgrayscale"</span>,
-  axes_units <span class="op">=</span> <span class="cn">TRUE</span>,
-  scalebar <span class="op">=</span> <span class="cn">TRUE</span>,
-  scalebar_loc <span class="op">=</span> <span class="st">"tl"</span>,
-  north_arrow <span class="op">=</span> <span class="cn">TRUE</span>,
-  north_arrow_loc <span class="op">=</span> <span class="st">"br"</span>,
-  north_arrow_size <span class="op">=</span> <span class="fl">0.75</span>,
-  wgs <span class="op">=</span> <span class="cn">TRUE</span>,
-  guide <span class="op">=</span> <span class="cn">TRUE</span>,
-  guide_pos <span class="op">=</span> <span class="st">"bottom"</span>,
-  seed <span class="op">=</span> <span class="cn">NA</span>,
-  drop_act <span class="op">=</span> <span class="cn">FALSE</span>,
-  trans_type <span class="op">=</span> <span class="cn">NULL</span>,
-  catchment <span class="op">=</span> <span class="cn">NULL</span>,
-  rivers <span class="op">=</span> <span class="cn">FALSE</span>,
-  add_hillshade <span class="op">=</span> <span class="cn">FALSE</span>,
-  plot_extent <span class="op">=</span> <span class="cn">NULL</span>,
-  mask_fill <span class="op">=</span> <span class="st">"grey50"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_other_signs</span><span class="op">(</span></span>
+<span>  <span class="va">beav_points</span>,</span>
+<span>  size <span class="op">=</span> <span class="fl">2.5</span>,</span>
+<span>  fill_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#e41a1c"</span>, <span class="st">"#4daf4a"</span>, <span class="st">"#d11141"</span><span class="op">)</span>,</span>
+<span>  label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  basemap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  basemap_type <span class="op">=</span> <span class="st">"osmgrayscale"</span>,</span>
+<span>  axes_units <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  scalebar <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  scalebar_loc <span class="op">=</span> <span class="st">"tl"</span>,</span>
+<span>  north_arrow <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  north_arrow_loc <span class="op">=</span> <span class="st">"br"</span>,</span>
+<span>  north_arrow_size <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  wgs <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  guide <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  guide_pos <span class="op">=</span> <span class="st">"bottom"</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  drop_act <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  trans_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  catchment <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rivers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add_hillshade <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  plot_extent <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mask_fill <span class="op">=</span> <span class="st">"grey50"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -83,71 +83,116 @@ beavertools::plot_territories but tidies things up a bit. It is not exaustive an
     <dl><dt>beav_points</dt>
 <dd><p>An 'sf' object containing the location of beaver dwellings and dams.
 Alternative signs will be labelled as 'other'</p></dd>
+
+
 <dt>size</dt>
 <dd><p>a numeric vector of length 1 denoting the point size to be used by ggplot2.</p></dd>
+
+
 <dt>fill_col</dt>
 <dd><p>character vector of R colours or HEX codes.</p></dd>
+
+
 <dt>label</dt>
 <dd><p>label activity areas with polygon ID.</p></dd>
+
+
 <dt>basemap</dt>
 <dd><p>Boolean, include an OSM basemap. (optional)</p></dd>
+
+
 <dt>basemap_type</dt>
 <dd><p>Character vector for osm map type. for options see <code><a href="https://rdrr.io/pkg/rosm/man/osm.types.html" class="external-link">rosm::osm.types()</a></code></p></dd>
+
+
 <dt>axes_units</dt>
 <dd><p>Boolean to include coordinate values on axis.</p></dd>
+
+
 <dt>scalebar</dt>
 <dd><p>Boolean to include a scalebar.</p></dd>
+
+
 <dt>scalebar_loc</dt>
 <dd><p>character vector for the scalebar location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.</p></dd>
+
+
 <dt>north_arrow</dt>
 <dd><p>Boolean to include a north arrow</p></dd>
+
+
 <dt>north_arrow_loc</dt>
 <dd><p>character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.</p></dd>
+
+
 <dt>north_arrow_size</dt>
 <dd><p>numeric vector for the arrow</p></dd>
+
+
 <dt>wgs</dt>
 <dd><p>Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)</p></dd>
+
+
 <dt>guide</dt>
 <dd><p>Boolean to include a legend</p></dd>
+
+
 <dt>guide_pos</dt>
 <dd><p>character vector describing the desired position of the guide c("left", "right", "bottom", "top")</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.</p></dd>
+
+
 <dt>drop_act</dt>
 <dd><p>Boolean to remove areas classified as 'activity' this creates a plot which shows only possibl
 and confirmed territories</p></dd>
+
+
 <dt>trans_type</dt>
 <dd><p>character - the transformation type to be used if fill_name=c('mean_fd', sum_fd').</p></dd>
+
+
 <dt>catchment</dt>
 <dd><p>An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.</p></dd>
+
+
 <dt>rivers</dt>
 <dd><p>Boolean to include river lines (downloaded automatcally using the osmdata package) OR a river network of class
 'sf' which can be generated beforehand using <code><a href="get_rivers.html">beavertools::get_rivers()</a></code>.</p></dd>
+
+
 <dt>add_hillshade</dt>
 <dd><p>Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
 create a textured basemap.</p></dd>
+
+
 <dt>plot_extent</dt>
 <dd><p>'bbox', 'sf' or 'sp' object defining the desired plot extent.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>ggplot object of a confirmatory signs map.</p>
+    
+
+<p>ggplot object of a confirmatory signs map.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Here we filter the filter the built in 2019-2020 ROBT confirmatory sign data `RivOtter_OtherSigns`</span></span>
-<span class="r-in"><span class="co"># Then pipe this 'sf' object to plot_feeding.</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">RivOtter_OtherSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">plot_other_signs</span><span class="op">(</span><span class="va">.</span>, size <span class="op">=</span> <span class="fl">1.5</span>,basemap<span class="op">=</span><span class="cn">T</span>, catchment <span class="op">=</span> <span class="va">RivOtter_Catch_Area</span>,</span>
-<span class="r-in">                   rivers <span class="op">=</span> <span class="cn">T</span>, plot_extent <span class="op">=</span> <span class="fu"><a href="inflate_bbox.html">inflate_bbox</a></span><span class="op">(</span><span class="va">RivOtter_Catch_Area</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Here we filter the filter the built in 2019-2020 ROBT confirmatory sign data `RivOtter_OtherSigns`</span></span></span>
+<span class="r-in"><span><span class="co"># Then pipe this 'sf' object to plot_feeding.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">RivOtter_OtherSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">plot_other_signs</span><span class="op">(</span><span class="va">.</span>, size <span class="op">=</span> <span class="fl">1.5</span>,basemap<span class="op">=</span><span class="cn">T</span>, catchment <span class="op">=</span> <span class="va">RivOtter_Catch_Area</span>,</span></span>
+<span class="r-in"><span>                   rivers <span class="op">=</span> <span class="cn">T</span>, plot_extent <span class="op">=</span> <span class="fu"><a href="inflate_bbox.html">inflate_bbox</a></span><span class="op">(</span><span class="va">RivOtter_Catch_Area</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>attribute variables are assumed to be spatially constant throughout all geometries</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in geos_op2_geom("intersection", x, y, ...):</span> st_crs(x) == st_crs(y) is not TRUE</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -159,7 +204,7 @@ create a textured basemap.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

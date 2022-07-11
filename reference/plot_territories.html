@@ -17,7 +17,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
@@ -48,123 +48,166 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plot_territories</span><span class="op">(</span>
-  <span class="va">terr_poly</span>,
-  <span class="va">fill_name</span>,
-  fill_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#7EAAC7"</span>, <span class="st">"#F87223"</span>, <span class="st">"#61E265"</span><span class="op">)</span>,
-  label <span class="op">=</span> <span class="cn">FALSE</span>,
-  basemap <span class="op">=</span> <span class="cn">TRUE</span>,
-  basemap_type <span class="op">=</span> <span class="st">"osmgrayscale"</span>,
-  axes_units <span class="op">=</span> <span class="cn">TRUE</span>,
-  scalebar <span class="op">=</span> <span class="cn">TRUE</span>,
-  scalebar_loc <span class="op">=</span> <span class="st">"tl"</span>,
-  north_arrow <span class="op">=</span> <span class="cn">TRUE</span>,
-  north_arrow_loc <span class="op">=</span> <span class="st">"br"</span>,
-  north_arrow_size <span class="op">=</span> <span class="fl">0.75</span>,
-  wgs <span class="op">=</span> <span class="cn">TRUE</span>,
-  guide <span class="op">=</span> <span class="cn">TRUE</span>,
-  guide_pos <span class="op">=</span> <span class="st">"right"</span>,
-  seed <span class="op">=</span> <span class="cn">NA</span>,
-  drop_act <span class="op">=</span> <span class="cn">FALSE</span>,
-  trans_type <span class="op">=</span> <span class="cn">NULL</span>,
-  catchment <span class="op">=</span> <span class="cn">NULL</span>,
-  rivers <span class="op">=</span> <span class="cn">FALSE</span>,
-  add_hillshade <span class="op">=</span> <span class="cn">FALSE</span>,
-  plot_extent <span class="op">=</span> <span class="cn">NULL</span>,
-  mask_fill <span class="op">=</span> <span class="st">"grey50"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_territories</span><span class="op">(</span></span>
+<span>  <span class="va">terr_poly</span>,</span>
+<span>  <span class="va">fill_name</span>,</span>
+<span>  fill_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#7EAAC7"</span>, <span class="st">"#F87223"</span>, <span class="st">"#61E265"</span><span class="op">)</span>,</span>
+<span>  label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  basemap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  basemap_type <span class="op">=</span> <span class="st">"osmgrayscale"</span>,</span>
+<span>  axes_units <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  scalebar <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  scalebar_loc <span class="op">=</span> <span class="st">"tl"</span>,</span>
+<span>  north_arrow <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  north_arrow_loc <span class="op">=</span> <span class="st">"br"</span>,</span>
+<span>  north_arrow_size <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  wgs <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  guide <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  guide_pos <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  drop_act <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  trans_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  catchment <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rivers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add_hillshade <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  plot_extent <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mask_fill <span class="op">=</span> <span class="st">"grey50"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>terr_poly</dt>
 <dd><p>a territory polygon created using <code><a href="estimate_territories.html">beavertools::estimate_territories()</a></code></p></dd>
+
+
 <dt>fill_name</dt>
 <dd><p>a character vector containing the name of the column to be used as the fill aesthetic.
 choose from: 'terr_status', 'user_class', 'mean_fd', sum_fd' or 'id'.</p></dd>
+
+
 <dt>fill_col</dt>
 <dd><p>character vector of R colours or HEX codes.</p></dd>
+
+
 <dt>label</dt>
 <dd><p>label activity areas with polygon ID.</p></dd>
+
+
 <dt>basemap</dt>
 <dd><p>Boolean, include an OSM basemap. (optional)</p></dd>
+
+
 <dt>basemap_type</dt>
 <dd><p>Character vector for osm map type. for options see <code><a href="https://rdrr.io/pkg/rosm/man/osm.types.html" class="external-link">rosm::osm.types()</a></code></p></dd>
+
+
 <dt>axes_units</dt>
 <dd><p>Boolean to include coordinate values on axis.</p></dd>
+
+
 <dt>scalebar</dt>
 <dd><p>Boolean to include a scalebar.</p></dd>
+
+
 <dt>scalebar_loc</dt>
 <dd><p>character vector for the scalebar location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.</p></dd>
+
+
 <dt>north_arrow</dt>
 <dd><p>Boolean to include a north arrow</p></dd>
+
+
 <dt>north_arrow_loc</dt>
 <dd><p>character vector for the arrow location one of:'tl', 'bl', 'tr', 'br' Meaning "top left" etc.</p></dd>
+
+
 <dt>north_arrow_size</dt>
 <dd><p>numeric vector for the arrow</p></dd>
+
+
 <dt>wgs</dt>
 <dd><p>Boolean to transform coordinate reference system (CRS) to WGS84 (EPSG:4326)</p></dd>
+
+
 <dt>guide</dt>
 <dd><p>Boolean to include a legend</p></dd>
+
+
 <dt>guide_pos</dt>
 <dd><p>character denoting the position of the legend c('left, 'right, 'bottom', 'top)</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>numeric seed number -useful if using 'fill_name' = 'ID' as will set the same random colour palette.</p></dd>
+
+
 <dt>drop_act</dt>
 <dd><p>Boolean to remove areas classified as 'activity' this creates a plot which shows only possibl
 and confirmed territories</p></dd>
+
+
 <dt>trans_type</dt>
 <dd><p>character - the transformation type to be used if fill_name=c('mean_fd', sum_fd').</p></dd>
+
+
 <dt>catchment</dt>
 <dd><p>An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.</p></dd>
+
+
 <dt>rivers</dt>
 <dd><p>Boolean to include river lines (downloaded automatcally using the osmdata package) OR a river network of class
 'sf' which can be generated beforehand using <code><a href="get_rivers.html">beavertools::get_rivers()</a></code>.</p></dd>
+
+
 <dt>add_hillshade</dt>
 <dd><p>Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
 create a textured basemap.</p></dd>
+
+
 <dt>plot_extent</dt>
 <dd><p>'bbox', 'sf' or 'sp' object defining the desired plot extent.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>ggplot object of the territory check map.</p>
+    
+
+<p>ggplot object of the territory check map.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`</span></span>
-<span class="r-in"><span class="co"># Then pipe this 'sf' object to forage_density.</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">ROBT_201920</span> <span class="op">&lt;-</span> <span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span><span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu"><a href="forage_density.html">forage_density</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`</span></span></span>
+<span class="r-in"><span><span class="co"># Then pipe this 'sf' object to forage_density.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">ROBT_201920</span> <span class="op">&lt;-</span> <span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span><span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="forage_density.html">forage_density</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No value supplied for "kd_extent" argument: default extent will be used</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>CRS object has comment, which is lost in output; in tests, see</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> https://cran.r-project.org/web/packages/sp/vignettes/CRS_warnings.html</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>CRS object has comment, which is lost in output; in tests, see</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> https://cran.r-project.org/web/packages/sp/vignettes/CRS_warnings.html</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Now we load the ROBT `RivOtter_OtherSigns` dataset and filter to the same</span></span>
-<span class="r-in"><span class="co"># year as the forage density raster.</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">CS_201920</span> <span class="op">&lt;-</span> <span class="va">RivOtter_OtherSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># run territory classification</span></span>
-<span class="r-in"><span class="va">otter_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate_territories.html">estimate_territories</a></span><span class="op">(</span><span class="va">ROBT_201920</span>, confirm_signs <span class="op">=</span> <span class="va">CS_201920</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># various options:</span></span>
-<span class="r-in"><span class="fu">plot_territories</span><span class="op">(</span><span class="va">otter_poly</span>, <span class="st">'mean_fd'</span>, basemap<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Now we load the ROBT `RivOtter_OtherSigns` dataset and filter to the same</span></span></span>
+<span class="r-in"><span><span class="co"># year as the forage density raster.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">CS_201920</span> <span class="op">&lt;-</span> <span class="va">RivOtter_OtherSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># run territory classification</span></span></span>
+<span class="r-in"><span><span class="va">otter_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate_territories.html">estimate_territories</a></span><span class="op">(</span><span class="va">ROBT_201920</span>, confirm_signs <span class="op">=</span> <span class="va">CS_201920</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># various options:</span></span></span>
+<span class="r-in"><span><span class="fu">plot_territories</span><span class="op">(</span><span class="va">otter_poly</span>, <span class="st">'mean_fd'</span>, basemap<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_territories-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot_territories</span><span class="op">(</span><span class="va">otter_poly</span>, <span class="st">'sum_fd'</span>, basemap<span class="op">=</span><span class="cn">FALSE</span>, trans_type <span class="op">=</span> <span class="st">'log10'</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plot_territories</span><span class="op">(</span><span class="va">otter_poly</span>, <span class="st">'sum_fd'</span>, basemap<span class="op">=</span><span class="cn">FALSE</span>, trans_type <span class="op">=</span> <span class="st">'log10'</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_territories-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot_territories</span><span class="op">(</span><span class="va">otter_poly</span>, <span class="st">'id'</span>, basemap<span class="op">=</span><span class="cn">TRUE</span>, guide <span class="op">=</span> <span class="cn">FALSE</span>, label <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">                drop_act <span class="op">=</span> <span class="cn">TRUE</span>, axes_units <span class="op">=</span> <span class="cn">FALSE</span>, rivers <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plot_territories</span><span class="op">(</span><span class="va">otter_poly</span>, <span class="st">'id'</span>, basemap<span class="op">=</span><span class="cn">TRUE</span>, guide <span class="op">=</span> <span class="cn">FALSE</span>, label <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                drop_act <span class="op">=</span> <span class="cn">TRUE</span>, axes_units <span class="op">=</span> <span class="cn">FALSE</span>, rivers <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> "rivers" argument ignored. A valid "catchment" area is required.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; = "none")` instead.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Zoom: 12</span>
@@ -172,7 +215,7 @@ create a textured basemap.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                                              |                                                                      |   0%  |                                                                              |===                                                                   |   4%  |                                                                              |======                                                                |   8%  |                                                                              |=========                                                             |  12%  |                                                                              |============                                                          |  17%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  25%  |                                                                              |====================                                                  |  29%  |                                                                              |=======================                                               |  33%  |                                                                              |==========================                                            |  38%  |                                                                              |=============================                                         |  42%  |                                                                              |================================                                      |  46%  |                                                                              |===================================                                   |  50%  |                                                                              |======================================                                |  54%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  62%  |                                                                              |===============================================                       |  67%  |                                                                              |==================================================                    |  71%  |                                                                              |====================================================                  |  75%  |                                                                              |=======================================================               |  79%  |                                                                              |==========================================================            |  83%  |                                                                              |=============================================================         |  88%  |                                                                              |================================================================      |  92%  |                                                                              |===================================================================   |  96%  |                                                                              |======================================================================| 100%</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ...complete!</span>
 <span class="r-plt img"><img src="plot_territories-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -184,7 +227,7 @@ create a textured basemap.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

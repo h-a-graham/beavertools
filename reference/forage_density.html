@@ -17,7 +17,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
@@ -48,16 +48,16 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">forage_density</span><span class="op">(</span>
-  <span class="va">forage_points</span>,
-  <span class="va">impact_cat</span>,
-  grid_size <span class="op">=</span> <span class="fl">20</span>,
-  kern_bw <span class="op">=</span> <span class="fl">250</span>,
-  <span class="va">kd_extent</span>,
-  kd_weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span>, <span class="fl">1e+06</span><span class="op">)</span>,
-  low_thresh <span class="op">=</span> <span class="fl">1e-12</span>,
-  standardise <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">forage_density</span><span class="op">(</span></span>
+<span>  <span class="va">forage_points</span>,</span>
+<span>  <span class="va">impact_cat</span>,</span>
+<span>  grid_size <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  kern_bw <span class="op">=</span> <span class="fl">250</span>,</span>
+<span>  <span class="va">kd_extent</span>,</span>
+<span>  kd_weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span>, <span class="fl">1e+06</span><span class="op">)</span>,</span>
+<span>  low_thresh <span class="op">=</span> <span class="fl">1e-12</span>,</span>
+<span>  standardise <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -65,38 +65,53 @@
     <dl><dt>forage_points</dt>
 <dd><p>The foraging sign point data - must be either an sf object or an sf-readable file.
 See sf::st_drivers() for available drivers</p></dd>
+
+
 <dt>impact_cat</dt>
 <dd><p>A character vector of length one containing the column name which describes the feeding
 impact category (i.e. Low, Medium, or High). If not provided kernel density is not weighted</p></dd>
+
+
 <dt>grid_size</dt>
 <dd><p>The raster grid cell size desired.</p></dd>
+
+
 <dt>kern_bw</dt>
 <dd><p>The bandwidth for the kernel denisty search radius.</p></dd>
+
+
 <dt>kd_extent</dt>
 <dd><p>The desired extent of the output raster.</p></dd>
+
+
 <dt>kd_weights</dt>
 <dd><p>A numeric vector of length equal to the number of unique impact categories.</p></dd>
+
+
 <dt>low_thresh</dt>
 <dd><p>A lower threshold for setting the minimum desired value. Values &lt; low_thresh are set to NA.</p></dd>
+
+
 <dt>standardise</dt>
 <dd><p>Boolean to specify if densities shoul be standardised between 0-1.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>"RasterLayer" object with kernel denisity estimates for feeding signs</p>
+    
+
+<p>"RasterLayer" object with kernel denisity estimates for feeding signs</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`</span></span>
-<span class="r-in"><span class="co"># Then pipe this 'sf' object to forage_density.</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span><span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">forage_density</span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`</span></span></span>
+<span class="r-in"><span><span class="co"># Then pipe this 'sf' object to forage_density.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">RivOtter_FeedSigns</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveySeason</span> <span class="op">==</span> <span class="st">"2019 - 2020"</span><span class="op">)</span><span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">forage_density</span><span class="op">(</span><span class="va">.</span>, <span class="st">'FeedCat'</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No value supplied for "kd_extent" argument: default extent will be used</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>CRS object has comment, which is lost in output; in tests, see</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> https://cran.r-project.org/web/packages/sp/vignettes/CRS_warnings.html</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating weighted kde</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>CRS object has comment, which is lost in output; in tests, see</span>
@@ -110,7 +125,7 @@ impact category (i.e. Low, Medium, or High). If not provided kernel density is n
 <span class="r-out co"><span class="r-pr">#&gt;</span> names      : kde </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> values     : 1.000071e-12, 3.214948e-06  (min, max)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -122,7 +137,7 @@ impact category (i.e. Low, Medium, or High). If not provided kernel density is n
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

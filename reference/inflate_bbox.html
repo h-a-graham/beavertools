@@ -17,7 +17,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
@@ -48,28 +48,35 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">inflate_bbox</span><span class="op">(</span><span class="va">sp_obj</span>, <span class="va">value</span>, wgs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">inflate_bbox</span><span class="op">(</span><span class="va">sp_obj</span>, <span class="va">value</span>, wgs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>sp_obj</dt>
 <dd><p>Either an sf object or an sf-readable file. See sf::st_drivers() for available drivers. used as the basis for the bounding box.</p></dd>
+
+
 <dt>value</dt>
 <dd><p>A numeric distance (in the units of the spatial object) to inflate the bounds by.</p></dd>
+
+
 <dt>wgs</dt>
 <dd><p>Boolean to determine if box should be defined in WGS84 CRS. default is TRUE as this plays more nicely with ggspatial...</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>object of class "bbox" containing the spatial coordinates of a bounding area</p>
+    
+
+<p>object of class "bbox" containing the spatial coordinates of a bounding area</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># generate inflated (by 10m) bounding box for ROBT feeding signs</span></span>
-<span class="r-in"><span class="fu">inflate_bbox</span><span class="op">(</span><span class="va">RivOtter_FeedSigns</span>, <span class="fl">10</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># generate inflated (by 10m) bounding box for ROBT feeding signs</span></span></span>
+<span class="r-in"><span><span class="fu">inflate_bbox</span><span class="op">(</span><span class="va">RivOtter_FeedSigns</span>, <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 1 feature and 0 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
@@ -77,7 +84,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: OSGB 1936 / British National Grid</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         geometry</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 POLYGON ((305466.8 82137.99...</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -89,7 +96,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>
