@@ -16,11 +16,10 @@ Catchment](https://github.com/h-a-graham/beavertools/tree/master/R_Otter_workflo
 To see a workflow example of this package.
 
 Here is an example of the outputs from the package. Results are from our
-in review publication:
+in 2022 publication:
 
-Graham, Puttock, Chant, Elliott, Campbell-Palmer, Anderson, Brazier, (In
-Review); Monitoring, modelling and managing beaver populations at the
-catchment scale. <https://doi.org/10.5281/zenodo.5771115>
+Graham, Hugh A., Alan Puttock, Jake Chant, Mark Elliott, Roisin Campbell‐Palmer, Karen Anderson, and Richard E. Brazier. ‘Monitoring, Modelling and Managing Beaver ( Castor Fiber ) Populations in the River Otter Catchment, Great Britain’. Ecological Solutions and Evidence 3, no. 3 (July 2022). https://doi.org/10.1002/2688-8319.12168.
+
 
 This example shows the kernel density estimate for feeding signs and the
 derived (automated) territory locations and their classification. This
