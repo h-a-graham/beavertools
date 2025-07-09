@@ -1,4 +1,3 @@
-
 #' Estimate the number of territories in a catchment
 #'
 #' Uses the kernel density maps to estimate the area of territories by locating areas of activity that
@@ -35,21 +34,24 @@
 #'# run territory classification
 #' estimate_territories(ROBT_201920, confirm_signs = CS_201920)
 #'
-estimate_territories <- function(forage_raster, confirm_signs, low_thresh = 0, upper_thresh = 0.95){
-
+estimate_territories <- function(
+  forage_raster,
+  confirm_signs,
+  low_thresh = 0,
+  upper_thresh = 0.95
+) {
   # check the input confirm points and convert to sf from either filepath or sp. skip if already sf.
   if (class(confirm_signs)[1] == "sf") {
     # forage objects already in sf format
-
   } else if (class(confirm_signs)[1] == "SpatialPointsDataFrame") {
     confirm_signs <- (sf::st_as_sf(confirm_signs))
-
-  } else if (class(confirm_signs)[1] == 'character'){
+  } else if (class(confirm_signs)[1] == 'character') {
     confirm_signs <- sf::read_sf(confirm_signs)
-
   } else {
-    stop('Class type %s is not supported for "confirm_signs" arg.
-         Please provide either: sf, SpatialPointsDataFrame, or sf-readable filepath')
+    stop(
+      'Class type %s is not supported for "confirm_signs" arg.
+         Please provide either: sf, SpatialPointsDataFrame, or sf-readable filepath'
+    )
   }
 
   # silence warnings
@@ -57,45 +59,81 @@ estimate_territories <- function(forage_raster, confirm_signs, low_thresh = 0, u
   options(warn = -1)
 
   poly_list <- list(low_thresh, upper_thresh) %>%
-    purrr::map(., ~ raster::quantile(forage_raster, .)) %>%
-    purrr::map(., ~ polygonise(forage_raster, .))
+    purrr::map(
+      .x = .,
+      ~ terra::global(forage_raster, fun = quantile, probs = .x, na.rm = TRUE)
+    ) %>%
+    purrr::map(.x = ., ~ polygonise(forage_raster, .x))
 
   # restore warning setting
   options(warn = oldw)
 
   forage_poly <- poly_list[[1]] %>%
     dplyr::mutate(id = forcats::as_factor(dplyr::row_number())) %>%
-    dplyr::mutate(Upper_Thresh = as.factor(ifelse(id %in% unlist(sf::st_intersects(poly_list[[2]], poly_list[[1]])),
-                                        'Yes', 'No'))) %>%
-    dplyr::mutate(Confirm_signs = as.factor(ifelse(id %in% unlist(sf::st_intersects(confirm_signs, poly_list[[1]])),
-                                         'Yes', 'No'))) %>%
-    dplyr::mutate(terr_status = as.factor(ifelse(Upper_Thresh=='Yes' & Confirm_signs=='Yes', 'Territory',
-                                       ifelse(Upper_Thresh=='Yes' & Confirm_signs=='No', 'Possible',
-                                              ifelse(Upper_Thresh=='No' & Confirm_signs=='Yes', 'Territory',
-                                                     'Activity'))))) %>%
-    dplyr::mutate(mean_fd = exactextractr::exact_extract(forage_raster, ., 'mean', progress =F))%>%
-    dplyr::mutate(sum_fd = exactextractr::exact_extract(forage_raster, ., 'sum', progress =F)) %>%
+    dplyr::mutate(
+      Upper_Thresh = as.factor(ifelse(
+        id %in% unlist(sf::st_intersects(poly_list[[2]], poly_list[[1]])),
+        'Yes',
+        'No'
+      ))
+    ) %>%
+    dplyr::mutate(
+      Confirm_signs = as.factor(ifelse(
+        id %in% unlist(sf::st_intersects(confirm_signs, poly_list[[1]])),
+        'Yes',
+        'No'
+      ))
+    ) %>%
+    dplyr::mutate(
+      terr_status = as.factor(ifelse(
+        Upper_Thresh == 'Yes' & Confirm_signs == 'Yes',
+        'Territory',
+        ifelse(
+          Upper_Thresh == 'Yes' & Confirm_signs == 'No',
+          'Possible',
+          ifelse(
+            Upper_Thresh == 'No' & Confirm_signs == 'Yes',
+            'Territory',
+            'Activity'
+          )
+        )
+      ))
+    ) %>%
+    dplyr::mutate(
+      mean_fd = exactextractr::exact_extract(
+        forage_raster,
+        .,
+        'mean',
+        progress = F
+      )
+    ) %>%
+    dplyr::mutate(
+      sum_fd = exactextractr::exact_extract(
+        forage_raster,
+        .,
+        'sum',
+        progress = F
+      )
+    ) %>%
     dplyr::rename(geometry = x)
-
 
   return(forage_poly)
 }
 
 # function to convert raster to polygons
-polygonise <- function(ras, thresh){
-
+polygonise <- function(ras, thresh) {
   rasvec <- as.vector(ras)
   rasvec <- rasvec[!is.na(rasvec)]
   f <- ecdf(rasvec)
   perc <- round(f(thresh), 2)
 
-  raster::rasterToPolygons(ras, fun=function(x){x>thresh}) %>%
+  ras[ras < as.numeric(thresh)] <- NA
+
+  terra::as.polygons(ras) %>%
     sf::st_as_sf() %>%
     sf::st_union() %>%
     sf::st_as_sf() %>%
     dplyr::mutate(quant = perc) %>%
     dplyr::mutate(quantf = as.factor(quant)) %>%
-    sf::st_cast(., to='POLYGON')
+    sf::st_cast(., to = 'POLYGON')
 }
-
-
