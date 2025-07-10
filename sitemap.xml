@@ -1,87 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>h-a-graham.github.io/beavertools/404.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/authors.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/index.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/RivOtter_BeaverNet.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/RivOtter_Catch_Area.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/RivOtter_FeedSigns.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/RivOtter_OtherSigns.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/animate_capacity.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/animate_maps.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/check_auto_terr.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/check_user_terr.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/estimate_territories.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/forage_density.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/gen_territories.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/get_rivers.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/inflate_bbox.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/panel_plot.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/plot_capacity.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/plot_feeding.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/plot_forage_density.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/plot_other_signs.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/plot_territories.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/sim_terr_cap.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/territory_cap.html</loc>
-  </url>
-  <url>
-    <loc>h-a-graham.github.io/beavertools/reference/user_classify.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>h-a-graham.github.io/beavertools/404.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/LICENSE.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/authors.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/index.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/RivOtter_BeaverNet.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/RivOtter_Catch_Area.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/RivOtter_FeedSigns.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/RivOtter_OtherSigns.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/animate_capacity.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/animate_maps.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/check_auto_terr.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/check_user_terr.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/estimate_territories.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/forage_density.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/gen_territories.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/get_rivers.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/index.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/inflate_bbox.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/panel_plot.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/pipe.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/plot_capacity.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/plot_feeding.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/plot_forage_density.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/plot_other_signs.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/plot_territories.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/sim_terr_cap.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/territory_cap.html</loc></url>
+<url><loc>h-a-graham.github.io/beavertools/reference/user_classify.html</loc></url>
 </urlset>
+
