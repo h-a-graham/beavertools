@@ -12,7 +12,7 @@
 #' # generate inflated (by 10m) bounding box for ROBT feeding signs
 #' inflate_bbox(RivOtter_FeedSigns, 10)
 #'
-inflate_bbox <- function(sp_obj, value, wgs=TRUE){
+inflate_bbox <- function(sp_obj, value, wgs = TRUE) {
   sp_obj <- check_spatial_feature(sp_obj, 'sp_obj')
   bounds <- sf::st_bbox(sp_obj)
 
@@ -21,8 +21,7 @@ inflate_bbox <- function(sp_obj, value, wgs=TRUE){
   bounds[3] <- bounds[3] + value
   bounds[4] <- bounds[4] + value
 
-  bounds <- sf::st_sf(geometry=sf::st_as_sfc(bounds))
+  bounds <- sf::st_sf(geometry = sf::st_as_sfc(bounds))
 
   return(bounds)
-
 }

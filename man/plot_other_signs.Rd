@@ -10,7 +10,7 @@ plot_other_signs(
   fill_col = c("#e41a1c", "#4daf4a", "#d11141"),
   label = FALSE,
   basemap = TRUE,
-  basemap_type = "osmgrayscale",
+  basemap_type = "cartolight",
   axes_units = TRUE,
   scalebar = TRUE,
   scalebar_loc = "tl",
@@ -25,7 +25,6 @@ plot_other_signs(
   trans_type = NULL,
   catchment = NULL,
   rivers = FALSE,
-  add_hillshade = FALSE,
   plot_extent = NULL,
   mask_fill = "grey50"
 )
@@ -34,7 +33,7 @@ plot_other_signs(
 \item{beav_points}{An 'sf' object containing the location of beaver dwellings and dams.
 Alternative signs will be labelled as 'other'}
 
-\item{size}{a numeric vector of length 1 denoting the point size to be used by {ggplot2}.}
+\item{size}{a numeric vector of length 1 denoting the point size to be used by ggplot2.}
 
 \item{fill_col}{character vector of R colours or HEX codes.}
 
@@ -73,13 +72,12 @@ and confirmed territories}
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.}
 
-\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+\item{rivers}{Boolean to include river lines (downloaded automatcally using the osmdata package) OR a river network of class
 'sf' which can be generated beforehand using \code{beavertools::get_rivers()}.}
 
-\item{add_hillshade}{Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
-create a textured basemap.}
-
 \item{plot_extent}{'bbox', 'sf' or 'sp' object defining the desired plot extent.}
+
+\item{mask_fill}{character vector for the fill colour of the catchment mask.}
 }
 \value{
 ggplot object of a confirmatory signs map.
@@ -94,7 +92,7 @@ function to create a ggplot for the feeding points or confirmatory signs. This i
 
 RivOtter_OtherSigns \%>\%
 dplyr::filter(SurveySeason == "2019 - 2020") \%>\%
-  plot_other_signs(., size = 1.5,basemap=T, catchment = RivOtter_Catch_Area,
-                   rivers = T, plot_extent = inflate_bbox(RivOtter_Catch_Area, 200))
+  plot_other_signs(., size = 1.5,basemap=TRUE, catchment = RivOtter_Catch_Area,
+                   rivers = TRUE, plot_extent = inflate_bbox(RivOtter_Catch_Area, 200))
 
 }

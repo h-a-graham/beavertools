@@ -29,21 +29,30 @@
 #' check_auto_terr(otter_poly, basemap=FALSE, label=TRUE)
 #'
 #' user_classify(otter_poly, territory = c(10, 28))
-user_classify <- function(territory_poly, territory=NULL, possible=NULL, activity=NULL){
-
+user_classify <- function(
+  territory_poly,
+  territory = NULL,
+  possible = NULL,
+  activity = NULL
+) {
   class_overlap <- territory %in% possible
 
-  if (isTRUE(TRUE %in% class_overlap)){
+  if (isTRUE(TRUE %in% class_overlap)) {
     stop('A territory is duplicated in both possible and territory lists')
   }
 
   territory_poly %>%
     # dplyr::mutate(user_class = terr_status) %>%
-    dplyr::mutate(user_class = as.factor(ifelse(id %in% territory, 'Territory',
-                                      ifelse(id %in% possible, 'Possible',
-                                             ifelse(id %in% activity, 'Activity',
-                                                    as.character(terr_status)))))) %>%
+    dplyr::mutate(
+      user_class = as.factor(ifelse(
+        id %in% territory,
+        'Territory',
+        ifelse(
+          id %in% possible,
+          'Possible',
+          ifelse(id %in% activity, 'Activity', as.character(terr_status))
+        )
+      ))
+    ) %>%
     dplyr::relocate(user_class, .after = terr_status)
-
-
 }

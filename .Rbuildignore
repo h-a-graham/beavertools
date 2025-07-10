@@ -7,3 +7,7 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^rosm\.cache/*$
+^R_Otter_workflow$
+^scratch\.R$
+^README\.Rmd$

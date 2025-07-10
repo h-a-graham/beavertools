@@ -12,7 +12,8 @@ An sf object with 1 rows and 3 variables:
 }
 }
 \source{
-\url{generated from OS Terrain 5: https://www.ordnancesurvey.co.uk/business-government/products/terrain-5 using GRASS GIS (https://grass.osgeo.org/)}
+generated from OS Terrain 5: \url{https://www.ordnancesurvey.co.uk/business-government/products/terrain-5}
+using GRASS GIS \url{https://grass.osgeo.org/}
 }
 \usage{
 RivOtter_Catch_Area

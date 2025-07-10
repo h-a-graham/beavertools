@@ -34,7 +34,7 @@ Animated map of esither territory locations over time or feeding density over ti
 }
 \description{
 This function generates an animation between map time steps to visualise change over time using
-the {magick} package.
+the magick package.
 }
 \examples{
 
@@ -43,12 +43,17 @@ the {magick} package.
 fsd_ggplot <- function(.data, p.names, p.ext, add_map_stuff= FALSE){
 
  if (isTRUE(add_map_stuff)){
-   fsd <- plot_forage_density(.data, guide = FALSE, catchment = RivOtter_Catch_Area,
-                              rivers = TRUE, plot_extent = p.ext, axes_units = FALSE) +
+   fsd <- plot_forage_density(
+     .data, guide = FALSE, catchment = RivOtter_Catch_Area,
+     rivers = TRUE, plot_extent = p.ext, axes_units = FALSE
+   ) +
      ggplot2::labs(subtitle = sprintf('Beaver Foraging Density: \%s', p.names))
  } else {
-   fsd <- plot_forage_density(.data, axes_units = FALSE, north_arrow = FALSE, scalebar = FALSE, guide = FALSE,
-                              catchment = RivOtter_Catch_Area, rivers = TRUE, plot_extent = p.ext) +
+   fsd <- plot_forage_density(
+     .data, axes_units = FALSE, north_arrow = FALSE,
+     scalebar = FALSE, guide = FALSE, catchment = RivOtter_Catch_Area,
+     rivers = TRUE, plot_extent = p.ext
+   ) +
      ggplot2::labs(subtitle = p.names)
  }
 
@@ -67,7 +72,8 @@ kde_ras_list <- RivOtter_FeedSigns \%>\%
 
 # animate kernel density rasters
 kde_animation <- kde_ras_list \%>\%
-purrr::map2(.x=., .y=plot_names, ~fsd_ggplot(.x, .y, inflate_bbox(RivOtter_Catch_Area, 200),
+purrr::map2(.x=., .y=plot_names,
+~fsd_ggplot(.x, .y, inflate_bbox(RivOtter_Catch_Area, 200),
   add_map_stuff = TRUE)) \%>\%
   animate_maps(.)
 }

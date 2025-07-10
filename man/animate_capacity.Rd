@@ -9,7 +9,7 @@ animate_capacity(
   buffer = 50,
   river_net = NULL,
   basemap = TRUE,
-  basemap_type = "osmgrayscale",
+  basemap_type = "cartolight",
   axes_units = TRUE,
   scalebar = TRUE,
   scalebar_loc = "tl",
@@ -20,7 +20,6 @@ animate_capacity(
   guide = FALSE,
   catchment = NULL,
   rivers = FALSE,
-  add_hillshade = FALSE,
   plot_extent = NULL,
   filename = NULL,
   x_pix = 1200,
@@ -64,11 +63,8 @@ to display the river network.}
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.}
 
-\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package).
+\item{rivers}{Boolean to include river lines (downloaded automatcally using the osmdata package).
 Probably not reuired if 'river_net' argument is supplied.}
-
-\item{add_hillshade}{Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
-create a textured basemap.}
 
 \item{plot_extent}{'bbox', 'sf' or 'sp' object defining the desired plot extent.}
 
@@ -83,8 +79,6 @@ create a textured basemap.}
 \item{n_frames}{numeric for the number of frames to use for transitions}
 
 \item{fps}{numeric for the number of frames per second for the resulting animation}
-
-\item{terr_colours}{option to supply a custom colour palette. If NULL then a random colour palette is generated.}
 }
 \value{
 An animated map of territory expansion up to capacity.
