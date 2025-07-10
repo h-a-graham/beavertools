@@ -10,7 +10,7 @@ plot_territories(
   fill_col = c("#7EAAC7", "#F87223", "#61E265"),
   label = FALSE,
   basemap = TRUE,
-  basemap_type = "osmgrayscale",
+  basemap_type = "cartolight",
   axes_units = TRUE,
   scalebar = TRUE,
   scalebar_loc = "tl",
@@ -25,7 +25,6 @@ plot_territories(
   trans_type = NULL,
   catchment = NULL,
   rivers = FALSE,
-  add_hillshade = FALSE,
   plot_extent = NULL,
   mask_fill = "grey50"
 )
@@ -73,13 +72,12 @@ and confirmed territories}
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.}
 
-\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+\item{rivers}{Boolean to include river lines (downloaded automatcally using the osmdata package) OR a river network of class
 'sf' which can be generated beforehand using \code{beavertools::get_rivers()}.}
 
-\item{add_hillshade}{Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
-create a textured basemap.}
-
 \item{plot_extent}{'bbox', 'sf' or 'sp' object defining the desired plot extent.}
+
+\item{mask_fill}{character vector for the fill colour of the catchment mask.}
 }
 \value{
 ggplot object of the territory check map.

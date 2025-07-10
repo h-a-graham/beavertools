@@ -22,47 +22,62 @@
 #' # --- run simple simulation...
 #'  sim_terr_cap(BeavNetOtter, n_p_terr_sim=2, n_hab_sim=2, min_veg = c(1.3, 1.8))
 #' }
-sim_terr_cap <- function(BeaverNetwork, n_p_terr_sim=1, n_hab_sim=5, min_veg = c(1.5, 4), progbar=TRUE){
-
+sim_terr_cap <- function(
+  BeaverNetwork,
+  n_p_terr_sim = 1,
+  n_hab_sim = 5,
+  min_veg = c(1.5, 4),
+  progbar = TRUE
+) {
   n_terr_sims <- c(1:n_p_terr_sim)
 
-  hab_mins <- seq(from=min_veg[1], to = min_veg[2], length.out=n_hab_sim)
-
-
+  hab_mins <- seq(from = min_veg[1], to = min_veg[2], length.out = n_hab_sim)
 
   hab_sim <- function(.val, .p_terrs, pb = NULL) {
-
-    if (!is.null(pb)){
+    if (!is.null(pb)) {
       pb$tick()
     }
 
-    test_TC_par <- territory_cap(.p_terrs, min_veg = .val , progbars=FALSE, multicore = TRUE) %>%
+    test_TC_par <- territory_cap(
+      .p_terrs,
+      min_veg = .val,
+      progbars = FALSE,
+      multicore = TRUE
+    ) %>%
       dplyr::summarise(., mean_length = mean(Terr_Leng), n = dplyr::n()) %>%
       dplyr::select(mean_length, n) %>%
       dplyr::mutate(min_BFI = .val)
   }
 
-  terr_sim <- function(.simNum, .BeavNet, .habVals, pb, target, sim_n){
-
-    if (isTRUE(pb)){
+  terr_sim <- function(.simNum, .BeavNet, .habVals, pb, target, sim_n) {
+    if (isTRUE(pb)) {
       message(sprintf('Simulation %s/%s:', .simNum, target))
-      prog <- progress::progress_bar$new(total = length(hab_mins), clear = FALSE)
+      prog <- progress::progress_bar$new(
+        total = length(hab_mins),
+        clear = FALSE
+      )
     } else {
       prog <- NULL
     }
 
-    p_terrs <-  gen_territories(.BeavNet, progbar = FALSE)
+    p_terrs <- gen_territories(.BeavNet, progbar = FALSE)
 
     sim_sum <- .habVals %>%
-      purrr::map(., ~ hab_sim(., p_terrs, pb= prog)) %>%
+      purrr::map(., ~ hab_sim(., p_terrs, pb = prog)) %>%
       dplyr::bind_rows() %>%
       dplyr::mutate(sim_num = .simNum)
-
   }
 
   sim_df <- n_terr_sims %>%
-    purrr::map(., ~ terr_sim(., BeaverNetwork, hab_mins, pb = progbar, target = length(n_terr_sims))) %>%
+    purrr::map(
+      .,
+      ~ terr_sim(
+        .,
+        BeaverNetwork,
+        hab_mins,
+        pb = progbar,
+        target = length(n_terr_sims)
+      )
+    ) %>%
     dplyr::bind_rows()
-
 }
-

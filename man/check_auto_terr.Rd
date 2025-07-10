@@ -9,7 +9,7 @@ check_auto_terr(
   fill_col = c("#7EAAC7", "#F87223", "#61E265"),
   label = TRUE,
   basemap = FALSE,
-  basemap_type = "osmgrayscale",
+  basemap_type = "cartolight",
   axes_units = TRUE,
   scalebar = TRUE,
   scalebar_loc = "tl",

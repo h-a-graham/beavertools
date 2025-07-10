@@ -1,5 +1,5 @@
 Package: beavertools
-Title: Tools to monitor the expansion of beaver populations and predict future territory capacity.
+Title: Tools to monitor the expansion of beaver populations and predict future territory capacity
 Version: 0.0.1.2
 Authors@R: 
     person(given = "Hugh",
@@ -12,7 +12,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.2
 Depends: 
     R (>= 2.10),
     sf
@@ -26,7 +26,6 @@ Imports:
     foreach,
     magrittr,
     progress,
-    geodata,
     spatialEco,
     doParallel,
     tcltk,
@@ -35,6 +34,13 @@ Imports:
     osmdata,
     gridExtra,
     ggpubr,
-    exactextractr
+    exactextractr,
+    plyr,
+    RColorBrewer,
+    rosm,
+    terra
 URL: https://h-a-graham.github.io/beavertools
 doi: https://zenodo.org/badge/latestdoi/278560084
+Suggests: 
+    geodata,
+    prettymapr

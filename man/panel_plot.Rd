@@ -49,12 +49,17 @@ Function to help build a panel plot consisting of multiple plots from different 
 fsd_ggplot <- function(.data, p.names, p.ext, add_map_stuff= FALSE){
 
  if (isTRUE(add_map_stuff)){
-   fsd <- plot_forage_density(.data, basemap = FALSE, guide = FALSE, catchment = RivOtter_Catch_Area,
-                              rivers = FALSE, plot_extent = p.ext, axes_units = FALSE) +
+   fsd <- plot_forage_density(
+     .data, basemap = FALSE, guide = FALSE, catchment = RivOtter_Catch_Area,
+     rivers = FALSE, plot_extent = p.ext, axes_units = FALSE
+   ) +
      ggplot2::labs(subtitle = sprintf('Beaver Foraging Density: \%s', p.names))
  } else {
-   fsd <- plot_forage_density(.data, basemap = FALSE, axes_units = FALSE, north_arrow = FALSE, scalebar = FALSE, guide = FALSE,
-                              catchment = RivOtter_Catch_Area, rivers = FALSE, plot_extent = p.ext) +
+   fsd <- plot_forage_density(
+     .data, basemap = FALSE, axes_units = FALSE, north_arrow = FALSE,
+     scalebar = FALSE, guide = FALSE, catchment = RivOtter_Catch_Area,
+     rivers = FALSE, plot_extent = p.ext
+   ) +
      ggplot2::labs(subtitle = p.names)
  }
 

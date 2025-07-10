@@ -45,7 +45,7 @@ estimate_territories <- function(
     # forage objects already in sf format
   } else if (class(confirm_signs)[1] == "SpatialPointsDataFrame") {
     confirm_signs <- (sf::st_as_sf(confirm_signs))
-  } else if (class(confirm_signs)[1] == 'character') {
+  } else if (class(confirm_signs)[1] == "character") {
     confirm_signs <- sf::read_sf(confirm_signs)
   } else {
     stop(
@@ -53,6 +53,9 @@ estimate_territories <- function(
          Please provide either: sf, SpatialPointsDataFrame, or sf-readable filepath'
     )
   }
+
+  # transform to same CRS as forage raster
+  confirm_signs <- sf::st_transform(confirm_signs, sf::st_crs(forage_raster))
 
   # silence warnings
   oldw <- getOption("warn")

@@ -1,7 +1,7 @@
 #' Built in plotting function for Kernel density Raster.
 #'
 #'This function provides a simple way to produce consistent maps of Kernel density plots.
-#'Please be aware that the 'basemap', 'rivers' and 'add_hillshade' arguments  use the following functions:
+#'Please be aware that the 'basemap', 'rivers' arguments  use the following functions:
 #'`rosm::osm.image()` `osmdata::opq()` which occasional fail during busy server times.
 #'
 #' @param kd_raster Kernel Density raster generated from the `beavertools::forage_density()`
@@ -20,14 +20,15 @@
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 #' map region outside of desired AOI.
-#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+#' @param rivers Boolean to include river lines (downloaded automatcally using the osmdata package) OR a river network of class
 #' 'sf' which can be generated beforehand using `beavertools::get_rivers()`.
-#' @param add_hillshade Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
-#' create a textured basemap.
 #' @param plot_extent 'bbox', 'sf' or 'sp' object used to set the plot extent.
 #' @param attribute Boolean to include an open street map attribution.
+#' @param guide_width numeric vector for the width of the legend.
+#' @param mask_fill character vector for the fill colour of the catchment mask.
 #' @return ggplot object of Kernel Density Map
 #' @export
+#' @import sf
 #' @examples
 #' # Here we filter the filter the built in 2019-2020 ROBT feeding sign data `RivOtter_FeedSigns`
 #' # Then pipe this 'sf' object to forage_density.
@@ -43,7 +44,7 @@
 plot_forage_density <- function(
   kd_raster,
   basemap = TRUE,
-  basemap_type = "osmgrayscale",
+  basemap_type = "cartolight",
   trans_fill = TRUE,
   trans_type = 'log10',
   axes_units = TRUE,
@@ -56,21 +57,18 @@ plot_forage_density <- function(
   guide = TRUE,
   catchment = NULL,
   rivers = FALSE,
-  add_hillshade = FALSE,
   plot_extent = NULL,
   attribute = TRUE,
   guide_width = NULL,
   mask_fill = "grey50"
 ) {
+  match.arg(basemap_type, rosm::osm.types())
+  kd_raster <- terra::project(kd_raster, "EPSG:4326")
   orig_crs <- sf::st_crs(kd_raster)
-  kd_raster <- terra::project(
-    kd_raster,
-    "EPSG:4326"
-  )
 
   # define extent
   set_lims <- TRUE
-
+  # browser()
   if (is.null(plot_extent)) {
     set_lims <- FALSE
   } else {
@@ -86,10 +84,6 @@ plot_forage_density <- function(
         zoomin = 0,
         alpha = 0.8
       )
-  }
-
-  if (isTRUE(add_hillshade)) {
-    p <- p + ggspatial::annotation_map_tile(type = 'hillshade', zoomin = 0)
   }
 
   if (!is.null(catchment)) {
@@ -115,7 +109,7 @@ plot_forage_density <- function(
           size = 0.2
         )
     }
-  } else if (class(rivers)[1] == "sf") {
+  } else if (inherits(rivers, "sf")) {
     rivers <- rivers %>%
       sf::st_transform(crs = 4326)
     p <- p +
@@ -127,6 +121,7 @@ plot_forage_density <- function(
       )
   }
 
+  # browser()
   p <- p +
     ggspatial::layer_spatial(
       kd_raster,
@@ -180,9 +175,6 @@ plot_forage_density <- function(
   }
 
   if (isTRUE(set_lims) && isTRUE(wgs)) {
-    # p <- p + ggplot2::scale_x_continuous(limits= c(plot_extent[1], plot_extent[2])) +
-    #   ggplot2::scale_y_continuous(limits =c(plot_extent[3], plot_extent[4]))
-
     p <- p +
       ggplot2::coord_sf(
         xlim = c(plot_extent[1], plot_extent[2]),
@@ -222,13 +214,14 @@ plot_forage_density <- function(
   }
 
   if (!is.null(guide_width)) {
-    p <- p + ggplot2::guides(fill = guide_colourbar(barheight = guide_width))
+    p <- p +
+      ggplot2::guides(fill = ggplot2::guide_colourbar(barheight = guide_width))
   }
 
-  if (isTRUE(basemap) | isTRUE(rivers) | isTRUE(add_hillshade)) {
+  if (isTRUE(basemap) | isTRUE(rivers)) {
     if (isTRUE(attribute)) {
       p <- p +
-        ggplot2::labs(caption = '© OpenStreetMap contributors') +
+        ggplot2::labs(caption = 'c OpenStreetMap contributors') +
         ggplot2::theme(plot.caption = ggplot2::element_text(size = 6))
     }
   }

@@ -20,12 +20,12 @@ territory_cap(
 
 \item{min_bdc}{Numeric vector describing the minimum Beaver Dam Capacity for reaches where Stream Order <=4.}
 
+\item{progbars}{Boolean to use a progress bar to monitor progress}
+
 \item{multicore}{Boolean to multiple core - This function can be slow for large catchments so setting as TRUE can speed things up.}
 
 \item{ncores}{numeric denoting the number of processes to run the function across. If not included, defaults to:
 \code{parallel::detectCores()[1]-2}}
-
-\item{progbar}{Boolean to use a progress bar to monitor progress}
 }
 \value{
 An 'sf' object containing all viable territories, the total of which equals the territory capacity.

@@ -7,7 +7,7 @@
 plot_forage_density(
   kd_raster,
   basemap = TRUE,
-  basemap_type = "osmgrayscale",
+  basemap_type = "cartolight",
   trans_fill = TRUE,
   trans_type = "log10",
   axes_units = TRUE,
@@ -20,7 +20,6 @@ plot_forage_density(
   guide = TRUE,
   catchment = NULL,
   rivers = FALSE,
-  add_hillshade = FALSE,
   plot_extent = NULL,
   attribute = TRUE,
   guide_width = NULL,
@@ -58,22 +57,23 @@ plot_forage_density(
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.}
 
-\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+\item{rivers}{Boolean to include river lines (downloaded automatcally using the osmdata package) OR a river network of class
 'sf' which can be generated beforehand using \code{beavertools::get_rivers()}.}
-
-\item{add_hillshade}{Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
-create a textured basemap.}
 
 \item{plot_extent}{'bbox', 'sf' or 'sp' object used to set the plot extent.}
 
 \item{attribute}{Boolean to include an open street map attribution.}
+
+\item{guide_width}{numeric vector for the width of the legend.}
+
+\item{mask_fill}{character vector for the fill colour of the catchment mask.}
 }
 \value{
 ggplot object of Kernel Density Map
 }
 \description{
 This function provides a simple way to produce consistent maps of Kernel density plots.
-Please be aware that the 'basemap', 'rivers' and 'add_hillshade' arguments  use the following functions:
+Please be aware that the 'basemap', 'rivers' arguments  use the following functions:
 \code{rosm::osm.image()} \code{osmdata::opq()} which occasional fail during busy server times.
 }
 \examples{

@@ -10,7 +10,7 @@ plot_feeding(
   fill_col = c("#1b9e77", "#7570b3", "#d95f02"),
   label = FALSE,
   basemap = TRUE,
-  basemap_type = "osmgrayscale",
+  basemap_type = "cartolight",
   axes_units = TRUE,
   scalebar = TRUE,
   scalebar_loc = "tl",
@@ -25,7 +25,6 @@ plot_feeding(
   trans_type = NULL,
   catchment = NULL,
   rivers = FALSE,
-  add_hillshade = FALSE,
   plot_extent = NULL,
   mask_fill = "grey50"
 )
@@ -73,13 +72,12 @@ and confirmed territories}
 This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 map region outside of desired AOI.}
 
-\item{rivers}{Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+\item{rivers}{Boolean to include river lines (downloaded automatcally using the osmdata package) OR a river network of class
 'sf' which can be generated beforehand using \code{beavertools::get_rivers()}.}
 
-\item{add_hillshade}{Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
-create a textured basemap.}
-
 \item{plot_extent}{'bbox', 'sf' or 'sp' object defining the desired plot extent.}
+
+\item{mask_fill}{character vector for the fill colour of the catchment mask.}
 }
 \value{
 ggplot object for a map of beaver feeding signs.
@@ -94,7 +92,7 @@ function to create a ggplot for the feeding points or confirmatory signs. This i
 
 RivOtter_FeedSigns \%>\%
 dplyr::filter(SurveySeason == "2019 - 2020") \%>\%
-  plot_feeding(., weight_aes=c(1,3,6), basemap=F,
-               catchment = RivOtter_Catch_Area, rivers = T)
+  plot_feeding(., weight_aes=c(1,3,6), basemap=FALSE,
+               catchment = RivOtter_Catch_Area, rivers = TRUE)
 
 }

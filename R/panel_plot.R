@@ -21,12 +21,17 @@
 #'fsd_ggplot <- function(.data, p.names, p.ext, add_map_stuff= FALSE){
 #'
 #'  if (isTRUE(add_map_stuff)){
-#'    fsd <- plot_forage_density(.data, basemap = FALSE, guide = FALSE, catchment = RivOtter_Catch_Area,
-#'                               rivers = FALSE, plot_extent = p.ext, axes_units = FALSE) +
+#'    fsd <- plot_forage_density(
+#'      .data, basemap = FALSE, guide = FALSE, catchment = RivOtter_Catch_Area,
+#'      rivers = FALSE, plot_extent = p.ext, axes_units = FALSE
+#'    ) +
 #'      ggplot2::labs(subtitle = sprintf('Beaver Foraging Density: %s', p.names))
 #'  } else {
-#'    fsd <- plot_forage_density(.data, basemap = FALSE, axes_units = FALSE, north_arrow = FALSE, scalebar = FALSE, guide = FALSE,
-#'                               catchment = RivOtter_Catch_Area, rivers = FALSE, plot_extent = p.ext) +
+#'    fsd <- plot_forage_density(
+#'      .data, basemap = FALSE, axes_units = FALSE, north_arrow = FALSE,
+#'      scalebar = FALSE, guide = FALSE, catchment = RivOtter_Catch_Area,
+#'      rivers = FALSE, plot_extent = p.ext
+#'    ) +
 #'      ggplot2::labs(subtitle = p.names)
 #'  }
 #'
@@ -51,44 +56,66 @@
 #'     panel_plot(.)
 #'
 #'
-panel_plot <- function(terr_plot_list, scalebar=TRUE, scalebar_loc = 'tl', north_arrow = TRUE,
-                       north_arrow_loc = 'br', north_arrow_size = 0.5, guide = FALSE, guide_fig_height = c(30,1),
-                       n_col=NULL){
+panel_plot <- function(
+  terr_plot_list,
+  scalebar = TRUE,
+  scalebar_loc = 'tl',
+  north_arrow = TRUE,
+  north_arrow_loc = 'br',
+  north_arrow_size = 0.5,
+  guide = FALSE,
+  guide_fig_height = c(30, 1),
+  n_col = NULL
+) {
   n <- length(terr_plot_list)
 
   #remove all legends from plots
   terr_plot_listNL <- terr_plot_list %>%
-    purrr::map(., .f = function(x) x + ggplot2::guides(fill=F, colour=F, size=F))
+    purrr::map(., .f = function(x) {
+      x + ggplot2::guides(fill = "none", colour = "none", size = "none")
+    })
 
-  if (isTRUE(scalebar)){
+  if (isTRUE(scalebar)) {
     terr_plot_listNL[[n]] <- terr_plot_listNL[[n]] +
-      ggspatial::annotation_scale(location= scalebar_loc)
+      ggspatial::annotation_scale(location = scalebar_loc)
   }
 
-  if (isTRUE(north_arrow)){
+  if (isTRUE(north_arrow)) {
     terr_plot_listNL[[n]] <- terr_plot_listNL[[n]] +
-      ggspatial::annotation_north_arrow(location = north_arrow_loc, which_north = "true",
-                                        height = ggplot2::unit(north_arrow_size, "cm"),
-                                        width = ggplot2::unit(north_arrow_size, "cm"),
-                                        style = ggspatial::north_arrow_orienteering(text_col=NA,
-                                                                                    fill = c("black", "black")))
+      ggspatial::annotation_north_arrow(
+        location = north_arrow_loc,
+        which_north = "true",
+        height = ggplot2::unit(north_arrow_size, "cm"),
+        width = ggplot2::unit(north_arrow_size, "cm"),
+        style = ggspatial::north_arrow_orienteering(
+          text_col = NA,
+          fill = c("black", "black")
+        )
+      )
   }
 
-  if (!is.null(n_col)){
+  if (!is.null(n_col)) {
     nCol = n_col
   } else {
     nCol <- ceiling(sqrt(n))
   }
 
-  p <- do.call(gridExtra::grid.arrange, c(terr_plot_listNL, ncol=nCol))
+  p <- do.call(gridExtra::grid.arrange, c(terr_plot_listNL, ncol = nCol))
 
   #extract legend
-  if (isTRUE(guide)){
+  if (isTRUE(guide)) {
     leg <- ggpubr::get_legend(terr_plot_list, position = "bottom") %>%
       ggpubr::as_ggplot()
-    p <- gridExtra::grid.arrange(p, leg, ncol=1, heights=c(guide_fig_height[1], guide_fig_height[2]),
-                                 bottom=grid::textGrob("© OpenStreetMap contributors",
-                                                       gp=grid::gpar(fontsize=6)))
+    p <- gridExtra::grid.arrange(
+      p,
+      leg,
+      ncol = 1,
+      heights = c(guide_fig_height[1], guide_fig_height[2]),
+      bottom = grid::textGrob(
+        "© OpenStreetMap contributors",
+        gp = grid::gpar(fontsize = 6)
+      )
+    )
   }
 
   return(p)

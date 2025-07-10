@@ -1,4 +1,3 @@
-
 #' Plotting function for feeding/foraging Locations.
 #'
 #' function to create a ggplot for the feeding points or confirmatory signs. This is just a lazy wrapper for
@@ -27,11 +26,10 @@
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 #' map region outside of desired AOI.
-#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+#' @param rivers Boolean to include river lines (downloaded automatcally using the osmdata package) OR a river network of class
 #' 'sf' which can be generated beforehand using `beavertools::get_rivers()`.
-#' @param add_hillshade Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
-#' create a textured basemap.
 #' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
+#' @param mask_fill character vector for the fill colour of the catchment mask.
 #' @return ggplot object for a map of beaver feeding signs.
 #' @export
 #' @examples
@@ -40,28 +38,73 @@
 #'
 #' RivOtter_FeedSigns %>%
 #' dplyr::filter(SurveySeason == "2019 - 2020") %>%
-#'   plot_feeding(., weight_aes=c(1,3,6), basemap=F,
-#'                catchment = RivOtter_Catch_Area, rivers = T)
+#'   plot_feeding(., weight_aes=c(1,3,6), basemap=FALSE,
+#'                catchment = RivOtter_Catch_Area, rivers = TRUE)
 #'
-plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e77", "#7570b3", "#d95f02"),
-                             label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
-                             scalebar=TRUE, scalebar_loc = 'tl',
-                             north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                             wgs=TRUE, guide=TRUE, guide_pos = "bottom", seed=NA, drop_act=FALSE, trans_type=NULL,
-                             catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, mask_fill='grey50'){
-
-  if (length(weight_aes)==1){
-    weight_aes <- c(weight_aes,weight_aes,weight_aes)
+plot_feeding <- function(
+  beav_points,
+  weight_aes = c(1, 3, 6),
+  fill_col = c("#1b9e77", "#7570b3", "#d95f02"),
+  label = FALSE,
+  basemap = TRUE,
+  basemap_type = "cartolight",
+  axes_units = TRUE,
+  scalebar = TRUE,
+  scalebar_loc = 'tl',
+  north_arrow = TRUE,
+  north_arrow_loc = 'br',
+  north_arrow_size = 0.75,
+  wgs = TRUE,
+  guide = TRUE,
+  guide_pos = "bottom",
+  seed = NA,
+  drop_act = FALSE,
+  trans_type = NULL,
+  catchment = NULL,
+  rivers = FALSE,
+  plot_extent = NULL,
+  mask_fill = 'grey50'
+) {
+  match.arg(basemap_type, rosm::osm.types())
+  if (length(weight_aes) == 1) {
+    weight_aes <- c(weight_aes, weight_aes, weight_aes)
   }
 
   beav_points %>%
-        dplyr::mutate(feedsigns = ifelse(FeedCat == 'Low', weight_aes[1],
-                      ifelse(FeedCat == 'Med', weight_aes[2], weight_aes[3]))) %>%
-        dplyr::mutate(FeedCat = forcats::fct_relevel(FeedCat, 'High', 'Med', 'Low')) %>%
-        plot_territories(., 'feedsigns', fill_col, label, basemap, basemap_type, axes_units,
-                         scalebar, scalebar_loc, north_arrow, north_arrow_loc, north_arrow_size,
-                         wgs, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent, mask_fill)
-
+    dplyr::mutate(
+      feedsigns = ifelse(
+        FeedCat == 'Low',
+        weight_aes[1],
+        ifelse(FeedCat == 'Med', weight_aes[2], weight_aes[3])
+      )
+    ) %>%
+    dplyr::mutate(
+      FeedCat = forcats::fct_relevel(FeedCat, 'High', 'Med', 'Low')
+    ) %>%
+    plot_territories(
+      .,
+      'feedsigns',
+      fill_col,
+      label,
+      basemap,
+      basemap_type,
+      axes_units,
+      scalebar,
+      scalebar_loc,
+      north_arrow,
+      north_arrow_loc,
+      north_arrow_size,
+      wgs,
+      guide,
+      guide_pos,
+      seed,
+      drop_act,
+      trans_type,
+      catchment,
+      rivers,
+      plot_extent,
+      mask_fill
+    )
 }
 
 #' Plotting function for Confirmatory sign (Dwelling and Dam) locations.
@@ -71,7 +114,7 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
 #'
 #' @param beav_points  An 'sf' object containing the location of beaver dwellings and dams.
 #' Alternative signs will be labelled as 'other'
-#' @param size a numeric vector of length 1 denoting the point size to be used by {ggplot2}.
+#' @param size a numeric vector of length 1 denoting the point size to be used by ggplot2.
 #' @param fill_col character vector of R colours or HEX codes.
 #' @param label label activity areas with polygon ID.
 #' @param basemap Boolean, include an OSM basemap. (optional)
@@ -92,11 +135,10 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
 #' @param catchment An sf object or an sf-readable file. See sf::st_drivers() for available drivers.
 #' This feature should be a boundary such as a catchment or Area of interest. It is used to mask the
 #' map region outside of desired AOI.
-#' @param rivers Boolean to include river lines (downloaded automatcally using the {osmdata} package) OR a river network of class
+#' @param rivers Boolean to include river lines (downloaded automatcally using the osmdata package) OR a river network of class
 #' 'sf' which can be generated beforehand using `beavertools::get_rivers()`.
-#' @param add_hillshade Boolean to add an osm hillshade background map. This can be combined with 'basemap_type' to
-#' create a textured basemap.
 #' @param plot_extent 'bbox', 'sf' or 'sp' object defining the desired plot extent.
+#' @param mask_fill character vector for the fill colour of the catchment mask.
 #' @return ggplot object of a confirmatory signs map.
 #' @export
 #' @examples
@@ -105,25 +147,69 @@ plot_feeding <- function(beav_points, weight_aes = c(1,3,6), fill_col = c("#1b9e
 #'
 #' RivOtter_OtherSigns %>%
 #' dplyr::filter(SurveySeason == "2019 - 2020") %>%
-#'   plot_other_signs(., size = 1.5,basemap=T, catchment = RivOtter_Catch_Area,
-#'                    rivers = T, plot_extent = inflate_bbox(RivOtter_Catch_Area, 200))
+#'   plot_other_signs(., size = 1.5,basemap=TRUE, catchment = RivOtter_Catch_Area,
+#'                    rivers = TRUE, plot_extent = inflate_bbox(RivOtter_Catch_Area, 200))
 #'
-plot_other_signs <- function(beav_points, size = 2.5, fill_col = c("#e41a1c", "#4daf4a", "#d11141"),
-                         label = FALSE, basemap=TRUE, basemap_type = "osmgrayscale", axes_units = TRUE,
-                         scalebar=TRUE, scalebar_loc = 'tl',
-                         north_arrow = TRUE, north_arrow_loc = 'br', north_arrow_size = 0.75,
-                         wgs=TRUE, guide=TRUE, guide_pos = "bottom", seed=NA, drop_act=FALSE, trans_type=NULL,
-                         catchment=NULL, rivers=FALSE, add_hillshade = FALSE, plot_extent=NULL, mask_fill='grey50'){
-
+plot_other_signs <- function(
+  beav_points,
+  size = 2.5,
+  fill_col = c("#e41a1c", "#4daf4a", "#d11141"),
+  label = FALSE,
+  basemap = TRUE,
+  basemap_type = "cartolight",
+  axes_units = TRUE,
+  scalebar = TRUE,
+  scalebar_loc = 'tl',
+  north_arrow = TRUE,
+  north_arrow_loc = 'br',
+  north_arrow_size = 0.75,
+  wgs = TRUE,
+  guide = TRUE,
+  guide_pos = "bottom",
+  seed = NA,
+  drop_act = FALSE,
+  trans_type = NULL,
+  catchment = NULL,
+  rivers = FALSE,
+  plot_extent = NULL,
+  mask_fill = 'grey50'
+) {
+  match.arg(basemap_type, rosm::osm.types())
   beav_points %>%
     dplyr::mutate(SignType = as.character(SignType)) %>%
-    dplyr::mutate(othersigns = ifelse(SignType=='Dwelling',  SignType,
-                                      ifelse(SignType=='Dam', SignType, 'Other'))) %>%
-    dplyr::mutate(othersigns = forcats::fct_relevel(othersigns, 'Dam','Dwelling')) %>%
+    dplyr::mutate(
+      othersigns = ifelse(
+        SignType == 'Dwelling',
+        SignType,
+        ifelse(SignType == 'Dam', SignType, 'Other')
+      )
+    ) %>%
+    dplyr::mutate(
+      othersigns = forcats::fct_relevel(othersigns, 'Dam', 'Dwelling')
+    ) %>%
     dplyr::mutate(p_size = size) %>%
-    plot_territories(., 'othersigns', fill_col, label, basemap, basemap_type, axes_units,
-                     scalebar, scalebar_loc, north_arrow, north_arrow_loc, north_arrow_size,
-                     wgs, guide, guide_pos, seed, drop_act, trans_type, catchment, rivers, add_hillshade, plot_extent, mask_fill)
-
+    plot_territories(
+      .,
+      'othersigns',
+      fill_col,
+      label,
+      basemap,
+      basemap_type,
+      axes_units,
+      scalebar,
+      scalebar_loc,
+      north_arrow,
+      north_arrow_loc,
+      north_arrow_size,
+      wgs,
+      guide,
+      guide_pos,
+      seed,
+      drop_act,
+      trans_type,
+      catchment,
+      rivers,
+      plot_extent,
+      mask_fill
+    )
 }
-

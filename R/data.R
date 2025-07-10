@@ -14,7 +14,6 @@
 "RivOtter_FeedSigns"
 
 
-
 #' Beaver Dwelling and Dam Locations recorded during the River Otter Beaver Trial.
 #'
 #' A dataset ('sf' object) which includes the locations, survey times and
@@ -42,7 +41,8 @@
 #'   \item{Name}{Simply the name of the catchment}
 #'   \item{geometry}{The geometry data for the catchment}
 #' }
-#' @source \url{generated from OS Terrain 5: https://www.ordnancesurvey.co.uk/business-government/products/terrain-5 using GRASS GIS (https://grass.osgeo.org/)}
+#' @source generated from OS Terrain 5: \url{https://www.ordnancesurvey.co.uk/business-government/products/terrain-5}
+#'  using GRASS GIS \url{https://grass.osgeo.org/}
 "RivOtter_Catch_Area"
 
 
